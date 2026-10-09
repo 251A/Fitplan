@@ -55,6 +55,27 @@ describe('parseHealthPayload', () => {
     expect(() => parseHealthPayload({ steps: [] })).toThrow(/versión/);
   });
 
+  it('accepts the daily-grouped format Shortcuts produces (date rows, 0 = no data, lowercase keys)', () => {
+    const parsed = parseHealthPayload({
+      version: 1,
+      steps: [{ date: '2026-10-08', value: '4584' }],
+      sleep: [{ start: '2026-10-07T23:30:00+02:00', end: '2026-10-08T07:00:00+02:00', value: 'Core', source: '' }],
+      hrv: [
+        { date: '2026-10-07', value: '0' },
+        { date: '2026-10-08', value: '79.70474402909092' },
+      ],
+      restinghr: [
+        { date: '2026-10-07', value: '0' },
+        { date: '2026-10-08', value: '65' },
+      ],
+    });
+    expect(parsed.warnings).toEqual([]);
+    expect(parsed.hrv).toHaveLength(1);
+    expect(parsed.restingHR).toHaveLength(1);
+    const oct8 = buildDailyHealth(parsed, 'Europe/Madrid').find((d) => d.date === '2026-10-08');
+    expect(oct8).toMatchObject({ steps: 4584, sleepHours: 7.5, hrvSDNN: 79.7, restingHR: 65, hrvFromNight: false });
+  });
+
   it('parses the Spanish-locale fixture into daily metrics', () => {
     const parsed = parseHealthPayload(JSON.stringify(fixture));
     expect(parsed.warnings).toEqual([]);

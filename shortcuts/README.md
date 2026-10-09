@@ -36,8 +36,10 @@ Todas las fechas en **ISO 8601** (acción *Formatear fecha* → formato *ISO 860
    - *Buscar muestras de Salud* → Tipo: **Análisis del sueño**, últimos 7 días.
    - *Repetir con cada*: *Texto* `{"start":"[Fecha de inicio ISO]","end":"[Fecha de finalización ISO]","value":"[Valor]","source":"[Fuente]"}`
    - *Combinar texto* con `,` → variable `Sueño`.
-4. **VFC** (Variabilidad de la frecuencia cardiaca), **Pulso en reposo** y **Peso**: igual que el sueño pero sin `end`:
-   `{"start":"[Fecha de inicio ISO]","value":"[Valor]"}` → variables `VFC`, `Reposo`, `Peso`.
+4. **VFC** (Variabilidad de la frecuencia cardiaca), **Pulso en reposo** y **Peso**: igual que los pasos,
+   **agrupados por día** (`{"date":"[yyyy-MM-dd]","value":"[Valor]"}`) → variables `VFC`, `Reposo`, `Peso`.
+   Los días sin dato llegan como `0` y la app los ignora. También acepta muestras sueltas
+   (`{"start":"[Fecha de inicio ISO]","value":"[Valor]"}`), que permiten usar solo la VFC medida durante el sueño.
    Para VFC y pulso en reposo usa *en los últimos 35 días* la primera vez (la app necesita 28 días de línea base); después basta con 7.
 5. **Entrenos**: *Buscar muestras de Salud* → Tipo: **Entrenamientos**, últimos 7 días →
    `{"start":"[Fecha de inicio ISO]","end":"[Fecha de finalización ISO]","type":"[Tipo de entrenamiento]","source":"[Fuente]"}` → variable `Entrenos`.

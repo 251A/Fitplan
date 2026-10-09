@@ -122,12 +122,21 @@ export function parseWorkoutKind(type: string): WorkoutKind {
   return 'other';
 }
 
+/**
+ * Accepts individual samples ({start, value}) and daily aggregates ({date, value}, what Shortcuts
+ * produces with "Agrupar por: Día"). Daily rows are placed at local noon of that day. A value of 0
+ * means "no data that day" (Shortcuts fills missing days with 0), never a real HRV/HR/weight.
+ */
 function parseSamples(list: RawSample[] | undefined, name: string, warnings: string[]): TimedValue[] {
   const out: TimedValue[] = [];
   let bad = 0;
   for (const s of list ?? []) {
-    const ms = parseTime(s.start);
+    const daily = (s as { date?: unknown }).date;
+    const ms =
+      parseTime(s.start) ??
+      (typeof daily === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(daily.trim()) ? parseTime(`${daily.trim()}T12:00:00`) : undefined);
     const value = parseNumber(s.value);
+    if (value === 0) continue;
     if (ms === undefined || value === undefined) {
       bad++;
       continue;
@@ -136,6 +145,30 @@ function parseSamples(list: RawSample[] | undefined, name: string, warnings: str
   }
   if (bad > 0) warnings.push(`${bad} valores de ${name} no se pudieron leer.`);
   return out.sort((a, b) => a.ms - b.ms);
+}
+
+/** Bumped whenever parsing changes, so devices re-import payloads already on the server. */
+export const PAYLOAD_PARSER_VERSION = 2;
+
+const KNOWN_KEYS = [
+  'version',
+  'generatedAt',
+  'steps',
+  'sleep',
+  'hrv',
+  'restingHR',
+  'respiratoryRate',
+  'wristTemp',
+  'bodyMass',
+  'workouts',
+] as const;
+
+/** Top-level keys are matched case-insensitively ("restinghr" → "restingHR"): easy to mistype in Shortcuts. */
+function normalizeKeys(raw: Record<string, unknown>): Record<string, unknown> {
+  const byLower = new Map(KNOWN_KEYS.map((k) => [k.toLowerCase(), k]));
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(raw)) out[byLower.get(k.trim().toLowerCase()) ?? k] = v;
+  return out;
 }
 
 export function parseHealthPayload(input: unknown): ParsedHealthPayload {
@@ -150,7 +183,7 @@ export function parseHealthPayload(input: unknown): ParsedHealthPayload {
   if (typeof raw !== 'object' || raw === null) {
     throw new HealthPayloadError('Formato de datos de Salud no reconocido.');
   }
-  const p = raw as RawHealthPayload;
+  const p = normalizeKeys(raw as Record<string, unknown>) as unknown as RawHealthPayload;
   const version = parseNumber(p.version);
   if (version === undefined) {
     throw new HealthPayloadError('Faltan los datos de versión: el atajo no es "FitPlan sync".');

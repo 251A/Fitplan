@@ -47,6 +47,21 @@ export function SyncSettings() {
                   ? `✓ Sincronizado ${timeFmt.format(new Date(state.lastOkMs))}`
                   : 'Pendiente de la primera sincronización.'}
           </p>
+          {state?.lastResult && (
+            <p className="metric-hint">
+              Última vez: {state.lastResult.payloadsImported} envíos de Salud importados
+              {state.lastResult.payloadErrors > 0 && `, ${state.lastResult.payloadErrors} con error`}
+              {state.lastResult.pulled > 0 && `, ${state.lastResult.pulled} cambios recibidos`}
+              {state.lastResult.pushed > 0 && `, ${state.lastResult.pushed} cambios enviados`}.
+            </p>
+          )}
+          {state?.lastWarnings && state.lastWarnings.length > 0 && (
+            <ul className="reasons metric-hint">
+              {state.lastWarnings.map((w) => (
+                <li key={w}>{w}</li>
+              ))}
+            </ul>
+          )}
           <p className="metric-hint">Servidor: {cloud.config.url}</p>
           <div className="row-gap">
             <button className="btn primary" disabled={cloud.running} onClick={() => cloud.run()}>

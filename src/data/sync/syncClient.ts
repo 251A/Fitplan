@@ -5,7 +5,7 @@
 import { DEFAULT_TIME_ZONE } from '../../domain/dates';
 import type { Database, RecordChange } from '../db/db';
 import { importHealth } from '../db/repository';
-import { parseHealthPayload } from '../health/payload';
+import { PAYLOAD_PARSER_VERSION, parseHealthPayload } from '../health/payload';
 
 export interface SyncConfig {
   url: string; // e.g. https://fitplan-sync.<account>.workers.dev
@@ -14,8 +14,12 @@ export interface SyncConfig {
 
 export interface SyncState {
   seq: number;
+  parserVersion?: number;
   lastOkMs?: number;
   lastError?: string;
+  lastResult?: SyncResult;
+  /** Problems found reading the Health payloads of the last sync that brought any. */
+  lastWarnings?: string[];
 }
 
 export interface SyncResult {
@@ -90,30 +94,39 @@ export async function syncNow(
 ): Promise<SyncResult> {
   const fetchImpl = opts.fetch ?? fetch;
   const state = await getSyncState(db);
+  // A newer parser reads more from the same payloads: pull everything again (imports are idempotent).
+  const since = state.parserVersion === PAYLOAD_PARSER_VERSION ? state.seq : 0;
   try {
     const outbox = await db.getOutbox();
-    const res = await call<SyncResponse>(
-      cfg,
-      '/sync',
-      JSON.stringify({ since: state.seq, changes: outbox }),
-      fetchImpl,
-    );
+    const res = await call<SyncResponse>(cfg, '/sync', JSON.stringify({ since, changes: outbox }), fetchImpl);
     await db.ackOutbox(outbox);
     const pulled = await db.applyRemote(res.changes);
 
     let payloadsImported = 0;
     let payloadErrors = 0;
+    const warnings = new Set<string>();
     for (const p of res.payloads) {
       try {
-        await importHealth(db, parseHealthPayload(p.body), opts.timeZone ?? DEFAULT_TIME_ZONE, p.receivedAt);
+        const parsed = parseHealthPayload(p.body);
+        parsed.warnings.forEach((w) => warnings.add(w));
+        await importHealth(db, parsed, opts.timeZone ?? DEFAULT_TIME_ZONE, p.receivedAt);
         payloadsImported++;
-      } catch {
+      } catch (e) {
         payloadErrors++;
+        warnings.add(e instanceof Error ? e.message : String(e));
       }
     }
 
-    await db.setKV(KV_STATE, { seq: res.seq, lastOkMs: Date.now() } satisfies SyncState);
-    return { pushed: outbox.length, pulled, payloadsImported, payloadErrors };
+    const result: SyncResult = { pushed: outbox.length, pulled, payloadsImported, payloadErrors };
+    await db.setKV(KV_STATE, {
+      seq: res.seq,
+      parserVersion: PAYLOAD_PARSER_VERSION,
+      lastOkMs: Date.now(),
+      lastResult: result,
+      // Keep the previous warnings when nothing new arrived, so they stay visible in Ajustes.
+      lastWarnings: res.payloads.length > 0 ? [...warnings] : state.lastWarnings,
+    } satisfies SyncState);
+    return result;
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     await db.setKV(KV_STATE, { ...state, lastError: msg } satisfies SyncState);
