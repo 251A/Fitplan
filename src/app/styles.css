@@ -700,6 +700,191 @@ code {
   font-variant-numeric: tabular-nums;
 }
 
+/* --- Week / plan --- */
+.avail {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.avail-row {
+  display: grid;
+  grid-template-columns: 54px 1fr 52px;
+  align-items: center;
+  gap: 6px;
+}
+
+.avail-day {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.chips {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--muted);
+  border-radius: 999px;
+  padding: 6px 9px;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.chip.on {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.avail-min {
+  width: 100%;
+  min-width: 0;
+  font: inherit;
+  font-size: 16px;
+  padding: 6px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--text);
+  text-align: center;
+}
+
+.day-card.today {
+  outline: 2px solid var(--accent);
+}
+
+.day-card.past {
+  opacity: 0.75;
+}
+
+.day-card h2 {
+  font-size: 16px;
+}
+
+.plan-session {
+  border-top: 1px solid var(--line);
+  padding-top: 8px;
+  margin-top: 6px;
+}
+
+.plan-session.status-done .plan-session-head strong {
+  text-decoration: line-through;
+  text-decoration-color: var(--good);
+}
+
+.plan-session.status-skipped {
+  opacity: 0.5;
+}
+
+.plan-session-head {
+  appearance: none;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0 8px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.tag.intensity-easy {
+  background: var(--line);
+  color: var(--text);
+}
+
+.tag.intensity-moderate {
+  background: var(--accent);
+}
+
+.tag.intensity-hard {
+  background: var(--bad);
+}
+
+.warn-card {
+  border-left: 5px solid var(--warn);
+}
+
+.steps-list {
+  margin: 6px 0;
+  padding-left: 20px;
+  line-height: 1.5;
+}
+
+.list.compact li {
+  padding: 7px 0;
+  font-size: 14px;
+}
+
+.small-select {
+  font: inherit;
+  font-size: 14px;
+  padding: 6px 8px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--line);
+  color: var(--text);
+}
+
+.done-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.done-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+}
+
+.done-form .check {
+  flex-direction: row;
+}
+
+.done-form input[type='range'] {
+  width: 100%;
+}
+
+.phase-pick {
+  border: 0;
+  padding: 0;
+  margin: 12px 0;
+}
+
+.phase-pick legend {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.phase-pick .check {
+  align-items: flex-start;
+  padding: 6px 0;
+  font-size: 14px;
+}
+
+.today-session.adjusted {
+  border-left: 5px solid var(--warn);
+}
+
+a.btn {
+  display: inline-block;
+  text-decoration: none;
+}
+
 .loading,
 .fatal {
   padding: 40px 16px;

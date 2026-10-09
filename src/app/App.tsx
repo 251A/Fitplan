@@ -3,6 +3,8 @@ import { TodayView } from '../features/today/TodayView';
 import { GymView } from '../features/gym/GymView';
 import { SettingsView } from '../features/settings/SettingsView';
 import { ProgressView } from '../features/progress/ProgressView';
+import { WeekView } from '../features/week/WeekView';
+import { CardioView } from '../features/cardio/CardioView';
 
 type Tab = 'today' | 'week' | 'gym' | 'cardio' | 'progress' | 'settings';
 
@@ -14,19 +16,6 @@ const TABS: Array<{ id: Tab; label: string; icon: string }> = [
   { id: 'progress', label: 'Progreso', icon: '↗' },
   { id: 'settings', label: 'Ajustes', icon: '⚙' },
 ];
-
-function Placeholder({ title, phase }: { title: string; phase: number }) {
-  return (
-    <div className="page">
-      <header className="page-header">
-        <h1>{title}</h1>
-      </header>
-      <section className="card">
-        <p className="metric-hint">Llega en la fase {phase}.</p>
-      </section>
-    </div>
-  );
-}
 
 function readTab(): Tab {
   const t = location.hash.replace('#', '') as Tab;
@@ -46,9 +35,9 @@ export function App() {
     <div className="app">
       <main className="content">
         {tab === 'today' && <TodayView />}
-        {tab === 'week' && <Placeholder title="Semana" phase={4} />}
+        {tab === 'week' && <WeekView />}
         {tab === 'gym' && <GymView />}
-        {tab === 'cardio' && <Placeholder title="Cardio" phase={4} />}
+        {tab === 'cardio' && <CardioView />}
         {tab === 'progress' && <ProgressView />}
         {tab === 'settings' && <SettingsView />}
       </main>

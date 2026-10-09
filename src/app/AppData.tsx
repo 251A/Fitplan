@@ -13,6 +13,8 @@ import {
   seedIfEmpty,
 } from '../data/db/repository';
 import { getSyncConfig, getSyncState, syncNow, type SyncConfig, type SyncState } from '../data/sync/syncClient';
+import { getAllWeekPlans, getCardioProgress, type CardioProgress } from '../data/plan/planService';
+import type { WeekPlan } from '../domain/planner/weekPlanner';
 
 export interface CloudSync {
   config?: SyncConfig;
@@ -31,6 +33,8 @@ export interface AppState {
   bestSets: SeedBestSet[];
   lastSync?: SyncInfo;
   recoveryConfig: RecoveryConfig;
+  weekPlans: WeekPlan[];
+  cardioProgress?: CardioProgress;
   timeZone: string;
   cloud: CloudSync;
   reload: () => Promise<void>;
@@ -65,22 +69,37 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     gymSessions: [],
     bestSets: [],
     recoveryConfig: DEFAULT_RECOVERY_CONFIG,
+    weekPlans: [],
   });
 
   const load = useCallback(async (d: Database) => {
-    const [profile, days, workouts, exercises, gymSessions, bestSets, lastSync, syncConfig, syncState, recoveryConfig] =
-      await Promise.all([
-        getProfile(d),
-        getDailyHealth(d),
-        getWorkouts(d),
-        d.getAll<Exercise>(STORES.exercises),
-        d.getAll<GymSession>(STORES.gymSessions),
-        d.getAll<SeedBestSet>(STORES.seedBestSets),
-        getLastSync(d),
-        getSyncConfig(d),
-        getSyncState(d),
-        getRecoveryConfig(d),
-      ]);
+    const [
+      profile,
+      days,
+      workouts,
+      exercises,
+      gymSessions,
+      bestSets,
+      lastSync,
+      syncConfig,
+      syncState,
+      recoveryConfig,
+      weekPlans,
+      cardioProgress,
+    ] = await Promise.all([
+      getProfile(d),
+      getDailyHealth(d),
+      getWorkouts(d),
+      d.getAll<Exercise>(STORES.exercises),
+      d.getAll<GymSession>(STORES.gymSessions),
+      d.getAll<SeedBestSet>(STORES.seedBestSets),
+      getLastSync(d),
+      getSyncConfig(d),
+      getSyncState(d),
+      getRecoveryConfig(d),
+      getAllWeekPlans(d),
+      getCardioProgress(d),
+    ]);
     setData({
       profile,
       days,
@@ -92,6 +111,8 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       syncConfig,
       syncState,
       recoveryConfig,
+      weekPlans,
+      cardioProgress,
     });
   }, []);
 

@@ -4,6 +4,8 @@ import { mean, previousValues } from '../../domain/health/baseline';
 import type { DailyHealth } from '../../domain/health/dailyMetrics';
 import { HealthSyncCard } from './HealthSyncCard';
 import { RecoveryCard } from './RecoveryCard';
+import { TodaySession } from './TodaySession';
+import { mondayOf } from '../../data/plan/planService';
 
 const longDate = new Intl.DateTimeFormat('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
 const int = new Intl.NumberFormat('es-ES');
@@ -27,10 +29,12 @@ function diffHint(today: number | undefined, avg: number | undefined, unit: stri
 }
 
 export function TodayView() {
-  const { days, profile, workouts, timeZone } = useAppData();
+  const { days, profile, workouts, weekPlans, timeZone } = useAppData();
   const todayKey = dateKey(Date.now(), timeZone);
   const today: DailyHealth = days.find((d) => d.date === todayKey) ?? { date: todayKey };
-  const stepGoal = profile?.stepGoal ?? 10000;
+  // The week plan may raise today's step target (12,000 on free days of low-cardio weeks).
+  const planTarget = weekPlans.find((p) => p.weekStart === mondayOf(todayKey))?.stepTargets[todayKey];
+  const stepGoal = planTarget ?? profile?.stepGoal ?? 10000;
   const steps = today.steps ?? 0;
   const stepPct = Math.min(1, steps / stepGoal);
 
@@ -49,6 +53,8 @@ export function TodayView() {
       </header>
 
       <RecoveryCard />
+
+      <TodaySession />
 
       <section className="card">
         <h2>Pasos</h2>
@@ -97,10 +103,6 @@ export function TodayView() {
         </div>
       </section>
 
-      <section className="card">
-        <h2>Sesión de hoy</h2>
-        <p className="metric-hint">El planificador semanal llega en la fase 4.</p>
-      </section>
 
       {recent.length > 0 && (
         <section className="card">

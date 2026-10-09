@@ -22,7 +22,7 @@ interface SyncRequest {
   changes: RecordChange[];
 }
 
-const SYNCED_STORES = new Set(['exercises', 'gymSessions', 'seedBestSets', 'kv']);
+const SYNCED_STORES = new Set(['exercises', 'gymSessions', 'seedBestSets', 'weekPlans', 'kv']);
 const MAX_BODY_BYTES = 5_000_000;
 const PAYLOAD_RETENTION_MS = 120 * 24 * 3600_000;
 

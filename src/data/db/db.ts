@@ -1,7 +1,7 @@
 // Minimal promise wrapper around IndexedDB (no third-party library).
 
 export const DB_NAME = 'fitplan';
-export const DB_VERSION = 2;
+export const DB_VERSION = 3;
 
 export const STORES = {
   dailyHealth: 'dailyHealth', // key: date (derived from Health payloads, not synced)
@@ -9,12 +9,13 @@ export const STORES = {
   exercises: 'exercises', // key: id (synced)
   gymSessions: 'gymSessions', // key: id (synced)
   seedBestSets: 'seedBestSets', // key: id (synced)
+  weekPlans: 'weekPlans', // key: weekStart (synced)
   kv: 'kv', // out-of-line key: profile (synced), local settings, sync state
   outbox: 'outbox', // out-of-line key "store|key": local changes not yet pushed
 } as const;
 
 export type StoreName = (typeof STORES)[keyof typeof STORES];
-export type SyncedStore = 'exercises' | 'gymSessions' | 'seedBestSets' | 'kv';
+export type SyncedStore = 'exercises' | 'gymSessions' | 'seedBestSets' | 'weekPlans' | 'kv';
 
 /** Stores whose records carry their own key in `id`/`date`. */
 const KEY_PATH: Partial<Record<StoreName, string>> = {
@@ -23,6 +24,7 @@ const KEY_PATH: Partial<Record<StoreName, string>> = {
   exercises: 'id',
   gymSessions: 'id',
   seedBestSets: 'id',
+  weekPlans: 'weekStart',
 };
 const OUT_OF_LINE = new Set<StoreName>([STORES.kv, STORES.outbox]);
 
@@ -78,6 +80,9 @@ export class Database {
         if (db.objectStoreNames.contains(STORES.seedBestSets)) db.deleteObjectStore(STORES.seedBestSets);
         db.createObjectStore(STORES.seedBestSets, { keyPath: 'id' });
         db.createObjectStore(STORES.outbox);
+      }
+      if (old < 3) {
+        db.createObjectStore(STORES.weekPlans, { keyPath: 'weekStart' });
       }
     };
     return new Database(await request(req));
