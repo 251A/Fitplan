@@ -6,6 +6,7 @@ import { useHealthImport } from '../today/HealthSyncCard';
 import { buildDemoPayload } from '../../data/health/demoPayload';
 import { SyncSettings } from './SyncSettings';
 import { RecoverySettings } from './RecoverySettings';
+import { ClaudeSettingsCard } from './ClaudeSettingsCard';
 
 function ProfileForm({ profile }: { profile: UserProfile }) {
   const { db, reload } = useAppData();
@@ -100,6 +101,8 @@ export function SettingsView() {
       <SyncSettings />
 
       <RecoverySettings />
+
+      <ClaudeSettingsCard />
 
       <section className="card">
         <h2>Datos iniciales</h2>

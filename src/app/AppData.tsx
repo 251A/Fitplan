@@ -9,6 +9,7 @@ import {
   getProfile,
   getRecoveryConfig,
   getWorkouts,
+  repairStoredText,
   seedIfEmpty,
 } from '../data/db/repository';
 import { getSyncConfig, getSyncState, syncNow, type SyncConfig, type SyncState } from '../data/sync/syncClient';
@@ -118,6 +119,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
       try {
         const d = await Database.open();
         await seedIfEmpty(d);
+        await repairStoredText(d);
         // Ask Safari not to evict our data (best effort; home-screen apps are usually exempt).
         await navigator.storage?.persist?.().catch(() => false);
         await load(d);

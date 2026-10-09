@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { useAppData } from '../../app/AppData';
 import { addDays, dateKey, formatDuration } from '../../domain/dates';
 import { movingAverage, seriesWithBaseline } from '../../domain/health/baselineSeries';
+import { StrengthSection } from './StrengthSection';
 import { TrendChart } from './TrendChart';
 
 const RANGES = [
@@ -37,7 +38,6 @@ export function ProgressView() {
     <div className="page">
       <header className="page-header">
         <h1>Progreso</h1>
-        <p className="subtitle">Fuerza (1RM) y volumen por músculo llegan con la fase 3.</p>
       </header>
 
       <div className="range-tabs" role="group" aria-label="Periodo">
@@ -47,6 +47,8 @@ export function ProgressView() {
           </button>
         ))}
       </div>
+
+      <StrengthSection />
 
       <TrendChart
         title="VFC (SDNN)"

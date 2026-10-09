@@ -2,6 +2,7 @@ import { DEFAULT_TIME_ZONE, type DateKey } from '../../domain/dates';
 import { buildDailyHealth, type DailyHealth } from '../../domain/health/dailyMetrics';
 import { DEFAULT_RECOVERY_CONFIG, type RecoveryConfig } from '../../domain/recovery/recoveryConfig';
 import library from '../../resources/exerciseLibrary.json';
+import { repairDeep } from './repairText';
 import type { ParsedHealthPayload } from '../health/payload';
 import { Database, DB_VERSION, STORES, type StoreName } from './db';
 import type {
@@ -18,6 +19,8 @@ const KV = {
   seedVersion: 'seedVersion',
   lastSync: 'lastSync',
   recoveryConfig: 'recoveryConfig',
+  textRepaired: 'textRepaired',
+  claude: 'claude',
 } as const;
 
 export const DEFAULT_PROFILE: UserProfile = {
@@ -30,13 +33,41 @@ export const DEFAULT_PROFILE: UserProfile = {
   threeDayTemplate: 'upperLowerFull',
 };
 
-/** Loads the public exercise library (no personal data) and a blank profile. */
+/**
+ * Loads the public exercise library (no personal data) and a blank profile. When the library
+ * version is newer than the stored one, library fields are refreshed while the user's own changes
+ * (learned aliases, confirmed load modes) are kept.
+ */
 export async function seedIfEmpty(db: Database): Promise<boolean> {
-  if ((await db.getKV<number>(KV.seedVersion)) !== undefined) return false;
-  await db.putMany(STORES.exercises, library.exercises as Exercise[]);
+  const stored = await db.getKV<number>(KV.seedVersion);
+  if (stored !== undefined && stored >= library.version) return false;
+  const current = new Map((await db.getAll<Exercise>(STORES.exercises)).map((e) => [e.id, e]));
+  const merged = (library.exercises as Exercise[]).map((lib) => {
+    const mine = current.get(lib.id);
+    if (!mine) return lib;
+    return {
+      ...lib,
+      aliases: [...new Set([...lib.aliases, ...(repairDeep(mine.aliases) ?? mine.aliases)])],
+      loadMode: lib.loadMode === 'unconfirmed' ? mine.loadMode : lib.loadMode,
+    };
+  });
+  await db.putMany(STORES.exercises, merged);
   if (!(await getProfile(db))) await db.setKV(KV.profile, DEFAULT_PROFILE);
   await db.setKV(KV.seedVersion, library.version);
   return true;
+}
+
+/** One-off: repairs garbled accents in gym data saved before the fix, and syncs the repair. */
+export async function repairStoredText(db: Database): Promise<number> {
+  if (await db.getKV<boolean>(KV.textRepaired)) return 0;
+  const changes: Array<{ store: 'gymSessions' | 'seedBestSets'; key: string; value: unknown }> = [];
+  for (const s of await db.getAll<GymSession>(STORES.gymSessions)) {
+    const fixed = repairDeep(s);
+    if (fixed) changes.push({ store: 'gymSessions', key: s.id, value: fixed });
+  }
+  await db.writeSynced(changes);
+  await db.setKV(KV.textRepaired, true);
+  return changes.length;
 }
 
 /** Personal starting data (profile, best sets, past sessions) kept out of the public repo. */
@@ -127,6 +158,27 @@ export async function importHealth(
 export const getProfile = (db: Database) => db.getKV<UserProfile>(KV.profile);
 export const saveProfile = (db: Database, p: UserProfile) =>
   db.writeSynced([{ store: 'kv', key: KV.profile, value: p }]);
+
+// ---- Gym ------------------------------------------------------------------
+
+export const saveGymSessions = (db: Database, sessions: GymSession[]) =>
+  db.writeSynced(sessions.map((s) => ({ store: 'gymSessions' as const, key: s.id, value: s })));
+
+export const deleteGymSession = (db: Database, id: string) =>
+  db.writeSynced([{ store: 'gymSessions', key: id, value: null }]);
+
+export const saveExercises = (db: Database, exercises: Exercise[]) =>
+  db.writeSynced(exercises.map((e) => ({ store: 'exercises' as const, key: e.id, value: e })));
+
+// ---- Claude (device-only: the API key is never synced) ---------------------
+
+export interface ClaudeSettings {
+  apiKey: string;
+  model: string;
+}
+
+export const getClaudeSettings = (db: Database) => db.getKV<ClaudeSettings>(KV.claude);
+export const saveClaudeSettings = (db: Database, s: ClaudeSettings | undefined) => db.setKV(KV.claude, s);
 
 export async function getRecoveryConfig(db: Database): Promise<RecoveryConfig> {
   // Merge with defaults so thresholds added in later versions get a value.

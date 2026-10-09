@@ -129,7 +129,7 @@ export function TrendChart(props: TrendChartProps) {
   };
 
   const hp = hover !== undefined ? points[hover] : undefined;
-  const labelIdx = [0, Math.floor((points.length - 1) / 2), points.length - 1];
+  const labelIdx = [...new Set([0, Math.floor((points.length - 1) / 2), points.length - 1])];
   const hasBaseline = points.some((p) => p.mean !== undefined);
 
   return (

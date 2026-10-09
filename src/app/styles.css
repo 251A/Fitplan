@@ -495,6 +495,211 @@ code {
   text-align: left;
 }
 
+/* --- Gym --- */
+.link-btn {
+  appearance: none;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  padding: 4px 0;
+  cursor: pointer;
+}
+
+.link-btn.danger,
+.btn.danger {
+  color: var(--bad);
+}
+
+.btn.small {
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
+.h1-small {
+  font-size: 26px !important;
+  line-height: 1.15;
+}
+
+.list li.clickable {
+  cursor: pointer;
+}
+
+.list li.clickable:active {
+  opacity: 0.6;
+}
+
+.sets-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.sets-table th {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 500;
+  text-align: left;
+  padding: 2px 4px;
+}
+
+.sets-table td {
+  padding: 3px 4px;
+}
+
+.sets-table td:first-child {
+  color: var(--muted);
+  width: 24px;
+}
+
+.sets-table input {
+  width: 100%;
+  min-width: 0;
+  font: inherit;
+  font-size: 16px;
+  padding: 7px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--text);
+}
+
+.sets-table tr.skipped input {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+
+.draft.excluded {
+  opacity: 0.6;
+}
+
+.draft-ex {
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+  margin-top: 10px;
+}
+
+.draft-ex select,
+.card > select {
+  width: 100%;
+  font: inherit;
+  font-size: 16px;
+  padding: 9px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--text);
+  margin-top: 6px;
+}
+
+.draft-ex.needs select {
+  border-color: var(--warn);
+}
+
+.question {
+  background: color-mix(in srgb, var(--warn) 14%, transparent);
+  border-radius: 10px;
+  padding: 8px 10px;
+  margin-top: 8px;
+}
+
+.question p {
+  margin: 0 0 6px;
+  font-size: 14px;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.check input {
+  width: 18px;
+  height: 18px;
+}
+
+.inline-form {
+  flex-direction: row;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.inline-form label {
+  flex: 1;
+}
+
+.thumbs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 6px 0;
+}
+
+.thumbs figure {
+  margin: 0;
+  flex: 0 0 auto;
+  width: 110px;
+}
+
+.thumbs img {
+  width: 110px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  display: block;
+}
+
+.thumbs figcaption {
+  font-size: 11px;
+  color: var(--bad);
+  margin-top: 4px;
+}
+
+/* --- Horizontal bars (sets per muscle) --- */
+.hbars {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 6px;
+}
+
+.hbar {
+  display: grid;
+  grid-template-columns: 112px 1fr 34px;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.hbar-track {
+  position: relative;
+  height: 12px;
+  background: var(--line);
+  border-radius: 4px;
+}
+
+.hbar-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--accent);
+  border-radius: 4px;
+}
+
+.hbar-min {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  width: 2px;
+  background: var(--text);
+  opacity: 0.6;
+}
+
+.hbar-value {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
 .loading,
 .fatal {
   padding: 40px 16px;

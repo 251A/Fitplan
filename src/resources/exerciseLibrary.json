@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "exercises": [
     {
       "id": "bench-press-barbell",
@@ -33,9 +33,9 @@
     },
     {
       "id": "shoulder-press-machine",
-      "name": "Press de hombros (mÃ¡quina)",
+      "name": "Press de hombros (máquina)",
       "aliases": [
-        "Press De Hombros (MÃ¡quina)"
+        "Press De Hombros (Máquina)"
       ],
       "primaryMuscle": "frontDelts",
       "secondaryMuscles": [
@@ -48,9 +48,9 @@
     },
     {
       "id": "lateral-raise-machine",
-      "name": "Elevaciones laterales (mÃ¡quina)",
+      "name": "Elevaciones laterales (máquina)",
       "aliases": [
-        "Elevaciones Laterales (MÃ¡quina)"
+        "Elevaciones Laterales (Máquina)"
       ],
       "primaryMuscle": "sideDelts",
       "secondaryMuscles": [],
@@ -73,9 +73,9 @@
     },
     {
       "id": "pec-deck",
-      "name": "Aperturas pec deck (mÃ¡quina)",
+      "name": "Aperturas pec deck (máquina)",
       "aliases": [
-        "Aperturas Pec Deck (MÃ¡quina)"
+        "Aperturas Pec Deck (Máquina)"
       ],
       "primaryMuscle": "chest",
       "secondaryMuscles": [
@@ -87,9 +87,9 @@
     },
     {
       "id": "triceps-pushdown-straight",
-      "name": "ExtensiÃ³n de trÃ­ceps agarre recto (polea)",
+      "name": "Extensión de tríceps agarre recto (polea)",
       "aliases": [
-        "ExtensiÃ³n De TrÃ­ceps Agarre Recto (Polea)"
+        "Extensión De Tríceps Agarre Recto (Polea)"
       ],
       "primaryMuscle": "triceps",
       "secondaryMuscles": [],
@@ -99,9 +99,9 @@
     },
     {
       "id": "katana-extension-single",
-      "name": "ExtensiÃ³n katana unilateral polea baja",
+      "name": "Extensión katana unilateral polea baja",
       "aliases": [
-        "ExtensiÃ³n Katana Unilateral Polea Baja"
+        "Extensión Katana Unilateral Polea Baja"
       ],
       "primaryMuscle": "triceps",
       "secondaryMuscles": [],
@@ -111,9 +111,9 @@
     },
     {
       "id": "lat-pulldown-pronated",
-      "name": "JalÃ³n al pecho agarre prono (mÃ¡quina)",
+      "name": "Jalón al pecho agarre prono (máquina)",
       "aliases": [
-        "JalÃ³n Al Pecho Agarre Prono (MÃ¡quina)"
+        "Jalón Al Pecho Agarre Prono (Máquina)"
       ],
       "primaryMuscle": "lats",
       "secondaryMuscles": [
@@ -126,9 +126,9 @@
     },
     {
       "id": "lat-pulldown-close",
-      "name": "JalÃ³n al pecho agarre cerrado (mÃ¡quina)",
+      "name": "Jalón al pecho agarre cerrado (máquina)",
       "aliases": [
-        "JalÃ³n Al Pecho Agarre Cerrado (MÃ¡quina)"
+        "Jalón Al Pecho Agarre Cerrado (Máquina)"
       ],
       "primaryMuscle": "lats",
       "secondaryMuscles": [
@@ -141,9 +141,9 @@
     },
     {
       "id": "lat-pulldown-neutral-wide",
-      "name": "JalÃ³n al pecho agarre neutro abierto (mÃ¡quina)",
+      "name": "Jalón al pecho agarre neutro abierto (máquina)",
       "aliases": [
-        "JalÃ³n Al Pecho Agarre Neutro Abierto (MÃ¡quina)"
+        "Jalón Al Pecho Agarre Neutro Abierto (Máquina)"
       ],
       "primaryMuscle": "lats",
       "secondaryMuscles": [
@@ -156,9 +156,9 @@
     },
     {
       "id": "row-neutral-machine",
-      "name": "Remo agarre neutro (mÃ¡quina)",
+      "name": "Remo agarre neutro (máquina)",
       "aliases": [
-        "Remo Agarre Neutro (MÃ¡quina)"
+        "Remo Agarre Neutro (Máquina)"
       ],
       "primaryMuscle": "upperBack",
       "secondaryMuscles": [
@@ -172,9 +172,9 @@
     },
     {
       "id": "incline-curl-db",
-      "name": "Curl de bÃ­ceps inclinado supino (mancuerna)",
+      "name": "Curl de bíceps inclinado supino (mancuerna)",
       "aliases": [
-        "Curl De BÃ­ceps Inclinado Supino (Mancuerna)"
+        "Curl De Bíceps Inclinado Supino (Mancuerna)"
       ],
       "primaryMuscle": "biceps",
       "secondaryMuscles": [],
@@ -198,9 +198,9 @@
     },
     {
       "id": "cable-curl",
-      "name": "Curl de bÃ­ceps (polea)",
+      "name": "Curl de bíceps (polea)",
       "aliases": [
-        "Curl De BÃ­ceps (Polea)"
+        "Curl De Bíceps (Polea)"
       ],
       "primaryMuscle": "biceps",
       "secondaryMuscles": [],
@@ -222,9 +222,9 @@
     },
     {
       "id": "concentration-curl-reverse",
-      "name": "Curl de concentraciÃ³n agarre inverso",
+      "name": "Curl de concentración agarre inverso",
       "aliases": [
-        "Curl De ConcentraciÃ³n Agarre Inverso"
+        "Curl De Concentración Agarre Inverso"
       ],
       "primaryMuscle": "biceps",
       "secondaryMuscles": [
@@ -250,10 +250,10 @@
     },
     {
       "id": "leg-press-45",
-      "name": "Prensa 45Â° (mÃ¡quina)",
+      "name": "Prensa 45° (máquina)",
       "aliases": [
-        "Prensa 45Â° (MÃ¡quina)",
-        "Prensa 45 (MÃ¡quina)"
+        "Prensa 45° (Máquina)",
+        "Prensa 45 (Máquina)"
       ],
       "primaryMuscle": "quads",
       "secondaryMuscles": [
@@ -277,9 +277,9 @@
     },
     {
       "id": "leg-extension",
-      "name": "ExtensiÃ³n de rodilla (mÃ¡quina)",
+      "name": "Extensión de rodilla (máquina)",
       "aliases": [
-        "ExtensiÃ³n De Rodilla (MÃ¡quina)"
+        "Extensión De Rodilla (Máquina)"
       ],
       "primaryMuscle": "quads",
       "secondaryMuscles": [],
@@ -289,9 +289,9 @@
     },
     {
       "id": "hip-abduction",
-      "name": "AbducciÃ³n de cadera (mÃ¡quina)",
+      "name": "Abducción de cadera (máquina)",
       "aliases": [
-        "AbducciÃ³n De Cadera (MÃ¡quina)"
+        "Abducción De Cadera (Máquina)"
       ],
       "primaryMuscle": "abductors",
       "secondaryMuscles": [
@@ -303,9 +303,9 @@
     },
     {
       "id": "hip-thrust-machine",
-      "name": "Hip thrust (mÃ¡quina)",
+      "name": "Hip thrust (máquina)",
       "aliases": [
-        "Hip Thrust (MÃ¡quina)"
+        "Hip Thrust (Máquina)"
       ],
       "primaryMuscle": "glutes",
       "secondaryMuscles": [

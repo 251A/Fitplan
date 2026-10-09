@@ -1,0 +1,72 @@
+[
+  {
+    "kind": "detail",
+    "has_header": true,
+    "header": { "date": "2026-09-08", "name": "Tracción A", "duration_min": 50, "volume_kg": 1855.5, "sets_total": 5 },
+    "exercises": [
+      {
+        "name": "Jalón Al Pecho Agarre Neutro Abierto (Máquina)",
+        "sets": [{ "index": 1, "weight_kg": 52.5, "reps": 10 }, { "index": 2, "weight_kg": 52.5, "reps": 9 }],
+        "cut_at_top": false,
+        "cut_at_bottom": true
+      }
+    ]
+  },
+  {
+    "kind": "detail",
+    "has_header": false,
+    "header": null,
+    "exercises": [
+      {
+        "name": "Jalón Al Pecho Agarre Neutro Abierto (Máquina)",
+        "sets": [{ "index": 2, "weight_kg": 52.5, "reps": 9 }, { "index": 3, "weight_kg": 50, "reps": 9 }],
+        "cut_at_top": true,
+        "cut_at_bottom": false
+      },
+      {
+        "name": "Curl De Bíceps Inclinado Supino (Mancuerna)",
+        "sets": [{ "index": 1, "weight_kg": 24, "reps": 9 }],
+        "cut_at_top": false,
+        "cut_at_bottom": true
+      }
+    ]
+  },
+  {
+    "kind": "detail",
+    "has_header": true,
+    "header": { "date": "2026-09-09", "name": "Pierna", "duration_min": 45, "volume_kg": 2800, "sets_total": 2 },
+    "exercises": [
+      {
+        "name": "Prensa 45° (Máquina)",
+        "sets": [{ "index": 1, "weight_kg": 140, "reps": 10 }, { "index": 2, "weight_kg": 0, "reps": 10 }],
+        "cut_at_top": false,
+        "cut_at_bottom": false
+      }
+    ]
+  },
+  {
+    "kind": "detail",
+    "has_header": true,
+    "header": { "date": "2026-09-08", "name": "Tracción A", "duration_min": 50, "volume_kg": 1855.5, "sets_total": 5 },
+    "exercises": [
+      {
+        "name": "Curl De Bíceps Inclinado Supino (Mancuerna)",
+        "sets": [{ "index": 1, "weight_kg": 24, "reps": 9 }, { "index": 2, "weight_kg": 24, "reps": 8 }],
+        "cut_at_top": true,
+        "cut_at_bottom": false
+      }
+    ]
+  },
+  {
+    "kind": "summary_card",
+    "has_header": true,
+    "header": { "date": "2026-09-09", "name": "Pierna", "duration_min": 45, "volume_kg": 2800, "sets_total": 2 },
+    "exercises": []
+  },
+  {
+    "kind": "summary_card",
+    "has_header": true,
+    "header": { "date": "2026-09-12", "name": "Tracción B", "duration_min": 40, "volume_kg": 4000, "sets_total": 14 },
+    "exercises": []
+  }
+]
