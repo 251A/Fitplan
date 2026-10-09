@@ -45,8 +45,14 @@ Todas las fechas en **ISO 8601** (acción *Formatear fecha* → formato *ISO 860
    ```
    {"version":1,"generatedAt":"[Fecha actual ISO]","steps":[[Pasos]],"sleep":[[Sueño]],"hrv":[[VFC]],"restingHR":[[Reposo]],"bodyMass":[[Peso]],"workouts":[[Entrenos]]}
    ```
-7. *Copiar al portapapeles* (el Texto anterior).
-8. *Abrir app*: no puede abrir directamente una app web de la pantalla de inicio, así que usa *Mostrar notificación* "Datos copiados: abre FitPlan y pulsa Pegar".
+7. **Enviar a tu servidor** (recomendado; así llega al iPhone y al ordenador sin hacer nada):
+   - *Obtener contenido de URL* → URL `https://fitplan-sync.fitplan.workers.dev/health`
+   - Método: **POST**
+   - Encabezados: `Authorization` = `Bearer TU_CLAVE` (la clave de `private/sync-token.txt`) y `Content-Type` = `application/json`
+   - Cuerpo de la solicitud: **Archivo** → el Texto del paso 6.
+   - *Mostrar notificación* "FitPlan: datos de Salud enviados".
+8. **Alternativa sin servidor**: en lugar del paso 7, *Copiar al portapapeles* el Texto y *Mostrar notificación*
+   "Datos copiados: abre FitPlan y pulsa Pegar".
 
 ## Automatización diaria
 

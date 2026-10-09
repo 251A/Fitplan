@@ -4,6 +4,7 @@ import { exportBackup, importPersonalSeed, restoreBackup, saveProfile } from '..
 import type { UserProfile } from '../../data/db/models';
 import { useHealthImport } from '../today/HealthSyncCard';
 import { buildDemoPayload } from '../../data/health/demoPayload';
+import { SyncSettings } from './SyncSettings';
 
 function ProfileForm({ profile }: { profile: UserProfile }) {
   const { db, reload } = useAppData();
@@ -95,6 +96,8 @@ export function SettingsView() {
         {profile ? <ProfileForm profile={profile} /> : <p>Sin perfil.</p>}
       </section>
 
+      <SyncSettings />
+
       <section className="card">
         <h2>Datos iniciales</h2>
         <p className="metric-hint">
@@ -174,7 +177,10 @@ export function SettingsView() {
         <section className="card">
           <h2>Desarrollo</h2>
           <p className="metric-hint">Solo en modo desarrollo: carga 35 días de datos inventados para probar la interfaz.</p>
-          <button className="btn" onClick={() => importText(JSON.stringify(buildDemoPayload(new Date())))}>
+          <button
+            className="btn"
+            onClick={() => importText(JSON.stringify(buildDemoPayload(new Date())), { upload: false })}
+          >
             Cargar datos de demo
           </button>
           {importStatus && <p className={`status ${importStatus.kind}`}>{importStatus.text}</p>}

@@ -42,7 +42,7 @@ export interface PersonalSeed {
   app: 'fitplan-personal-seed';
   version: number;
   profile: UserProfile;
-  bestSets: SeedBestSet[];
+  bestSets: Array<Omit<SeedBestSet, 'id'>>;
   sessions: Array<{
     date: DateKey | null;
     templateName: string;
@@ -70,11 +70,18 @@ export async function importPersonalSeed(db: Database, json: string): Promise<{ 
     sets: (s.sets ?? []).map((set, order) => ({ ...set, order, skipped: set.weightKg === 0 })),
     summaryOnly: !s.sets,
   }));
-  // Re-importing replaces previous seed rows instead of duplicating them.
-  await db.clear(STORES.seedBestSets);
-  await db.putMany(STORES.seedBestSets, seed.bestSets);
-  await db.putMany(STORES.gymSessions, sessions);
-  await db.setKV(KV.profile, { ...DEFAULT_PROFILE, ...seed.profile });
+  const bestSets: SeedBestSet[] = seed.bestSets.map((b, i) => ({ ...b, id: `seed-best-${i}` }));
+
+  // Re-importing replaces previous seed rows instead of duplicating them (stale ids are deleted).
+  const newIds = new Set(bestSets.map((b) => b.id));
+  const stale = (await db.getAll<SeedBestSet>(STORES.seedBestSets)).filter((b) => !newIds.has(b.id));
+
+  await db.writeSynced([
+    ...stale.map((b) => ({ store: 'seedBestSets' as const, key: b.id, value: null })),
+    ...bestSets.map((b) => ({ store: 'seedBestSets' as const, key: b.id, value: b })),
+    ...sessions.map((s) => ({ store: 'gymSessions' as const, key: s.id, value: s })),
+    { store: 'kv', key: KV.profile, value: { ...DEFAULT_PROFILE, ...seed.profile } },
+  ]);
   return { sessions: sessions.length };
 }
 
@@ -116,7 +123,8 @@ export async function importHealth(
 }
 
 export const getProfile = (db: Database) => db.getKV<UserProfile>(KV.profile);
-export const saveProfile = (db: Database, p: UserProfile) => db.setKV(KV.profile, p);
+export const saveProfile = (db: Database, p: UserProfile) =>
+  db.writeSynced([{ store: 'kv', key: KV.profile, value: p }]);
 export const getLastSync = (db: Database) => db.getKV<SyncInfo>(KV.lastSync);
 
 export async function getDailyHealth(db: Database): Promise<DailyHealth[]> {

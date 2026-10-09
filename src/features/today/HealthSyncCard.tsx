@@ -2,22 +2,31 @@ import { useRef, useState } from 'react';
 import { useAppData } from '../../app/AppData';
 import { importHealth } from '../../data/db/repository';
 import { HealthPayloadError, parseHealthPayload } from '../../data/health/payload';
+import { pushHealthPayload } from '../../data/sync/syncClient';
 
 const timeFmt = new Intl.DateTimeFormat('es-ES', { weekday: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 
 export function useHealthImport() {
-  const { db, timeZone, reload } = useAppData();
+  const { db, timeZone, reload, cloud } = useAppData();
   const [status, setStatus] = useState<{ kind: 'ok' | 'error'; text: string }>();
 
-  async function importText(text: string) {
+  /** `upload: false` for data that must never reach the cloud (demo data). */
+  async function importText(text: string, { upload = true } = {}) {
     try {
       const parsed = parseHealthPayload(text);
       const info = await importHealth(db, parsed, timeZone);
       await reload();
       const extra = info.warnings.length > 0 ? ` Avisos: ${info.warnings.join(' ')}` : '';
+      let cloudNote = '';
+      if (upload && cloud.config) {
+        // Share with the other devices; the payload comes back on the next sync and re-imports idempotently.
+        cloudNote = await pushHealthPayload(cloud.config, text)
+          .then(() => ' Enviado a tus otros dispositivos.')
+          .catch((e) => ` No se pudo enviar a la nube: ${e instanceof Error ? e.message : String(e)}`);
+      }
       setStatus({
         kind: 'ok',
-        text: `Sincronizado: ${info.daysUpdated} días, ${info.workoutsAdded} entrenos nuevos.${extra}`,
+        text: `Sincronizado: ${info.daysUpdated} días, ${info.workoutsAdded} entrenos nuevos.${extra}${cloudNote}`,
       });
     } catch (e) {
       const msg = e instanceof HealthPayloadError ? e.message : `Error al importar: ${String(e)}`;

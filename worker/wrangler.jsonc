@@ -1,0 +1,18 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "fitplan-sync",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-01",
+  "observability": { "enabled": true },
+  "vars": {
+    "ALLOWED_ORIGINS": "https://251a.github.io,http://localhost:5173,http://localhost:4173"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "fitplan",
+      "database_id": "924f29b3-f985-4bb9-9fcd-7d4899793e4d"
+    }
+  ]
+  // SYNC_TOKEN is a secret: set it with `npm run sync:token` (never committed).
+}

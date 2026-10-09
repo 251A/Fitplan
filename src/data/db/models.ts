@@ -60,6 +60,7 @@ export interface GymSession {
 
 /** Best recent set per exercise from the seed (used for "último peso" from day one). */
 export interface SeedBestSet {
+  id: string;
   exerciseId: string;
   date?: DateKey;
   weightKg: number;
