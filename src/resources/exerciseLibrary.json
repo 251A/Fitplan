@@ -1,0 +1,319 @@
+{
+  "version": 1,
+  "exercises": [
+    {
+      "id": "bench-press-barbell",
+      "name": "Press de banca plano (barra recta)",
+      "aliases": [
+        "Press De Banca Plano (Barra Recta)"
+      ],
+      "primaryMuscle": "chest",
+      "secondaryMuscles": [
+        "triceps",
+        "frontDelts"
+      ],
+      "equipment": "barbell",
+      "loadMode": "total",
+      "category": "push"
+    },
+    {
+      "id": "incline-press-smith",
+      "name": "Press de banca inclinado (Smith)",
+      "aliases": [
+        "Press De Banca Inclinado (Smith)"
+      ],
+      "primaryMuscle": "chest",
+      "secondaryMuscles": [
+        "frontDelts",
+        "triceps"
+      ],
+      "equipment": "smith",
+      "loadMode": "total",
+      "category": "push"
+    },
+    {
+      "id": "shoulder-press-machine",
+      "name": "Press de hombros (mÃ¡quina)",
+      "aliases": [
+        "Press De Hombros (MÃ¡quina)"
+      ],
+      "primaryMuscle": "frontDelts",
+      "secondaryMuscles": [
+        "triceps",
+        "sideDelts"
+      ],
+      "equipment": "machine",
+      "loadMode": "total",
+      "category": "push"
+    },
+    {
+      "id": "lateral-raise-machine",
+      "name": "Elevaciones laterales (mÃ¡quina)",
+      "aliases": [
+        "Elevaciones Laterales (MÃ¡quina)"
+      ],
+      "primaryMuscle": "sideDelts",
+      "secondaryMuscles": [],
+      "equipment": "machine",
+      "loadMode": "total",
+      "category": "push"
+    },
+    {
+      "id": "lateral-raise-seated-db",
+      "name": "Elevaciones laterales sentado con respaldo (mancuerna)",
+      "aliases": [
+        "Elevaciones Laterales Sentado Con Respaldo (Mancuerna)",
+        "Elevaciones Laterales Sentado (Mancuerna)"
+      ],
+      "primaryMuscle": "sideDelts",
+      "secondaryMuscles": [],
+      "equipment": "dumbbell",
+      "loadMode": "perDumbbell",
+      "category": "push"
+    },
+    {
+      "id": "pec-deck",
+      "name": "Aperturas pec deck (mÃ¡quina)",
+      "aliases": [
+        "Aperturas Pec Deck (MÃ¡quina)"
+      ],
+      "primaryMuscle": "chest",
+      "secondaryMuscles": [
+        "frontDelts"
+      ],
+      "equipment": "machine",
+      "loadMode": "total",
+      "category": "push"
+    },
+    {
+      "id": "triceps-pushdown-straight",
+      "name": "ExtensiÃ³n de trÃ­ceps agarre recto (polea)",
+      "aliases": [
+        "ExtensiÃ³n De TrÃ­ceps Agarre Recto (Polea)"
+      ],
+      "primaryMuscle": "triceps",
+      "secondaryMuscles": [],
+      "equipment": "cable",
+      "loadMode": "total",
+      "category": "push"
+    },
+    {
+      "id": "katana-extension-single",
+      "name": "ExtensiÃ³n katana unilateral polea baja",
+      "aliases": [
+        "ExtensiÃ³n Katana Unilateral Polea Baja"
+      ],
+      "primaryMuscle": "triceps",
+      "secondaryMuscles": [],
+      "equipment": "cable",
+      "loadMode": "total",
+      "category": "push"
+    },
+    {
+      "id": "lat-pulldown-pronated",
+      "name": "JalÃ³n al pecho agarre prono (mÃ¡quina)",
+      "aliases": [
+        "JalÃ³n Al Pecho Agarre Prono (MÃ¡quina)"
+      ],
+      "primaryMuscle": "lats",
+      "secondaryMuscles": [
+        "biceps",
+        "upperBack"
+      ],
+      "equipment": "machine",
+      "loadMode": "total",
+      "category": "pull"
+    },
+    {
+      "id": "lat-pulldown-close",
+      "name": "JalÃ³n al pecho agarre cerrado (mÃ¡quina)",
+      "aliases": [
+        "JalÃ³n Al Pecho Agarre Cerrado (MÃ¡quina)"
+      ],
+      "primaryMuscle": "lats",
+      "secondaryMuscles": [
+        "biceps",
+        "upperBack"
+      ],
+      "equipment": "machine",
+      "loadMode": "total",
+      "category": "pull"
+    },
+    {
+      "id": "lat-pulldown-neutral-wide",
+      "name": "JalÃ³n al pecho agarre neutro abierto (mÃ¡quina)",
+      "aliases": [
+        "JalÃ³n Al Pecho Agarre Neutro Abierto (MÃ¡quina)"
+      ],
+      "primaryMuscle": "lats",
+      "secondaryMuscles": [
+        "biceps",
+        "upperBack"
+      ],
+      "equipment": "machine",
+      "loadMode": "total",
+      "category": "pull"
+    },
+    {
+      "id": "row-neutral-machine",
+      "name": "Remo agarre neutro (mÃ¡quina)",
+      "aliases": [
+        "Remo Agarre Neutro (MÃ¡quina)"
+      ],
+      "primaryMuscle": "upperBack",
+      "secondaryMuscles": [
+        "lats",
+        "biceps",
+        "rearDelts"
+      ],
+      "equipment": "machine",
+      "loadMode": "total",
+      "category": "pull"
+    },
+    {
+      "id": "incline-curl-db",
+      "name": "Curl de bÃ­ceps inclinado supino (mancuerna)",
+      "aliases": [
+        "Curl De BÃ­ceps Inclinado Supino (Mancuerna)"
+      ],
+      "primaryMuscle": "biceps",
+      "secondaryMuscles": [],
+      "equipment": "dumbbell",
+      "loadMode": "perDumbbell",
+      "category": "pull"
+    },
+    {
+      "id": "hammer-curl-seated-db",
+      "name": "Curl martillo sentado alternando (mancuerna)",
+      "aliases": [
+        "Curl Martillo Sentado Alternando (Mancuerna)"
+      ],
+      "primaryMuscle": "biceps",
+      "secondaryMuscles": [
+        "forearms"
+      ],
+      "equipment": "dumbbell",
+      "loadMode": "perDumbbell",
+      "category": "pull"
+    },
+    {
+      "id": "cable-curl",
+      "name": "Curl de bÃ­ceps (polea)",
+      "aliases": [
+        "Curl De BÃ­ceps (Polea)"
+      ],
+      "primaryMuscle": "biceps",
+      "secondaryMuscles": [],
+      "equipment": "cable",
+      "loadMode": "total",
+      "category": "pull"
+    },
+    {
+      "id": "preacher-curl-single-db",
+      "name": "Curl predicador unilateral (mancuerna)",
+      "aliases": [
+        "Curl Predicador Unilateral (Mancuerna)"
+      ],
+      "primaryMuscle": "biceps",
+      "secondaryMuscles": [],
+      "equipment": "dumbbell",
+      "loadMode": "perDumbbell",
+      "category": "pull"
+    },
+    {
+      "id": "concentration-curl-reverse",
+      "name": "Curl de concentraciÃ³n agarre inverso",
+      "aliases": [
+        "Curl De ConcentraciÃ³n Agarre Inverso"
+      ],
+      "primaryMuscle": "biceps",
+      "secondaryMuscles": [
+        "forearms"
+      ],
+      "equipment": "dumbbell",
+      "loadMode": "unconfirmed",
+      "category": "pull"
+    },
+    {
+      "id": "reverse-fly-incline-db",
+      "name": "Aperturas inversas banco inclinado (mancuerna)",
+      "aliases": [
+        "Aperturas Inversas Banco Inclinado (Mancuerna)"
+      ],
+      "primaryMuscle": "rearDelts",
+      "secondaryMuscles": [
+        "upperBack"
+      ],
+      "equipment": "dumbbell",
+      "loadMode": "unconfirmed",
+      "category": "pull"
+    },
+    {
+      "id": "leg-press-45",
+      "name": "Prensa 45Â° (mÃ¡quina)",
+      "aliases": [
+        "Prensa 45Â° (MÃ¡quina)",
+        "Prensa 45 (MÃ¡quina)"
+      ],
+      "primaryMuscle": "quads",
+      "secondaryMuscles": [
+        "glutes"
+      ],
+      "equipment": "machine",
+      "loadMode": "total",
+      "category": "legs"
+    },
+    {
+      "id": "lying-leg-curl-db",
+      "name": "Curl femoral tumbado (mancuerna)",
+      "aliases": [
+        "Curl Femoral Tumbado (Mancuerna)"
+      ],
+      "primaryMuscle": "hamstrings",
+      "secondaryMuscles": [],
+      "equipment": "dumbbell",
+      "loadMode": "total",
+      "category": "legs"
+    },
+    {
+      "id": "leg-extension",
+      "name": "ExtensiÃ³n de rodilla (mÃ¡quina)",
+      "aliases": [
+        "ExtensiÃ³n De Rodilla (MÃ¡quina)"
+      ],
+      "primaryMuscle": "quads",
+      "secondaryMuscles": [],
+      "equipment": "machine",
+      "loadMode": "total",
+      "category": "legs"
+    },
+    {
+      "id": "hip-abduction",
+      "name": "AbducciÃ³n de cadera (mÃ¡quina)",
+      "aliases": [
+        "AbducciÃ³n De Cadera (MÃ¡quina)"
+      ],
+      "primaryMuscle": "abductors",
+      "secondaryMuscles": [
+        "glutes"
+      ],
+      "equipment": "machine",
+      "loadMode": "total",
+      "category": "legs"
+    },
+    {
+      "id": "hip-thrust-machine",
+      "name": "Hip thrust (mÃ¡quina)",
+      "aliases": [
+        "Hip Thrust (MÃ¡quina)"
+      ],
+      "primaryMuscle": "glutes",
+      "secondaryMuscles": [
+        "hamstrings"
+      ],
+      "equipment": "machine",
+      "loadMode": "total",
+      "category": "legs"
+    }
+  ]
+}

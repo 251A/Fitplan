@@ -1,0 +1,30 @@
+{
+  "app": "fitplan-personal-seed",
+  "version": 1,
+  "profile": {
+    "heightCm": 175,
+    "startWeightKg": 75,
+    "startWeightDate": "2026-10-01",
+    "hrMaxObserved": 185,
+    "stepGoal": 10000,
+    "gymBaseDays": 5,
+    "threeDayTemplate": "upperLowerFull"
+  },
+  "bestSets": [
+    { "exerciseId": "bench-press-barbell", "date": "2026-09-22", "weightKg": 50, "reps": 8 },
+    { "exerciseId": "leg-press-45", "weightKg": 120, "reps": 10 }
+  ],
+  "sessions": [
+    { "date": "2026-09-08", "templateName": "Tracción" },
+    { "date": "2026-09-09", "templateName": "Pierna" },
+    {
+      "date": null,
+      "templateName": "Empuje",
+      "note": "Sin fecha visible en la captura",
+      "sets": [
+        { "exerciseId": "bench-press-barbell", "weightKg": 40, "reps": 10 },
+        { "exerciseId": "hip-thrust-machine", "weightKg": 0, "reps": 10 }
+      ]
+    }
+  ]
+}

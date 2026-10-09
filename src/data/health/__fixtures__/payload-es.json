@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "generatedAt": "2026-10-08T07:30:00+02:00",
+  "steps": [
+    { "date": "2026-10-07", "value": "12.050" },
+    { "date": "2026-10-08", "value": "15.400" }
+  ],
+  "sleep": [
+    { "start": "2026-10-07T23:00:00+02:00", "end": "2026-10-08T07:00:00+02:00", "value": "Dormido", "source": "iPhone de Ana" },
+    { "start": "2026-10-07T23:30:00+02:00", "end": "2026-10-08T03:00:00+02:00", "value": "Núcleo", "source": "Apple Watch de Ana" },
+    { "start": "2026-10-08T03:00:00+02:00", "end": "2026-10-08T04:00:00+02:00", "value": "Profundo", "source": "Apple Watch de Ana" },
+    { "start": "2026-10-08T04:00:00+02:00", "end": "2026-10-08T07:00:00+02:00", "value": "REM", "source": "Apple Watch de Ana" },
+    { "start": "2026-10-07T23:00:00+02:00", "end": "2026-10-08T07:10:00+02:00", "value": "En cama", "source": "Apple Watch de Ana" }
+  ],
+  "hrv": [
+    { "start": "2026-10-07T23:45:00+02:00", "value": "60" },
+    { "start": "2026-10-08T01:00:00+02:00", "value": "64,5" },
+    { "start": "2026-10-08T04:00:00+02:00", "value": "70,5" },
+    { "start": "2026-10-08T16:00:00+02:00", "value": "40" }
+  ],
+  "restingHR": [
+    { "start": "2026-10-07T00:00:00+02:00", "value": "63" },
+    { "start": "2026-10-08T00:00:00+02:00", "value": "61" }
+  ],
+  "respiratoryRate": [
+    { "start": "2026-10-08T03:00:00+02:00", "value": "14,5" }
+  ],
+  "bodyMass": [
+    { "start": "2026-10-08T07:20:00+02:00", "value": "71,2" }
+  ],
+  "workouts": [
+    { "start": "2026-10-07T18:00:00+02:00", "end": "2026-10-07T18:52:00+02:00", "type": "Entrenamiento de fuerza tradicional", "source": "Symmetry", "energyKcal": "310" },
+    { "start": "2026-10-08T19:00:00+02:00", "end": "2026-10-08T19:30:00+02:00", "type": "Carrera", "source": "Runna", "distanceM": "3.120", "avgHR": "148" }
+  ]
+}

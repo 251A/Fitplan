@@ -1,0 +1,9 @@
+node_modules/
+dist/
+*.local
+.DS_Store
+
+# Personal data: never pushed to the public repo
+private/
+CLAUDE.md
+.claude/
