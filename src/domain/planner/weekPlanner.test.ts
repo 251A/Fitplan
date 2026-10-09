@@ -131,9 +131,11 @@ describe('planWeek', () => {
     expect(p.sessions.every((s) => s.minutes <= 30)).toBe(true);
   });
 
-  it('says when only one key run fits (the 5K week will repeat)', () => {
-    const p = planWeek(input({ availability: week((wd) => (wd === 6 ? ['run'] : ['gym'])) }));
-    expect(p.warnings.join(' ')).toMatch(/Solo cabe 1 carrera/);
+  it('gym first: the default 5-day routine keeps all 5 gym days and a rest day, cardio only fills the gaps', () => {
+    const p = planWeek(input({ maxGymDays: 5 }));
+    expect(p.sessions.filter((s) => s.kind === 'gym')).toHaveLength(5);
+    expect(p.sessions.length).toBeLessThanOrEqual(6);
+    expect(p.warnings.join(' ')).not.toMatch(/5K/); // not progressing the 5K is not a problem
   });
 
   it('raises the step goal to 12,000 on free days when cardio is scarce', () => {
@@ -152,11 +154,12 @@ describe('planWeek', () => {
     expect(p.sessions.some((s) => s.gymTemplate === 'Pierna')).toBe(true); // legs are never cut
   });
 
-  it('never cuts legs or key runs, and says so when the cap cannot be met', () => {
+  it('cuts all cardio before ever touching the gym, and says so when the cap cannot be met', () => {
+    const free = planWeek(input());
     const p = planWeek(input({ previousWeekLoads: [300, 300, 300] }));
-    expect(p.sessions.some((s) => s.gymTemplate === 'Pierna')).toBe(true);
-    expect(p.sessions.filter((s) => s.run?.slot === 'A' || s.run?.slot === 'B')).toHaveLength(2);
-    expect(p.warnings.join(' ')).toMatch(/supera el límite/);
+    expect(p.sessions.filter((s) => s.kind === 'gym')).toEqual(free.sessions.filter((s) => s.kind === 'gym'));
+    expect(p.sessions.filter((s) => s.kind !== 'gym')).toHaveLength(0);
+    expect(p.warnings.join(' ')).toMatch(/el gimnasio se mantiene completo/);
   });
 });
 

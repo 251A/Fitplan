@@ -247,14 +247,7 @@ export function planWeek(input: PlannerInput): WeekPlan {
     const day = pick('run', plannedA.totalMin, (d) => Math.min(3, ...runDates().map((r) => dist(r, d.date)), 3) * 2);
     if (day) addRun(plannedA, day, [`${plannedA.title} el ${dayName(day.date)}, separado de la otra carrera.`], 3);
   }
-  const keyRuns = sessions.filter((s) => s.kind === 'run').length;
-  if (keyRuns < 2) {
-    warnings.push(
-      keyRuns === 1
-        ? 'Solo cabe 1 carrera clave: la semana del plan 5K se repetirá.'
-        : 'No hay días disponibles para correr: el plan 5K no avanza esta semana.',
-    );
-  }
+  // Gym comes first: if runs don't fit, the 5K simply stays where it is (no warning needed).
 
   // Swims: preferably the day after legs or after the long run.
   const longRunDate = sessions.find((s) => s.run?.slot === 'B')?.date;
@@ -317,7 +310,8 @@ export function planWeek(input: PlannerInput): WeekPlan {
         b.rationale.push('En suave para no pasar del límite de carga semanal.');
         return 'La tirada larga pasa a suave';
       },
-      ...[2, 1, 1, 4].map((priority) => () => {
+      // Cardio is cut first (easy run, swims, key runs); gym sessions are never cut for load.
+      ...[2, 1, 1, 3, 3].map((priority) => () => {
         const s = sortByPriority().find((x) => x.priority === priority);
         if (!s) return undefined;
         sessions.splice(sessions.indexOf(s), 1);
@@ -332,7 +326,7 @@ export function planWeek(input: PlannerInput): WeekPlan {
     }
     if (applied.length) warnings.push(`${cap.reason} ${applied.join('; ')}.`);
     if (total() > cap.limit) {
-      warnings.push('Aun así la semana supera el límite de carga: se mantienen pierna y las carreras clave. Ve con calma.');
+      warnings.push('Aun así la semana supera el límite de carga: el gimnasio se mantiene completo. Ve con calma y vigila el semáforo.');
     }
   }
 

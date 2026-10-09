@@ -32,6 +32,7 @@ export function CardioView() {
     <div className="page">
       <header className="page-header">
         <h1>Cardio</h1>
+        <p className="subtitle">Complemento para los días sin gimnasio.</p>
       </header>
 
       <section className="card">
