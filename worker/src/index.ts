@@ -2,7 +2,15 @@
 //   GET  /health-check                 → "ok" (no auth)
 //   POST /health    body: HealthPayload → stores raw payload (used by the iOS shortcut)
 //   POST /sync      body: { since, changes } → { seq, changes, payloads }
+//   GET  /briefing?kind=morning|steps|sunday → { notify, title, body } for shortcut notifications
 // All routes except /health-check require `Authorization: Bearer <SYNC_TOKEN>`.
+
+import { buildBriefing, mergeHealthInputs, type BriefingKind } from '../../src/domain/briefing';
+import { dateKey } from '../../src/domain/dates';
+import { buildDailyHealth } from '../../src/domain/health/dailyMetrics';
+import type { WeekPlan } from '../../src/domain/planner/weekPlanner';
+import { DEFAULT_RECOVERY_CONFIG, type RecoveryConfig } from '../../src/domain/recovery/recoveryConfig';
+import { parseHealthPayload } from '../../src/data/health/payload';
 
 export interface Env {
   DB: D1Database;
@@ -175,6 +183,54 @@ async function handleSync(req: Request, env: Env): Promise<unknown> {
   };
 }
 
+/**
+ * GET /briefing?kind=morning|steps|sunday[&tz=Europe/Madrid] — notification text for the iOS
+ * shortcut, computed with the app's own domain code from the synced plans and Health payloads.
+ */
+async function handleBriefing(req: Request, env: Env): Promise<unknown> {
+  const url = new URL(req.url);
+  const kind = (url.searchParams.get('kind') ?? 'morning') as BriefingKind;
+  if (!['morning', 'steps', 'sunday'].includes(kind)) throw new HttpError(400, 'Unknown kind');
+  const timeZone = url.searchParams.get('tz') ?? 'Europe/Madrid';
+  let date: string;
+  try {
+    date = url.searchParams.get('date') ?? dateKey(Date.now(), timeZone);
+  } catch {
+    throw new HttpError(400, 'Bad time zone');
+  }
+
+  const since = Date.now() - 45 * 24 * 3600_000;
+  const [payloads, records] = await Promise.all([
+    env.DB.prepare('SELECT body FROM health_payloads WHERE received_at >= ? ORDER BY seq').bind(since).all<{ body: string }>(),
+    env.DB.prepare(
+      "SELECT store, key, value FROM records WHERE value IS NOT NULL AND (store = 'weekPlans' OR (store = 'kv' AND key IN ('profile', 'recoveryConfig')))",
+    ).all<{ store: string; key: string; value: string }>(),
+  ]);
+
+  const inputs = [];
+  for (const p of payloads.results) {
+    try {
+      inputs.push(parseHealthPayload(p.body));
+    } catch {
+      /* skip unreadable payloads */
+    }
+  }
+  const days = buildDailyHealth(mergeHealthInputs(inputs), timeZone);
+  const plans = records.results.filter((r) => r.store === 'weekPlans').map((r) => JSON.parse(r.value) as WeekPlan);
+  const kv = new Map(records.results.filter((r) => r.store === 'kv').map((r) => [r.key, JSON.parse(r.value)]));
+  const profile = kv.get('profile') as { stepGoal?: number } | undefined;
+  const recoveryConfig = kv.get('recoveryConfig') as Partial<RecoveryConfig> | undefined;
+
+  return buildBriefing({
+    kind,
+    date,
+    days,
+    plans,
+    recoveryConfig: { ...DEFAULT_RECOVERY_CONFIG, ...recoveryConfig },
+    stepGoal: profile?.stepGoal || 10000,
+  });
+}
+
 export default {
   async fetch(req: Request, env: Env): Promise<Response> {
     const headers = cors(req, env);
@@ -187,6 +243,7 @@ export default {
     try {
       if (req.method === 'POST' && pathname === '/health') return json(await handleHealth(req, env), 200, headers);
       if (req.method === 'POST' && pathname === '/sync') return json(await handleSync(req, env), 200, headers);
+      if (req.method === 'GET' && pathname === '/briefing') return json(await handleBriefing(req, env), 200, headers);
       return json({ error: 'Not found' }, 404, headers);
     } catch (e) {
       if (e instanceof HttpError) return json({ error: e.message }, e.status, headers);

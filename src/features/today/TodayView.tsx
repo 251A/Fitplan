@@ -5,6 +5,7 @@ import type { DailyHealth } from '../../domain/health/dailyMetrics';
 import { HealthSyncCard } from './HealthSyncCard';
 import { RecoveryCard } from './RecoveryCard';
 import { TodaySession } from './TodaySession';
+import { AskClaude } from './AskClaude';
 import { mondayOf } from '../../data/plan/planService';
 
 const longDate = new Intl.DateTimeFormat('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
@@ -55,6 +56,8 @@ export function TodayView() {
       <RecoveryCard />
 
       <TodaySession />
+
+      <AskClaude />
 
       <section className="card">
         <h2>Pasos</h2>

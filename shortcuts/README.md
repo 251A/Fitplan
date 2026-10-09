@@ -52,12 +52,32 @@ Todas las fechas en **ISO 8601** (acción *Formatear fecha* → formato *ISO 860
    - Método: **POST**
    - Encabezados: `Authorization` = `Bearer TU_CLAVE` (la clave de `private/sync-token.txt`) y `Content-Type` = `application/json`
    - Cuerpo de la solicitud: **Archivo** → el Texto del paso 6.
-   - *Mostrar notificación* "FitPlan: datos de Salud enviados".
+   - (Sin notificación aquí: la da el paso siguiente.)
 8. **Alternativa sin servidor**: en lugar del paso 7, *Copiar al portapapeles* el Texto y *Mostrar notificación*
    "Datos copiados: abre FitPlan y pulsa Pegar".
 
-## Automatización diaria
+9. **Aviso de la mañana** (lo calcula tu servidor con la misma lógica que la app: semáforo + sesión de hoy):
+   - *Obtener contenido de URL* → `https://fitplan-sync.fitplan.workers.dev/briefing?kind=morning`
+     (método **GET**, encabezado `Authorization` = `Bearer TU_CLAVE`).
+   - *Obtener valor del diccionario* → clave `title` → variable `Título`; otra vez con clave `body` → variable `Texto`.
+   - *Mostrar notificación*: título `[Título]`, cuerpo `[Texto]`.
+   Ejemplo: "🟡 Hoy: Pierna — Dormiste 5 h 40 min… Amarillo: deja 1 repetición más en reserva…".
 
-Atajos → **Automatización** → *Nueva* → **Hora del día** (p. ej. 7:30, diaria) → *Ejecutar inmediatamente* → acción *Ejecutar atajo* `FitPlan sync`.
+## Automatizaciones
 
-La primera vez, iOS pedirá permiso para que Atajos lea cada tipo de dato de Salud: acéptalos todos.
+Atajos → **Automatización** → *Nueva* → **Hora del día** → *Ejecutar inmediatamente*:
+
+| Cuándo | Qué hace |
+|---|---|
+| Cada día, 7:30 | *Ejecutar atajo* `FitPlan sync` (envía Salud + aviso de la mañana). |
+| Cada día, 18:00 | Atajo `FitPlan pasos`: primero *Ejecutar atajo* `FitPlan sync` sin el paso 9 (o un atajo que solo envíe los pasos de hoy), después *Obtener contenido de URL* `…/briefing?kind=steps`, *Obtener valor del diccionario* `notify`, y **Si** `notify` es verdadero → *Mostrar notificación* con `title` y `body`. Solo avisa si faltan más de 3.000 pasos. |
+| Domingo, 19:00 | Atajo `FitPlan domingo`: *Obtener contenido de URL* `…/briefing?kind=sunday`; **Si** `notify` es verdadero → notificación "Planifica la semana". No avisa si ya está planificada. |
+
+La primera vez, iOS pedirá permiso para que Atajos lea cada tipo de dato de Salud y para conectar con
+`fitplan-sync.fitplan.workers.dev`: acéptalo todo.
+
+## Calendario
+
+En la app: **Semana → Añadir al calendario** genera un `.ics` con las sesiones de la semana (eventos de
+día completo). En el iPhone, elige *Calendario* en el menú Compartir. Si replanificas, vuelve a añadirlo:
+los eventos se actualizan en lugar de duplicarse.

@@ -14,6 +14,7 @@ import { useZones } from '../cardio/useZones';
 import { FIVEK_PHASES, SWIM_PHASES } from '../cardio/phaseText';
 import { IntensityTag, SessionDetails, sessionIcon, sessionTitle } from './SessionDetails';
 import { SessionActions } from './SessionActions';
+import { PlanSummaryCard, WeekSummaryCard } from './WeekExtras';
 
 const ACT_LABEL: Record<Activity, string> = { gym: 'Gimnasio', run: 'Correr', swim: 'Nadar' };
 const nf = new Intl.NumberFormat('es-ES');
@@ -178,6 +179,9 @@ function PlanView({ plan, onReplan }: { plan: WeekPlan; onReplan: () => void }) 
         </section>
       )}
       {message && <p className="status ok">{message}</p>}
+
+      <WeekSummaryCard plan={plan} />
+      <PlanSummaryCard plan={plan} />
 
       {days.map((d) => {
         const sessions = plan.sessions.filter((s) => s.date === d);
