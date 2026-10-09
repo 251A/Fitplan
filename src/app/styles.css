@@ -303,6 +303,198 @@ code {
   line-height: 22px;
 }
 
+/* --- Recovery traffic light --- */
+.recovery-card {
+  border-left: 5px solid var(--line);
+}
+
+.recovery-card.tone-good {
+  border-left-color: var(--good);
+}
+
+.recovery-card.tone-warn {
+  border-left-color: var(--warn);
+}
+
+.recovery-card.tone-bad {
+  border-left-color: var(--bad);
+}
+
+.recovery-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.recovery-head h2 {
+  margin: 0;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--line);
+  color: var(--text);
+}
+
+.status-pill.tone-good {
+  background: var(--good);
+  color: #fff;
+}
+
+.status-pill.tone-warn {
+  background: var(--warn);
+  color: #1c1c1e;
+}
+
+.status-pill.tone-bad {
+  background: var(--bad);
+  color: #fff;
+}
+
+.reasons {
+  margin: 6px 0 0;
+  padding-left: 18px;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.reasons li + li {
+  margin-top: 3px;
+}
+
+.advice {
+  margin: 10px 0 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.advice strong {
+  color: var(--text);
+}
+
+/* --- Charts --- */
+.range-tabs {
+  display: inline-flex;
+  background: var(--line);
+  border-radius: 9px;
+  padding: 2px;
+  margin-bottom: 14px;
+}
+
+.range-tabs button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+  padding: 6px 14px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.range-tabs button[aria-pressed='true'] {
+  background: var(--card);
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+.chart-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.chart-latest {
+  font-size: 22px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.chart-wrap {
+  position: relative;
+  margin-top: 8px;
+  touch-action: pan-y;
+}
+
+.chart-wrap svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.chart-tooltip {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  background: var(--text);
+  color: var(--card);
+  font-size: 12px;
+  line-height: 1.3;
+  padding: 5px 8px;
+  border-radius: 7px;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 2;
+}
+
+.chart-legend {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+.chart-legend .swatch {
+  display: inline-block;
+  width: 14px;
+  height: 8px;
+  border-radius: 2px;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+.chart-table {
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+.chart-table summary {
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.chart-table table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 6px;
+  font-variant-numeric: tabular-nums;
+}
+
+.chart-table td,
+.chart-table th {
+  text-align: right;
+  padding: 3px 4px;
+  border-bottom: 1px solid var(--line);
+}
+
+.chart-table td:first-child,
+.chart-table th:first-child {
+  text-align: left;
+}
+
 .loading,
 .fatal {
   padding: 40px 16px;

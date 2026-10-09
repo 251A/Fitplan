@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { TodayView } from '../features/today/TodayView';
 import { GymView } from '../features/gym/GymView';
 import { SettingsView } from '../features/settings/SettingsView';
+import { ProgressView } from '../features/progress/ProgressView';
 
 type Tab = 'today' | 'week' | 'gym' | 'cardio' | 'progress' | 'settings';
 
@@ -48,7 +49,7 @@ export function App() {
         {tab === 'week' && <Placeholder title="Semana" phase={4} />}
         {tab === 'gym' && <GymView />}
         {tab === 'cardio' && <Placeholder title="Cardio" phase={4} />}
-        {tab === 'progress' && <Placeholder title="Progreso" phase={2} />}
+        {tab === 'progress' && <ProgressView />}
         {tab === 'settings' && <SettingsView />}
       </main>
       <nav className="tabbar">

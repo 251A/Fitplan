@@ -1,5 +1,6 @@
 import { DEFAULT_TIME_ZONE, type DateKey } from '../../domain/dates';
 import { buildDailyHealth, type DailyHealth } from '../../domain/health/dailyMetrics';
+import { DEFAULT_RECOVERY_CONFIG, type RecoveryConfig } from '../../domain/recovery/recoveryConfig';
 import library from '../../resources/exerciseLibrary.json';
 import type { ParsedHealthPayload } from '../health/payload';
 import { Database, DB_VERSION, STORES, type StoreName } from './db';
@@ -16,6 +17,7 @@ const KV = {
   profile: 'profile',
   seedVersion: 'seedVersion',
   lastSync: 'lastSync',
+  recoveryConfig: 'recoveryConfig',
 } as const;
 
 export const DEFAULT_PROFILE: UserProfile = {
@@ -125,6 +127,13 @@ export async function importHealth(
 export const getProfile = (db: Database) => db.getKV<UserProfile>(KV.profile);
 export const saveProfile = (db: Database, p: UserProfile) =>
   db.writeSynced([{ store: 'kv', key: KV.profile, value: p }]);
+
+export async function getRecoveryConfig(db: Database): Promise<RecoveryConfig> {
+  // Merge with defaults so thresholds added in later versions get a value.
+  return { ...DEFAULT_RECOVERY_CONFIG, ...(await db.getKV<Partial<RecoveryConfig>>(KV.recoveryConfig)) };
+}
+export const saveRecoveryConfig = (db: Database, c: RecoveryConfig | null) =>
+  db.writeSynced([{ store: 'kv', key: KV.recoveryConfig, value: c }]);
 export const getLastSync = (db: Database) => db.getKV<SyncInfo>(KV.lastSync);
 
 export async function getDailyHealth(db: Database): Promise<DailyHealth[]> {

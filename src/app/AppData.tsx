@@ -1,11 +1,13 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 import type { DailyHealth } from '../domain/health/dailyMetrics';
+import { DEFAULT_RECOVERY_CONFIG, type RecoveryConfig } from '../domain/recovery/recoveryConfig';
 import { Database, STORES } from '../data/db/db';
 import type { Exercise, GymSession, HealthWorkout, SeedBestSet, SyncInfo, UserProfile } from '../data/db/models';
 import {
   getDailyHealth,
   getLastSync,
   getProfile,
+  getRecoveryConfig,
   getWorkouts,
   seedIfEmpty,
 } from '../data/db/repository';
@@ -27,6 +29,7 @@ export interface AppState {
   gymSessions: GymSession[];
   bestSets: SeedBestSet[];
   lastSync?: SyncInfo;
+  recoveryConfig: RecoveryConfig;
   timeZone: string;
   cloud: CloudSync;
   reload: () => Promise<void>;
@@ -60,10 +63,11 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     exercises: [],
     gymSessions: [],
     bestSets: [],
+    recoveryConfig: DEFAULT_RECOVERY_CONFIG,
   });
 
   const load = useCallback(async (d: Database) => {
-    const [profile, days, workouts, exercises, gymSessions, bestSets, lastSync, syncConfig, syncState] =
+    const [profile, days, workouts, exercises, gymSessions, bestSets, lastSync, syncConfig, syncState, recoveryConfig] =
       await Promise.all([
         getProfile(d),
         getDailyHealth(d),
@@ -74,8 +78,20 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         getLastSync(d),
         getSyncConfig(d),
         getSyncState(d),
+        getRecoveryConfig(d),
       ]);
-    setData({ profile, days, workouts, exercises, gymSessions, bestSets, lastSync, syncConfig, syncState });
+    setData({
+      profile,
+      days,
+      workouts,
+      exercises,
+      gymSessions,
+      bestSets,
+      lastSync,
+      syncConfig,
+      syncState,
+      recoveryConfig,
+    });
   }, []);
 
   const runSync = useCallback(

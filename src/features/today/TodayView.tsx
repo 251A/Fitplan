@@ -3,6 +3,7 @@ import { dateKey, formatDuration } from '../../domain/dates';
 import { mean, previousValues } from '../../domain/health/baseline';
 import type { DailyHealth } from '../../domain/health/dailyMetrics';
 import { HealthSyncCard } from './HealthSyncCard';
+import { RecoveryCard } from './RecoveryCard';
 
 const longDate = new Intl.DateTimeFormat('es-ES', { weekday: 'long', day: 'numeric', month: 'long' });
 const int = new Intl.NumberFormat('es-ES');
@@ -47,7 +48,7 @@ export function TodayView() {
         <p className="subtitle">{longDate.format(new Date())}</p>
       </header>
 
-      <HealthSyncCard />
+      <RecoveryCard />
 
       <section className="card">
         <h2>Pasos</h2>
@@ -65,9 +66,10 @@ export function TodayView() {
         </p>
       </section>
 
+      <HealthSyncCard />
+
       <section className="card">
-        <h2>Recuperación</h2>
-        <p className="metric-hint">El semáforo llega en la fase 2. De momento, los valores de anoche:</p>
+        <h2>Anoche</h2>
         <div className="metric-grid">
           <Metric
             label="Sueño"
