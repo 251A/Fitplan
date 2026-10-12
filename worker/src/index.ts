@@ -231,6 +231,41 @@ async function handleBriefing(req: Request, env: Env): Promise<unknown> {
   });
 }
 
+const SYMMETRY_API_BASE = 'https://dev-api-398208568169.europe-southwest1.run.app/api';
+
+async function handleSymmetryProxy(req: Request, pathname: string, headers: Record<string, string>): Promise<Response> {
+  const url = new URL(req.url);
+  let targetPath = '';
+  if (pathname === '/symmetry/login') targetPath = '/users/login';
+  else if (pathname === '/symmetry/sessions') targetPath = '/training-sessions/';
+  else if (pathname === '/symmetry/bootstrap') targetPath = '/sync/bootstrap';
+  else targetPath = pathname.replace('/symmetry', '');
+
+  const targetUrl = `${SYMMETRY_API_BASE}${targetPath}${url.search}`;
+  const forwardHeaders: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+  const symAuth = req.headers.get('X-Symmetry-Auth');
+  if (symAuth) {
+    forwardHeaders['Authorization'] = symAuth;
+  }
+
+  const init: RequestInit = {
+    method: req.method,
+    headers: forwardHeaders,
+  };
+  if (req.method !== 'GET' && req.method !== 'HEAD') {
+    init.body = await req.text();
+  }
+
+  const res = await fetch(targetUrl, init);
+  const data = await res.text();
+  return new Response(data, {
+    status: res.status,
+    headers: { 'Content-Type': 'application/json; charset=utf-8', ...headers },
+  });
+}
+
 export default {
   async fetch(req: Request, env: Env): Promise<Response> {
     const headers = cors(req, env);
@@ -238,6 +273,12 @@ export default {
 
     if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers });
     if (req.method === 'GET' && pathname === '/health-check') return json({ ok: true }, 200, headers);
+
+    // Symmetry proxy (bypasses browser CORS; authenticated by Symmetry token or credentials)
+    if (pathname.startsWith('/symmetry/')) {
+      return handleSymmetryProxy(req, pathname, headers);
+    }
+
     if (!(await authorized(req, env))) return json({ error: 'Unauthorized' }, 401, headers);
 
     try {

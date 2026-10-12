@@ -12,3 +12,7 @@ CLAUDE.md
 .wrangler/
 .dev.vars
 
+# APK binaries (>100MB)
+*.apk
+*.xapk
+
