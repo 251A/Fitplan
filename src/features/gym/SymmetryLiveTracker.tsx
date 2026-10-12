@@ -13,6 +13,7 @@ import { isSymmetryConnected, pushWorkoutToSymmetry } from '../../data/symmetry/
 import { lastSetFor } from './gymStats';
 import { SymmetryExercisePicker } from './SymmetryExercisePicker';
 import { SymmetryExerciseVisual } from './SymmetryExerciseVisual';
+import { assetUrl } from '../../data/symmetry/assetHelper';
 
 interface TrackerSet {
   id: string;
@@ -540,7 +541,7 @@ export function SymmetryLiveTracker({
           }}
         >
           <img
-            src="/symmetry/icons/dumbell_icon.svg"
+            src={assetUrl('symmetry/icons/dumbell_icon.svg')}
             alt=""
             style={{ width: 44, height: 44, opacity: 0.4, marginBottom: 12, filter: 'invert(1)' }}
           />
@@ -572,7 +573,7 @@ export function SymmetryLiveTracker({
             rank = calculateSymmetryRank(ex.symmetryId, oneRepMax, userWeightKg, 'male');
           }
 
-          const rankSvg = rank?.svg ?? '/symmetry/icons/ranking/rank=ruby2.svg';
+          const rankSvg = assetUrl(rank?.svg ?? 'symmetry/icons/ranking/rank=ruby2.svg');
           const rankTierName = rank?.name ?? 'Rubí II';
 
           return (

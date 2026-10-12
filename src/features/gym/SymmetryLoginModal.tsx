@@ -6,6 +6,7 @@ import {
   logoutSymmetry,
   type SymmetryAuth,
 } from '../../data/symmetry/symmetryApi';
+import { assetUrl } from '../../data/symmetry/assetHelper';
 
 interface SymmetryLoginModalProps {
   onClose: () => void;
@@ -71,7 +72,7 @@ export function SymmetryLoginModal({ onClose, onAuthChange }: SymmetryLoginModal
               }}
             >
               <img
-                src="/symmetry/icons/symmetry_logo.svg"
+                src={assetUrl('symmetry/icons/symmetry_logo.svg')}
                 alt="Symmetry"
                 style={{ width: 14, height: 14 }}
               />

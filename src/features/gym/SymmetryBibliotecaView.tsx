@@ -10,6 +10,7 @@ import {
   getMuscleImage,
   type SymmetryExercise,
 } from '../../data/symmetry/symmetryCatalog';
+import { assetUrl } from '../../data/symmetry/assetHelper';
 
 export interface RoutineTemplate {
   id: string;
@@ -22,7 +23,7 @@ export interface RoutineTemplate {
   isCustom?: boolean;
 }
 
-const DEFAULT_TEMPLATES: RoutineTemplate[] = [
+export const DEFAULT_TEMPLATES: RoutineTemplate[] = [
   {
     id: 'traccion-a',
     name: 'Tracción A',
@@ -90,7 +91,16 @@ const DEFAULT_TEMPLATES: RoutineTemplate[] = [
   },
 ];
 
-const STORAGE_CUSTOM_ROUTINES = 'symmetry_custom_routines_v1';
+export const STORAGE_CUSTOM_ROUTINES = 'symmetry_custom_routines_v1';
+
+export function loadSavedCustomRoutines(): RoutineTemplate[] {
+  try {
+    const raw = localStorage.getItem(STORAGE_CUSTOM_ROUTINES);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
 
 interface SymmetryBibliotecaViewProps {
   onStartRoutine: (template: RoutineTemplate) => void;
@@ -605,7 +615,7 @@ export const SymmetryBibliotecaView: React.FC<SymmetryBibliotecaViewProps> = ({
                 >
                   {collageImg ? (
                     <img
-                      src={collageImg}
+                      src={assetUrl(collageImg)}
                       alt={t.name}
                       style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                     />

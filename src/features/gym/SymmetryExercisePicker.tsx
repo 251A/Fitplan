@@ -21,6 +21,7 @@ const MUSCLE_FILTERS: { key: string; label: string; muscleKey?: string }[] = [
 ];
 
 import { SymmetryExerciseVisual } from './SymmetryExerciseVisual';
+import { assetUrl } from '../../data/symmetry/assetHelper';
 
 interface SymmetryExercisePickerProps {
   onSelect: (exercise: SymmetryExercise) => void;
@@ -54,7 +55,7 @@ export function SymmetryExercisePicker({
         <header className="sym-modal-header">
           <h2 className="sym-modal-title">
             <img
-              src="/symmetry/icons/dumbell_icon.svg"
+              src={assetUrl('symmetry/icons/dumbell_icon.svg')}
               alt=""
               style={{ width: 20, height: 20, filter: 'invert(1)' }}
             />

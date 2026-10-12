@@ -6,6 +6,7 @@ import {
   type SymmetryExercise,
 } from '../../data/symmetry/symmetryCatalog';
 import type { GymSession, SeedBestSet } from '../../data/db/models';
+import { assetUrl } from '../../data/symmetry/assetHelper';
 
 interface SymmetryRanksViewProps {
   gymSessions?: GymSession[];
@@ -26,7 +27,7 @@ const MUSCLE_GROUPS: {
   {
     id: 'arms',
     name: 'Brazos',
-    drawerIcon: '/symmetry/icons/ranking/muscle_drawer/biceps.svg',
+    drawerIcon: assetUrl('symmetry/icons/ranking/muscle_drawer/biceps.svg'),
     muscles: ['biceps', 'triceps', 'forearms'],
     sampleTier: 'ORO I',
     color: '#f59e0b',
@@ -35,7 +36,7 @@ const MUSCLE_GROUPS: {
   {
     id: 'legs',
     name: 'Piernas',
-    drawerIcon: '/symmetry/icons/ranking/muscle_drawer/cuadriceps.svg',
+    drawerIcon: assetUrl('symmetry/icons/ranking/muscle_drawer/cuadriceps.svg'),
     muscles: ['quads', 'hamstrings', 'calves', 'adductors', 'abductors'],
     sampleTier: 'ORO II',
     color: '#f59e0b',
@@ -44,7 +45,7 @@ const MUSCLE_GROUPS: {
   {
     id: 'back',
     name: 'Espalda',
-    drawerIcon: '/symmetry/icons/ranking/muscle_drawer/dorsales.svg',
+    drawerIcon: assetUrl('symmetry/icons/ranking/muscle_drawer/dorsales.svg'),
     muscles: ['back', 'traps', 'lowerback'],
     sampleTier: 'RUBÍ II',
     color: '#ef4444',
@@ -53,7 +54,7 @@ const MUSCLE_GROUPS: {
   {
     id: 'chest',
     name: 'Pecho',
-    drawerIcon: '/symmetry/icons/ranking/muscle_drawer/pecho.svg',
+    drawerIcon: assetUrl('symmetry/icons/ranking/muscle_drawer/pecho.svg'),
     muscles: ['chest'],
     sampleTier: 'RUBÍ II',
     color: '#ef4444',
@@ -62,7 +63,7 @@ const MUSCLE_GROUPS: {
   {
     id: 'shoulders',
     name: 'Hombros',
-    drawerIcon: '/symmetry/icons/ranking/muscle_drawer/hombros.svg',
+    drawerIcon: assetUrl('symmetry/icons/ranking/muscle_drawer/hombros.svg'),
     muscles: ['shoulders'],
     sampleTier: 'RUBÍ III',
     color: '#ef4444',
@@ -71,7 +72,7 @@ const MUSCLE_GROUPS: {
   {
     id: 'abs',
     name: 'Abdominales',
-    drawerIcon: '/symmetry/icons/ranking/muscle_drawer/abdominales.svg',
+    drawerIcon: assetUrl('symmetry/icons/ranking/muscle_drawer/abdominales.svg'),
     muscles: ['abs'],
     sampleTier: 'SIN RANGO',
     color: '#6b7280',
@@ -80,7 +81,7 @@ const MUSCLE_GROUPS: {
   {
     id: 'neck',
     name: 'Cuello',
-    drawerIcon: '/symmetry/icons/ranking/muscle_drawer/cuelo.svg',
+    drawerIcon: assetUrl('symmetry/icons/ranking/muscle_drawer/cuelo.svg'),
     muscles: ['neck'],
     sampleTier: 'SIN RANGO',
     color: '#6b7280',
@@ -123,7 +124,7 @@ export const SymmetryRanksView: React.FC<SymmetryRanksViewProps> = ({
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <img
-            src="/symmetry/symmetry_letters_logo.svg"
+            src={assetUrl('symmetry/symmetry_letters_logo.svg')}
             alt="Symmetry"
             style={{ height: 24, filter: 'brightness(0) invert(1)' }}
           />
@@ -243,7 +244,7 @@ export const SymmetryRanksView: React.FC<SymmetryRanksViewProps> = ({
               {/* Gold Wings Medal on top right */}
               <div style={{ width: 72, height: 72 }}>
                 <img
-                  src="/symmetry/icons/ranking/base/rank=gold.svg"
+                  src={assetUrl('symmetry/icons/ranking/base/rank=gold.svg')}
                   alt="Oro"
                   style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                 />
@@ -319,7 +320,7 @@ export const SymmetryRanksView: React.FC<SymmetryRanksViewProps> = ({
                           }}
                         >
                           <img
-                            src="/symmetry/icons/ranking/muscle_group_hexagon_bg.svg"
+                            src={assetUrl('symmetry/icons/ranking/muscle_group_hexagon_bg.svg')}
                             alt=""
                             style={{ position: 'absolute', width: '100%', height: '100%' }}
                           />
@@ -378,7 +379,7 @@ export const SymmetryRanksView: React.FC<SymmetryRanksViewProps> = ({
                             .slice(0, 4)
                             .map((ex) => {
                               const rank = calculateSymmetryRank(ex.id, 0.01, userWeightKg, 'male');
-                              const tierSvg = rank?.svg || '/symmetry/icons/ranking/rank=bronze1.svg';
+                              const tierSvg = rank?.svg || assetUrl('symmetry/icons/ranking/rank=bronze1.svg');
 
                               return (
                                 <div

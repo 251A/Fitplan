@@ -1,47 +1,48 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { SymmetryExercise } from '../../data/symmetry/symmetryCatalog';
+import { assetUrl } from '../../data/symmetry/assetHelper';
 
 // Known authentic cropped illustrations from Symmetry
 const KNOWN_EXERCISE_IMAGES: Record<string, string> = {
   // By ID or slug
-  '19': '/symmetry/exercises/ex_jalon_prono.png',
-  'jalon_prono': '/symmetry/exercises/ex_jalon_prono.png',
-  'jalon_cerrado': '/symmetry/exercises/ex_jalon_cerrado.png',
-  'remo_neutro': '/symmetry/exercises/ex_remo_neutro.png',
-  'curl_biceps': '/symmetry/exercises/ex_curl_biceps.png',
-  '26': '/symmetry/exercises/ex_curl_biceps.png',
-  '8': '/symmetry/exercises/ex_press_banca.png',
-  'press_banca': '/symmetry/exercises/ex_press_banca.png',
-  '14': '/symmetry/exercises/ex_press_inclinado.png',
-  'press_inclinado': '/symmetry/exercises/ex_press_inclinado.png',
-  '17': '/symmetry/exercises/ex_pec_deck.png',
-  'pec_deck': '/symmetry/exercises/ex_pec_deck.png',
-  'cruces_polea': '/symmetry/exercises/ex_cruces_polea.png',
-  '2': '/symmetry/exercises/ex_prensa_45.png',
-  'prensa_45': '/symmetry/exercises/ex_prensa_45.png',
-  'curl_femoral': '/symmetry/exercises/ex_curl_femoral.png',
-  '6': '/symmetry/exercises/ex_extension_cuadriceps.png',
-  'extension_cuadriceps': '/symmetry/exercises/ex_extension_cuadriceps.png',
-  'sentadilla_hack': '/symmetry/exercises/ex_sentadilla_hack.png',
-  '1': '/symmetry/exercises/ex_sentadilla_hack.png',
+  '19': 'symmetry/exercises/ex_jalon_prono.png',
+  'jalon_prono': 'symmetry/exercises/ex_jalon_prono.png',
+  'jalon_cerrado': 'symmetry/exercises/ex_jalon_cerrado.png',
+  'remo_neutro': 'symmetry/exercises/ex_remo_neutro.png',
+  'curl_biceps': 'symmetry/exercises/ex_curl_biceps.png',
+  '26': 'symmetry/exercises/ex_curl_biceps.png',
+  '8': 'symmetry/exercises/ex_press_banca.png',
+  'press_banca': 'symmetry/exercises/ex_press_banca.png',
+  '14': 'symmetry/exercises/ex_press_inclinado.png',
+  'press_inclinado': 'symmetry/exercises/ex_press_inclinado.png',
+  '17': 'symmetry/exercises/ex_pec_deck.png',
+  'pec_deck': 'symmetry/exercises/ex_pec_deck.png',
+  'cruces_polea': 'symmetry/exercises/ex_cruces_polea.png',
+  '2': 'symmetry/exercises/ex_prensa_45.png',
+  'prensa_45': 'symmetry/exercises/ex_prensa_45.png',
+  'curl_femoral': 'symmetry/exercises/ex_curl_femoral.png',
+  '6': 'symmetry/exercises/ex_extension_cuadriceps.png',
+  'extension_cuadriceps': 'symmetry/exercises/ex_extension_cuadriceps.png',
+  'sentadilla_hack': 'symmetry/exercises/ex_sentadilla_hack.png',
+  '1': 'symmetry/exercises/ex_sentadilla_hack.png',
 };
 
 // Known routine 2x2 collage images
 export const ROUTINE_COLLAGES: Record<string, string> = {
-  'traccion_a': '/symmetry/exercises/routine_traccion_a.png',
-  'empuje_a': '/symmetry/exercises/routine_empuje_a.png',
-  'pierna': '/symmetry/exercises/routine_pierna.png',
-  'traccion_b': '/symmetry/exercises/routine_traccion_b.png',
-  'empuje_b': '/symmetry/exercises/routine_empuje_b.png',
+  'traccion_a': 'symmetry/exercises/routine_traccion_a.png',
+  'empuje_a': 'symmetry/exercises/routine_empuje_a.png',
+  'pierna': 'symmetry/exercises/routine_pierna.png',
+  'traccion_b': 'symmetry/exercises/routine_traccion_b.png',
+  'empuje_b': 'symmetry/exercises/routine_empuje_b.png',
 };
 
 // Known 3D hero renders with glowing blue muscles
 export const HERO_RENDERS: Record<string, string> = {
-  '19': '/symmetry/exercises/hero_jalon_prono.png',
-  'jalon_prono': '/symmetry/exercises/hero_jalon_prono.png',
-  'jalon_cerrado': '/symmetry/exercises/hero_jalon_cerrado.png',
-  'remo_neutro': '/symmetry/exercises/bubble_remo_neutro.png',
-  'curl_biceps': '/symmetry/exercises/hero_jalon_prono.png',
+  '19': 'symmetry/exercises/hero_jalon_prono.png',
+  'jalon_prono': 'symmetry/exercises/hero_jalon_prono.png',
+  'jalon_cerrado': 'symmetry/exercises/hero_jalon_cerrado.png',
+  'remo_neutro': 'symmetry/exercises/bubble_remo_neutro.png',
+  'curl_biceps': 'symmetry/exercises/hero_jalon_prono.png',
 };
 
 /**
@@ -70,21 +71,24 @@ export function resolveExerciseImage(
 
   if (exercise.id != null) {
     const byId = KNOWN_EXERCISE_IMAGES[String(exercise.id)];
-    if (byId) return byId;
+    if (byId) return assetUrl(byId);
   }
 
   const name = (exercise.name || '').toLowerCase();
-  if (name.includes('prono') && name.includes('jal')) return KNOWN_EXERCISE_IMAGES['jalon_prono'] ?? null;
-  if (name.includes('cerrado') && name.includes('jal')) return KNOWN_EXERCISE_IMAGES['jalon_cerrado'] ?? null;
-  if (name.includes('remo') && name.includes('neutro')) return KNOWN_EXERCISE_IMAGES['remo_neutro'] ?? null;
-  if (name.includes('curl') && name.includes('bíc')) return KNOWN_EXERCISE_IMAGES['curl_biceps'] ?? null;
-  if (name.includes('banca plano') || name.includes('banca barra')) return KNOWN_EXERCISE_IMAGES['press_banca'] ?? null;
-  if (name.includes('banca inclinado') || name.includes('press inclinado')) return KNOWN_EXERCISE_IMAGES['press_inclinado'] ?? null;
-  if (name.includes('pec deck') || name.includes('aperturas')) return KNOWN_EXERCISE_IMAGES['pec_deck'] ?? null;
-  if (name.includes('prensa 45')) return KNOWN_EXERCISE_IMAGES['prensa_45'] ?? null;
-  if (name.includes('extensión de rodilla') || name.includes('cuádriceps')) return KNOWN_EXERCISE_IMAGES['extension_cuadriceps'] ?? null;
-  if (name.includes('sentadilla')) return KNOWN_EXERCISE_IMAGES['sentadilla_hack'] ?? null;
-  if (name.includes('femoral')) return KNOWN_EXERCISE_IMAGES['curl_femoral'] ?? null;
+  if (name.includes('prono') && name.includes('jal')) return assetUrl(KNOWN_EXERCISE_IMAGES['jalon_prono'] ?? null);
+  if (name.includes('cerrado') && name.includes('jal')) return assetUrl(KNOWN_EXERCISE_IMAGES['jalon_cerrado'] ?? null);
+  if (name.includes('jalón') || name.includes('jalon') || name.includes('pulldown')) return assetUrl(KNOWN_EXERCISE_IMAGES['jalon_prono'] ?? null);
+  if (name.includes('remo') || name.includes('row')) return assetUrl(KNOWN_EXERCISE_IMAGES['remo_neutro'] ?? null);
+  if (name.includes('curl') || name.includes('bíc') || name.includes('bic')) return assetUrl(KNOWN_EXERCISE_IMAGES['curl_biceps'] ?? null);
+  if (name.includes('banca plano') || name.includes('banca barra') || name.includes('press banca')) return assetUrl(KNOWN_EXERCISE_IMAGES['press_banca'] ?? null);
+  if (name.includes('banca inclinado') || name.includes('press inclinado') || name.includes('militar') || name.includes('hombro') || name.includes('press')) return assetUrl(KNOWN_EXERCISE_IMAGES['press_inclinado'] ?? null);
+  if (name.includes('pec deck') || name.includes('apertura') || name.includes('lateral') || name.includes('pájaro') || name.includes('pajaro')) return assetUrl(KNOWN_EXERCISE_IMAGES['pec_deck'] ?? null);
+  if (name.includes('cruce') || name.includes('polea') || name.includes('tríceps') || name.includes('triceps') || name.includes('katana')) return assetUrl(KNOWN_EXERCISE_IMAGES['cruces_polea'] ?? null);
+  if (name.includes('prensa 45') || name.includes('prensa')) return assetUrl(KNOWN_EXERCISE_IMAGES['prensa_45'] ?? null);
+  if (name.includes('extensión de rodilla') || name.includes('cuádriceps') || name.includes('cuadriceps')) return assetUrl(KNOWN_EXERCISE_IMAGES['extension_cuadriceps'] ?? null);
+  if (name.includes('sentadilla') || name.includes('squat') || name.includes('hack') || name.includes('búlgara') || name.includes('bulgara')) return assetUrl(KNOWN_EXERCISE_IMAGES['sentadilla_hack'] ?? null);
+  if (name.includes('femoral') || name.includes('peso muerto') || name.includes('isquios')) return assetUrl(KNOWN_EXERCISE_IMAGES['curl_femoral'] ?? null);
+  if (name.includes('hip thrust') || name.includes('abducci') || name.includes('aducci') || name.includes('glúte') || name.includes('glute')) return assetUrl(KNOWN_EXERCISE_IMAGES['prensa_45'] ?? null);
 
   return null;
 }
@@ -106,9 +110,14 @@ export const SymmetryExerciseVisual: React.FC<SymmetryExerciseVisualProps> = ({
   className = '',
   onClick,
 }) => {
+  const [loadError, setLoadError] = useState(false);
   const name = exercise?.name || '';
   const imgUrl = resolveExerciseImage(exercise);
   const initials = getExerciseInitials(name);
+
+  React.useEffect(() => {
+    setLoadError(false);
+  }, [imgUrl]);
 
   // 1. CIRCULAR BUBBLE (guided workout top carousel or PRs row)
   if (variant === 'circular') {
@@ -135,10 +144,11 @@ export const SymmetryExerciseVisual: React.FC<SymmetryExerciseVisualProps> = ({
           opacity: active ? 1 : 0.65,
         }}
       >
-        {imgUrl ? (
+        {imgUrl && !loadError ? (
           <img
             src={imgUrl}
             alt={name}
+            onError={() => setLoadError(true)}
             style={{
               width: '100%',
               height: '100%',
@@ -170,9 +180,10 @@ export const SymmetryExerciseVisual: React.FC<SymmetryExerciseVisualProps> = ({
 
   // 2. HERO GRAPHIC (center live workout render)
   if (variant === 'hero') {
-    const heroImg =
+    const heroKey =
       (exercise?.id && HERO_RENDERS[String(exercise.id)]) ||
       (name.includes('cerrado') ? HERO_RENDERS['jalon_cerrado'] : HERO_RENDERS['jalon_prono']);
+    const heroImg = assetUrl(heroKey);
 
     return (
       <div
@@ -216,7 +227,7 @@ export const SymmetryExerciseVisual: React.FC<SymmetryExerciseVisualProps> = ({
           }}
         >
           <img
-            src="/symmetry/symmetry_letters_logo.svg"
+            src={assetUrl('symmetry/symmetry_letters_logo.svg')}
             alt="Symmetry"
             style={{ width: 22, height: 22, filter: 'brightness(0) invert(1)' }}
           />
@@ -244,10 +255,11 @@ export const SymmetryExerciseVisual: React.FC<SymmetryExerciseVisualProps> = ({
         boxShadow: '0 2px 6px rgba(0,0,0,0.25)',
       }}
     >
-      {imgUrl ? (
+      {imgUrl && !loadError ? (
         <img
           src={imgUrl}
           alt={name}
+          onError={() => setLoadError(true)}
           style={{
             width: '100%',
             height: '100%',

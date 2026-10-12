@@ -1,5 +1,6 @@
 import symmetryExercises from './symmetryCatalog.json';
 import type { Muscle } from '../../domain/strength/strength';
+import { assetUrl } from './assetHelper';
 
 export interface SymmetryExercise {
   id: number;
@@ -18,31 +19,31 @@ export interface SymmetryExercise {
 export const SYMMETRY_EXERCISES: SymmetryExercise[] = symmetryExercises as SymmetryExercise[];
 
 export const RANK_TIERS = [
-  { id: 'iron1', name: 'Hierro I', color: '#6b7280', svg: '/symmetry/icons/ranking/rank=iron1.svg' },
-  { id: 'iron2', name: 'Hierro II', color: '#6b7280', svg: '/symmetry/icons/ranking/rank=iron2.svg' },
-  { id: 'iron3', name: 'Hierro III', color: '#6b7280', svg: '/symmetry/icons/ranking/rank=iron3.svg' },
-  { id: 'bronze1', name: 'Bronce I', color: '#b45309', svg: '/symmetry/icons/ranking/rank=bronze1.svg' },
-  { id: 'bronze2', name: 'Bronce II', color: '#b45309', svg: '/symmetry/icons/ranking/rank=bronze2.svg' },
-  { id: 'bronze3', name: 'Bronce III', color: '#b45309', svg: '/symmetry/icons/ranking/rank=bronze3.svg' },
-  { id: 'silver1', name: 'Plata I', color: '#9ca3af', svg: '/symmetry/icons/ranking/rank=silver1.svg' },
-  { id: 'silver2', name: 'Plata II', color: '#9ca3af', svg: '/symmetry/icons/ranking/rank=silver2.svg' },
-  { id: 'silver3', name: 'Plata III', color: '#9ca3af', svg: '/symmetry/icons/ranking/rank=silver3.svg' },
-  { id: 'gold1', name: 'Oro I', color: '#f59e0b', svg: '/symmetry/icons/ranking/rank=gold1.svg' },
-  { id: 'gold2', name: 'Oro II', color: '#f59e0b', svg: '/symmetry/icons/ranking/rank=gold2.svg' },
-  { id: 'gold3', name: 'Oro III', color: '#f59e0b', svg: '/symmetry/icons/ranking/rank=gold3.svg' },
-  { id: 'emerald1', name: 'Esmeralda I', color: '#10b981', svg: '/symmetry/icons/ranking/rank=emerald1.svg' },
-  { id: 'emerald2', name: 'Esmeralda II', color: '#10b981', svg: '/symmetry/icons/ranking/rank=emerald2.svg' },
-  { id: 'emerald3', name: 'Esmeralda III', color: '#10b981', svg: '/symmetry/icons/ranking/rank=emerald3.svg' },
-  { id: 'ruby1', name: 'Rubí I', color: '#ef4444', svg: '/symmetry/icons/ranking/rank=ruby1.svg' },
-  { id: 'ruby2', name: 'Rubí II', color: '#ef4444', svg: '/symmetry/icons/ranking/rank=ruby2.svg' },
-  { id: 'ruby3', name: 'Rubí III', color: '#ef4444', svg: '/symmetry/icons/ranking/rank=ruby3.svg' },
-  { id: 'diamond1', name: 'Diamante I', color: '#06b6d4', svg: '/symmetry/icons/ranking/rank=diamond1.svg' },
-  { id: 'diamond2', name: 'Diamante II', color: '#06b6d4', svg: '/symmetry/icons/ranking/rank=diamond2.svg' },
-  { id: 'diamond3', name: 'Diamante III', color: '#06b6d4', svg: '/symmetry/icons/ranking/rank=diamond3.svg' },
-  { id: 'champion', name: 'Campeón I', color: '#8b5cf6', svg: '/symmetry/icons/ranking/rank=champion.svg' },
-  { id: 'champion2', name: 'Campeón II', color: '#8b5cf6', svg: '/symmetry/icons/ranking/rank=champion2.svg' },
-  { id: 'champion3', name: 'Campeón III', color: '#8b5cf6', svg: '/symmetry/icons/ranking/rank=champion3.svg' },
-  { id: 'symmetric', name: 'Simétrico', color: '#ec4899', svg: '/symmetry/icons/ranking/rank=symmetric.svg' },
+  { id: 'iron1', name: 'Hierro I', color: '#6b7280', svg: assetUrl('symmetry/icons/ranking/rank=iron1.svg') },
+  { id: 'iron2', name: 'Hierro II', color: '#6b7280', svg: assetUrl('symmetry/icons/ranking/rank=iron2.svg') },
+  { id: 'iron3', name: 'Hierro III', color: '#6b7280', svg: assetUrl('symmetry/icons/ranking/rank=iron3.svg') },
+  { id: 'bronze1', name: 'Bronce I', color: '#b45309', svg: assetUrl('symmetry/icons/ranking/rank=bronze1.svg') },
+  { id: 'bronze2', name: 'Bronce II', color: '#b45309', svg: assetUrl('symmetry/icons/ranking/rank=bronze2.svg') },
+  { id: 'bronze3', name: 'Bronce III', color: '#b45309', svg: assetUrl('symmetry/icons/ranking/rank=bronze3.svg') },
+  { id: 'silver1', name: 'Plata I', color: '#9ca3af', svg: assetUrl('symmetry/icons/ranking/rank=silver1.svg') },
+  { id: 'silver2', name: 'Plata II', color: '#9ca3af', svg: assetUrl('symmetry/icons/ranking/rank=silver2.svg') },
+  { id: 'silver3', name: 'Plata III', color: '#9ca3af', svg: assetUrl('symmetry/icons/ranking/rank=silver3.svg') },
+  { id: 'gold1', name: 'Oro I', color: '#f59e0b', svg: assetUrl('symmetry/icons/ranking/rank=gold1.svg') },
+  { id: 'gold2', name: 'Oro II', color: '#f59e0b', svg: assetUrl('symmetry/icons/ranking/rank=gold2.svg') },
+  { id: 'gold3', name: 'Oro III', color: '#f59e0b', svg: assetUrl('symmetry/icons/ranking/rank=gold3.svg') },
+  { id: 'emerald1', name: 'Esmeralda I', color: '#10b981', svg: assetUrl('symmetry/icons/ranking/rank=emerald1.svg') },
+  { id: 'emerald2', name: 'Esmeralda II', color: '#10b981', svg: assetUrl('symmetry/icons/ranking/rank=emerald2.svg') },
+  { id: 'emerald3', name: 'Esmeralda III', color: '#10b981', svg: assetUrl('symmetry/icons/ranking/rank=emerald3.svg') },
+  { id: 'ruby1', name: 'Rubí I', color: '#ef4444', svg: assetUrl('symmetry/icons/ranking/rank=ruby1.svg') },
+  { id: 'ruby2', name: 'Rubí II', color: '#ef4444', svg: assetUrl('symmetry/icons/ranking/rank=ruby2.svg') },
+  { id: 'ruby3', name: 'Rubí III', color: '#ef4444', svg: assetUrl('symmetry/icons/ranking/rank=ruby3.svg') },
+  { id: 'diamond1', name: 'Diamante I', color: '#06b6d4', svg: assetUrl('symmetry/icons/ranking/rank=diamond1.svg') },
+  { id: 'diamond2', name: 'Diamante II', color: '#06b6d4', svg: assetUrl('symmetry/icons/ranking/rank=diamond2.svg') },
+  { id: 'diamond3', name: 'Diamante III', color: '#06b6d4', svg: assetUrl('symmetry/icons/ranking/rank=diamond3.svg') },
+  { id: 'champion', name: 'Campeón I', color: '#8b5cf6', svg: assetUrl('symmetry/icons/ranking/rank=champion.svg') },
+  { id: 'champion2', name: 'Campeón II', color: '#8b5cf6', svg: assetUrl('symmetry/icons/ranking/rank=champion2.svg') },
+  { id: 'champion3', name: 'Campeón III', color: '#8b5cf6', svg: assetUrl('symmetry/icons/ranking/rank=champion3.svg') },
+  { id: 'symmetric', name: 'Simétrico', color: '#ec4899', svg: assetUrl('symmetry/icons/ranking/rank=symmetric.svg') },
 ] as const;
 
 export type RankTierId = (typeof RANK_TIERS)[number]['id'];
@@ -100,7 +101,7 @@ export function calculateSymmetryRank(
       tierId: 'iron1',
       name: 'Sin rango (pronto Hierro I)',
       color: '#4b5563',
-      svg: '/symmetry/icons/ranking/rank=iron1.svg',
+      svg: assetUrl('symmetry/icons/ranking/rank=iron1.svg'),
       ratio,
       currentThreshold: 0,
       nextThreshold: nextThresh,
@@ -160,18 +161,18 @@ export function getMuscleImage(muscle: string, selected = false): string {
     lowerback: 'image_lowerback',
   };
   const key = map[muscle] || 'image_chest';
-  return `/symmetry/images/shared/${key}${suffix}`;
+  return assetUrl(`symmetry/images/shared/${key}${suffix}`);
 }
 
 export function getEquipmentImage(equipment: string): string {
   const map: Record<string, string> = {
-    dumbbell: '/symmetry/images/equipment/img-dumbbells.jpg',
-    barbell: '/symmetry/images/equipment/img-barbells.jpg',
-    smith: '/symmetry/images/equipment/img-smith-machine.jpg',
-    cable: '/symmetry/images/equipment/img-crossover-cable.jpg',
-    machine: '/symmetry/images/equipment/img-commercial-gym-machines.jpg',
-    bodyweight: '/symmetry/images/equipment/img-no-equipment.jpg',
+    dumbbell: assetUrl('symmetry/images/equipment/img-dumbbells.jpg'),
+    barbell: assetUrl('symmetry/images/equipment/img-barbells.jpg'),
+    smith: assetUrl('symmetry/images/equipment/img-smith-machine.jpg'),
+    cable: assetUrl('symmetry/images/equipment/img-crossover-cable.jpg'),
+    machine: assetUrl('symmetry/images/equipment/img-commercial-gym-machines.jpg'),
+    bodyweight: assetUrl('symmetry/images/equipment/img-no-equipment.jpg'),
   };
-  return map[equipment] || '/symmetry/images/equipment/img-dumbbells.jpg';
+  return map[equipment] || assetUrl('symmetry/images/equipment/img-dumbbells.jpg');
 }
 
