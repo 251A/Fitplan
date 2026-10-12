@@ -41,7 +41,7 @@ function cors(req: Request, env: Env): Record<string, string> {
   return {
     'Access-Control-Allow-Origin': origin,
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Authorization, Content-Type',
+    'Access-Control-Allow-Headers': 'Authorization, Content-Type, X-Symmetry-Auth',
     'Access-Control-Max-Age': '86400',
     Vary: 'Origin',
   };
@@ -236,10 +236,20 @@ const SYMMETRY_API_BASE = 'https://dev-api-398208568169.europe-southwest1.run.ap
 async function handleSymmetryProxy(req: Request, pathname: string, headers: Record<string, string>): Promise<Response> {
   const url = new URL(req.url);
   let targetPath = '';
-  if (pathname === '/symmetry/login') targetPath = '/users/login';
-  else if (pathname === '/symmetry/sessions') targetPath = '/training-sessions/';
-  else if (pathname === '/symmetry/bootstrap') targetPath = '/sync/bootstrap';
-  else targetPath = pathname.replace('/symmetry', '');
+  if (pathname === '/symmetry/login' || pathname === '/symmetry/users/login' || pathname === '/symmetry-api/users/login') {
+    targetPath = '/users/login';
+  } else if (
+    pathname === '/symmetry/sessions' ||
+    pathname === '/symmetry/training-sessions' ||
+    pathname === '/symmetry/training-sessions/' ||
+    pathname === '/symmetry-api/training-sessions/'
+  ) {
+    targetPath = '/training-sessions/';
+  } else if (pathname === '/symmetry/bootstrap' || pathname === '/symmetry/sync/bootstrap' || pathname === '/symmetry-api/sync/bootstrap') {
+    targetPath = '/sync/bootstrap';
+  } else {
+    targetPath = pathname.replace(/^\/(symmetry-api|symmetry)/, '');
+  }
 
   const targetUrl = `${SYMMETRY_API_BASE}${targetPath}${url.search}`;
   const forwardHeaders: Record<string, string> = {

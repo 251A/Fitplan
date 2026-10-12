@@ -34,10 +34,15 @@ export function isSymmetryConnected(): boolean {
 }
 
 export function getWorkerBaseUrl(): string {
-  // Uses Vite env, or current origin, or localhost for dev worker
   const override = localStorage.getItem('worker_url');
   if (override) return override.replace(/\/$/, '');
-  return '';
+  if (typeof window !== 'undefined' && window.location) {
+    const host = window.location.hostname;
+    if (host === 'localhost' || host === '127.0.0.1') {
+      return '';
+    }
+  }
+  return 'https://fitplan-sync.fitplan.workers.dev';
 }
 
 /** Login to Symmetry backend via Cloudflare Worker proxy */
@@ -47,16 +52,35 @@ export async function loginToSymmetry(
   workerBase = getWorkerBaseUrl(),
 ): Promise<{ ok: boolean; error?: string; auth?: SymmetryAuth }> {
   try {
-    const endpoint = `${workerBase}/symmetry/login`;
+    const endpoint = `${workerBase}/symmetry/users/login`;
     const res = await fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password: pass }),
+      body: JSON.stringify({ email: email.trim(), password: pass }),
     });
 
     const data = (await res.json()) as Record<string, unknown>;
     if (!res.ok) {
-      const err = typeof data.error === 'object' ? JSON.stringify(data.error) : (data.error as string) || (data.detail as string) || 'Error de inicio de sesión';
+      let err = 'Error al iniciar sesión en Symmetry';
+      if (data.error && typeof data.error === 'object') {
+        const eObj = data.error as Record<string, unknown>;
+        if (Array.isArray(eObj.non_field_errors) && eObj.non_field_errors[0]) {
+          const firstErr = String(eObj.non_field_errors[0]);
+          err = firstErr === 'Incorrect email'
+            ? 'Correo o contraseña incorrectos en Symmetry.'
+            : firstErr;
+        } else if (eObj.email) {
+          err = `Correo: ${Array.isArray(eObj.email) ? eObj.email[0] : eObj.email}`;
+        } else if (eObj.password) {
+          err = `Contraseña: ${Array.isArray(eObj.password) ? eObj.password[0] : eObj.password}`;
+        } else {
+          err = JSON.stringify(eObj);
+        }
+      } else if (typeof data.detail === 'string') {
+        err = data.detail;
+      } else if (typeof data.error === 'string') {
+        err = data.error;
+      }
       return { ok: false, error: err };
     }
 

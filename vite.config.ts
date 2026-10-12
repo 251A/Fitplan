@@ -6,6 +6,22 @@ export default defineConfig({
   // Relative base so the build works on GitHub Pages sub-paths too.
   base: './',
   plugins: [react()],
+  server: {
+    proxy: {
+      '^/symmetry-(api|proxy)': {
+        target: 'https://dev-api-398208568169.europe-southwest1.run.app/api',
+        changeOrigin: true,
+        secure: true,
+        rewrite: (path) => path.replace(/^\/symmetry-(api|proxy)/, ''),
+      },
+      '^/symmetry/(users|training-sessions|sync)': {
+        target: 'https://dev-api-398208568169.europe-southwest1.run.app/api',
+        changeOrigin: true,
+        secure: true,
+        rewrite: (path) => path.replace(/^\/symmetry/, ''),
+      },
+    },
+  },
   test: {
     environment: 'node',
     include: ['src/**/*.test.ts'],

@@ -16,3 +16,6 @@ CLAUDE.md
 *.apk
 *.xapk
 
+# Temp reverse engineering scratchpad
+scratch/
+

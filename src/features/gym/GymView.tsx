@@ -10,9 +10,18 @@ import {
   SYMMETRY_EXERCISES,
   calculateSymmetryRank,
   IMPLEMENT_LABELS,
-  type SymmetryExercise,
+  getMuscleImage,
+  getEquipmentImage,
 } from '../../data/symmetry/symmetryCatalog';
+import {
+  getAllQuickWorkouts,
+  MUSCLE_GROUP_LABELS,
+  LEVEL_LABELS,
+  EQUIPMENT_LABELS,
+  type QuickWorkout,
+} from '../../data/symmetry/quickWorkouts';
 import { isSymmetryConnected } from '../../data/symmetry/symmetryApi';
+import type { SymmetryTrackerInitialExercise } from './SymmetryLiveTracker';
 import './symmetryTheme.css';
 
 const shortDate = (d: string) =>
@@ -24,42 +33,9 @@ const shortDate = (d: string) =>
 
 type View =
   | { kind: 'list' }
-  | { kind: 'live'; templateName?: string; exercises?: SymmetryExercise[]; session?: GymSession }
+  | { kind: 'live'; templateName?: string; exercises?: SymmetryTrackerInitialExercise[]; session?: GymSession }
   | { kind: 'import' }
   | { kind: 'exercise'; exercise: Exercise };
-
-// Quick routines using Symmetry canonical exercises
-const QUICK_ROUTINES: {
-  id: string;
-  title: string;
-  desc: string;
-  exerciseIds: number[];
-}[] = [
-  {
-    id: 'push-a',
-    title: 'Empuje A (Pecho / Hombro / Tríceps)',
-    desc: 'Banca barra, militar mancuernas, aperturas y tríceps',
-    exerciseIds: [16, 39, 21, 41, 67],
-  },
-  {
-    id: 'pull-a',
-    title: 'Tracción A (Espalda / Bíceps)',
-    desc: 'Jalón al pecho, remo con barra, face pull y curl mancuernas',
-    exerciseIds: [48, 53, 55, 44, 61],
-  },
-  {
-    id: 'legs-a',
-    title: 'Pierna A (Cuádriceps / Femoral)',
-    desc: 'Sentadilla barra, prensa, curl femoral y gemelos',
-    exerciseIds: [1, 2, 7, 5, 11],
-  },
-  {
-    id: 'upper-b',
-    title: 'Torso B (Hipertrofia)',
-    desc: 'Inclinado mancuernas, dominadas, fondos y martillo',
-    exerciseIds: [18, 49, 23, 63, 68],
-  },
-];
 
 const MUSCLE_FILTER_OPTIONS: { key: string; label: string; svg?: string }[] = [
   { key: 'all', label: 'Todos' },
@@ -71,6 +47,21 @@ const MUSCLE_FILTER_OPTIONS: { key: string; label: string; svg?: string }[] = [
   { key: 'quads', label: 'Pierna', svg: '/symmetry/icons/muscles/cuadriceps.svg' },
 ];
 
+const ROUTINE_MUSCLE_OPTIONS: { key: string; label: string }[] = [
+  { key: 'all', label: 'Todos' },
+  { key: 'arms', label: 'Brazos' },
+  { key: 'chest', label: 'Pecho' },
+  { key: 'back', label: 'Espalda' },
+  { key: 'legs', label: 'Piernas' },
+  { key: 'shoulders', label: 'Hombros' },
+  { key: 'glutes', label: 'Glúteos' },
+  { key: 'core', label: 'Core / Abdomen' },
+  { key: 'upper_body', label: 'Torso' },
+  { key: 'full_body', label: 'Cuerpo Completo' },
+  { key: 'push', label: 'Empuje' },
+  { key: 'pull', label: 'Tracción' },
+];
+
 export function GymView() {
   const { exercises, bestSets, gymSessions, profile, days } = useAppData();
   const [tab, setTab] = useState<'sessions' | 'exercises' | 'routines'>('sessions');
@@ -78,6 +69,11 @@ export function GymView() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [catalogQuery, setCatalogQuery] = useState('');
   const [catalogMuscle, setCatalogMuscle] = useState('all');
+
+  // Quick Workouts Filters
+  const [routineMuscle, setRoutineMuscle] = useState('all');
+  const [routineEquipment, setRoutineEquipment] = useState<'all' | 'gym_small' | 'home'>('all');
+  const [routineLevel, setRoutineLevel] = useState<'all' | 'beginner' | 'intermediate' | 'advanced'>('all');
 
   const back = () => setView({ kind: 'list' });
 
@@ -95,14 +91,51 @@ export function GymView() {
 
   const connected = isSymmetryConnected();
 
-  // Launch routine by preset
-  function startRoutine(routineId: string) {
-    const routine = QUICK_ROUTINES.find((r) => r.id === routineId);
-    if (!routine) return;
-    const exList = routine.exerciseIds
-      .map((id) => SYMMETRY_EXERCISES.find((e) => e.id === id))
-      .filter((e): e is SymmetryExercise => Boolean(e));
-    setView({ kind: 'live', templateName: routine.title, exercises: exList });
+  // Load all authentic Symmetry quick workouts
+  const allRoutines = useMemo(() => getAllQuickWorkouts(), []);
+
+  const filteredRoutines = useMemo(() => {
+    return allRoutines.filter((r) => {
+      const matchM = routineMuscle === 'all' || r.muscleGroupId === routineMuscle;
+      const matchE = routineEquipment === 'all' || r.equipmentVersion === routineEquipment;
+      const matchL = routineLevel === 'all' || r.level === routineLevel;
+      return matchM && matchE && matchL;
+    });
+  }, [allRoutines, routineMuscle, routineEquipment, routineLevel]);
+
+  // Launch quick workout
+  function startQuickWorkout(routine: QuickWorkout) {
+    const exList: SymmetryTrackerInitialExercise[] = routine.exercises.map((e) => {
+      const symEx = SYMMETRY_EXERCISES.find(
+        (s) => s.id === e.exerciseTemplateId || s.name.toLowerCase() === e.name.toLowerCase(),
+      );
+      if (!symEx) {
+        return {
+          id: e.exerciseTemplateId,
+          name: e.name,
+          category: 'push' as const,
+          implement: 'dumbbell' as const,
+          primaryMuscle: 'chest' as const,
+          loggedUnit: 'kg',
+          loadDivisor: 1,
+          rankThresholds: { male: [], female: [] },
+          targetSets: e.numberOfSets,
+          targetReps: e.repsPerSet,
+        };
+      }
+      return {
+        ...symEx,
+        targetSets: e.numberOfSets,
+        targetReps: e.repsPerSet,
+      };
+    });
+
+    const muscleLabel = MUSCLE_GROUP_LABELS[routine.muscleGroupId] || routine.name;
+    setView({
+      kind: 'live',
+      templateName: `${routine.name} (${muscleLabel} · ${routine.durationMinutes} min)`,
+      exercises: exList,
+    });
   }
 
   // Filtered exercises for catalog
@@ -328,35 +361,128 @@ export function GymView() {
       {/* QUICK ROUTINES TAB */}
       {tab === 'routines' && (
         <section>
-          <div style={{ marginBottom: 12, color: 'var(--sym-text-muted)', fontSize: 13 }}>
-            Rutinas canónicas de Symmetry listas para iniciar en 1 toque sin suscripción Pro:
+          {/* Muscle Group Scroller */}
+          <div className="sym-muscle-scroller">
+            {ROUTINE_MUSCLE_OPTIONS.map((m) => (
+              <button
+                key={m.key}
+                type="button"
+                className={`sym-muscle-chip ${routineMuscle === m.key ? 'active' : ''}`}
+                onClick={() => setRoutineMuscle(m.key)}
+              >
+                {m.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Subfilters: Equipment & Level */}
+          <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
+            <select
+              value={routineEquipment}
+              onChange={(e) => setRoutineEquipment(e.target.value as 'all' | 'gym_small' | 'home')}
+              className="sym-input-number"
+              style={{ width: 'auto', padding: '6px 12px', fontSize: 13, textAlign: 'left' }}
+            >
+              <option value="all">Todo el equipo</option>
+              <option value="gym_small">Gimnasio</option>
+              <option value="home">En Casa</option>
+            </select>
+
+            <select
+              value={routineLevel}
+              onChange={(e) =>
+                setRoutineLevel(e.target.value as 'all' | 'beginner' | 'intermediate' | 'advanced')
+              }
+              className="sym-input-number"
+              style={{ width: 'auto', padding: '6px 12px', fontSize: 13, textAlign: 'left' }}
+            >
+              <option value="all">Todos los niveles</option>
+              <option value="beginner">Principiante</option>
+              <option value="intermediate">Intermedio</option>
+              <option value="advanced">Avanzado</option>
+            </select>
+
+            <span
+              style={{
+                marginLeft: 'auto',
+                fontSize: 12,
+                color: 'var(--sym-text-muted)',
+                alignSelf: 'center',
+              }}
+            >
+              {filteredRoutines.length} rutinas de Symmetry
+            </span>
           </div>
 
           <div className="sym-routine-grid">
-            {QUICK_ROUTINES.map((r) => (
-              <div
-                key={r.id}
-                className="sym-routine-card"
-                onClick={() => startRoutine(r.id)}
-                role="button"
-                tabIndex={0}
-              >
-                <h3 className="sym-routine-title">
-                  {r.title}
-                  <span style={{ color: 'var(--sym-emerald)', fontSize: 13 }}>Iniciar ›</span>
-                </h3>
-                <p className="sym-routine-desc">{r.desc}</p>
-                <div style={{ marginTop: 10, display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                  <span className="sym-tag-pill">{r.exerciseIds.length} ejercicios</span>
-                  <span
-                    className="sym-tag-pill"
-                    style={{ background: 'rgba(16, 185, 129, 0.1)', color: 'var(--sym-emerald)' }}
-                  >
-                    Ilimitado
-                  </span>
+            {filteredRoutines.map((r) => {
+              const muscleLabel = MUSCLE_GROUP_LABELS[r.muscleGroupId] || r.name;
+              const equipLabel = EQUIPMENT_LABELS[r.equipmentVersion] || r.equipmentVersion;
+              const levelLabel = LEVEL_LABELS[r.level] || r.level;
+
+              return (
+                <div
+                  key={r.id}
+                  className="sym-qw-card"
+                  onClick={() => startQuickWorkout(r)}
+                  role="button"
+                  tabIndex={0}
+                >
+                  <div className="sym-qw-thumb-wrap">
+                    <img
+                      src={r.thumbnailUrl}
+                      alt={r.name}
+                      className="sym-qw-thumb"
+                      loading="lazy"
+                      onError={(e) => {
+                        // Fallback to local default thumbnail if offline
+                        (e.currentTarget as HTMLImageElement).src =
+                          '/symmetry/images/default_exercise_thumbnail.png';
+                      }}
+                    />
+                    <div className="sym-qw-duration-badge">⏱️ {r.durationMinutes} min</div>
+                    <div className={`sym-qw-level-badge ${r.level}`}>{levelLabel}</div>
+                  </div>
+
+                  <div className="sym-qw-body">
+                    <h3 className="sym-qw-title">
+                      <span>{r.name}</span>
+                      <span
+                        className="sym-tag-pill"
+                        style={{
+                          background: 'rgba(59, 130, 246, 0.15)',
+                          color: '#60a5fa',
+                          fontWeight: 700,
+                        }}
+                      >
+                        {muscleLabel}
+                      </span>
+                    </h3>
+
+                    <div className="sym-qw-exercises-list">
+                      {r.exercises.map((e) => `${e.name} (${e.numberOfSets}×${e.repsPerSet})`).join(' · ')}
+                    </div>
+
+                    <div className="sym-qw-footer">
+                      <div style={{ display: 'flex', gap: 6 }}>
+                        <span className="sym-tag-pill">{r.exercises.length} ejercicios</span>
+                        <span className="sym-tag-pill">{equipLabel}</span>
+                      </div>
+                      <button
+                        type="button"
+                        className="sym-qw-start-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          startQuickWorkout(r);
+                        }}
+                      >
+                        Iniciar Rutina ›
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </section>
       )}
@@ -411,6 +537,8 @@ export function GymView() {
               const tierColor = rank?.color ?? '#6b7280';
               const progress = rank?.progressPercent ?? 0;
               const implementLabel = IMPLEMENT_LABELS[symEx.implement] ?? symEx.implement;
+              const muscleImg = getMuscleImage(symEx.primaryMuscle);
+              const equipImg = getEquipmentImage(symEx.implement);
 
               return (
                 <div
@@ -431,8 +559,19 @@ export function GymView() {
                   role="button"
                   tabIndex={0}
                 >
-                  <div className="sym-rank-card-badge">
-                    <img src={rankSvg} alt={tierName} />
+                  <div className="sym-rank-card-visual">
+                    <img
+                      src={muscleImg}
+                      alt={symEx.primaryMuscle}
+                      className="sym-exercise-anatomy-thumb"
+                      loading="lazy"
+                    />
+                    <img
+                      src={equipImg}
+                      alt={symEx.implement}
+                      className="sym-exercise-equipment-pip"
+                      loading="lazy"
+                    />
                   </div>
 
                   <div className="sym-rank-card-content">
@@ -454,10 +593,16 @@ export function GymView() {
 
                     <div className="sym-rank-ratio-text">
                       <span>
-                        {last ? `${exerciseWeightLabel(matchingEx ?? ({} as Exercise), last.weightKg)} × ${last.reps}` : 'Sin marcas'}
+                        {last
+                          ? `${exerciseWeightLabel(matchingEx ?? ({} as Exercise), last.weightKg)} × ${last.reps}`
+                          : 'Sin marcas'}
                       </span>
                       <span>{progress}%</span>
                     </div>
+                  </div>
+
+                  <div className="sym-rank-card-badge">
+                    <img src={rankSvg} alt={tierName} loading="lazy" />
                   </div>
                 </div>
               );

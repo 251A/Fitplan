@@ -33,12 +33,12 @@ export const RANK_TIERS = [
   { id: 'emerald1', name: 'Esmeralda I', color: '#10b981', svg: '/symmetry/icons/ranking/rank=emerald1.svg' },
   { id: 'emerald2', name: 'Esmeralda II', color: '#10b981', svg: '/symmetry/icons/ranking/rank=emerald2.svg' },
   { id: 'emerald3', name: 'Esmeralda III', color: '#10b981', svg: '/symmetry/icons/ranking/rank=emerald3.svg' },
-  { id: 'diamond1', name: 'Diamante I', color: '#06b6d4', svg: '/symmetry/icons/ranking/rank=diamond1.svg' },
-  { id: 'diamond2', name: 'Diamante II', color: '#06b6d4', svg: '/symmetry/icons/ranking/rank=diamond2.svg' },
-  { id: 'diamond3', name: 'Diamante III', color: '#06b6d4', svg: '/symmetry/icons/ranking/rank=diamond3.svg' },
   { id: 'ruby1', name: 'Rubí I', color: '#ef4444', svg: '/symmetry/icons/ranking/rank=ruby1.svg' },
   { id: 'ruby2', name: 'Rubí II', color: '#ef4444', svg: '/symmetry/icons/ranking/rank=ruby2.svg' },
   { id: 'ruby3', name: 'Rubí III', color: '#ef4444', svg: '/symmetry/icons/ranking/rank=ruby3.svg' },
+  { id: 'diamond1', name: 'Diamante I', color: '#06b6d4', svg: '/symmetry/icons/ranking/rank=diamond1.svg' },
+  { id: 'diamond2', name: 'Diamante II', color: '#06b6d4', svg: '/symmetry/icons/ranking/rank=diamond2.svg' },
+  { id: 'diamond3', name: 'Diamante III', color: '#06b6d4', svg: '/symmetry/icons/ranking/rank=diamond3.svg' },
   { id: 'champion', name: 'Campeón I', color: '#8b5cf6', svg: '/symmetry/icons/ranking/rank=champion.svg' },
   { id: 'champion2', name: 'Campeón II', color: '#8b5cf6', svg: '/symmetry/icons/ranking/rank=champion2.svg' },
   { id: 'champion3', name: 'Campeón III', color: '#8b5cf6', svg: '/symmetry/icons/ranking/rank=champion3.svg' },
@@ -138,3 +138,40 @@ export const IMPLEMENT_LABELS: Record<string, string> = {
   cable: 'Polea',
   bodyweight: 'Peso Corporal',
 };
+
+export function getMuscleImage(muscle: string, selected = false): string {
+  const suffix = selected ? '_selected.png' : '.png';
+  const map: Record<string, string> = {
+    chest: 'image_chest',
+    back: 'image_lats',
+    shoulders: 'image_shoulders',
+    biceps: 'image_biceps',
+    triceps: 'image_triceps',
+    forearms: 'image_forearms',
+    quads: 'image_quads',
+    hamstrings: 'image_hamstrings',
+    glutes: 'image_glutes',
+    calves: 'image_calves',
+    abs: 'image_abs',
+    traps: 'image_trapezoids',
+    neck: 'image_neck',
+    adductors: 'image_adductors',
+    abductors: 'image_abductors',
+    lowerback: 'image_lowerback',
+  };
+  const key = map[muscle] || 'image_chest';
+  return `/symmetry/images/shared/${key}${suffix}`;
+}
+
+export function getEquipmentImage(equipment: string): string {
+  const map: Record<string, string> = {
+    dumbbell: '/symmetry/images/equipment/img-dumbbells.jpg',
+    barbell: '/symmetry/images/equipment/img-barbells.jpg',
+    smith: '/symmetry/images/equipment/img-smith-machine.jpg',
+    cable: '/symmetry/images/equipment/img-crossover-cable.jpg',
+    machine: '/symmetry/images/equipment/img-commercial-gym-machines.jpg',
+    bodyweight: '/symmetry/images/equipment/img-no-equipment.jpg',
+  };
+  return map[equipment] || '/symmetry/images/equipment/img-dumbbells.jpg';
+}
+

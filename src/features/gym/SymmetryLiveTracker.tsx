@@ -7,6 +7,8 @@ import {
   findSymmetryExercise,
   calculateSymmetryRank,
   IMPLEMENT_LABELS,
+  getMuscleImage,
+  getEquipmentImage,
   type SymmetryExercise,
   type CalculatedRank,
 } from '../../data/symmetry/symmetryCatalog';
@@ -67,6 +69,11 @@ function formatTimer(totalSeconds: number): string {
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
 
+export interface SymmetryTrackerInitialExercise extends SymmetryExercise {
+  targetSets?: number;
+  targetReps?: number;
+}
+
 export function SymmetryLiveTracker({
   initialTemplateName = 'Entrenamiento',
   initialExercises = [],
@@ -74,7 +81,7 @@ export function SymmetryLiveTracker({
   onDone,
 }: {
   initialTemplateName?: string;
-  initialExercises?: SymmetryExercise[];
+  initialExercises?: SymmetryTrackerInitialExercise[];
   existingSession?: GymSession;
   onDone: () => void;
 }) {
@@ -133,13 +140,16 @@ export function SymmetryLiveTracker({
     }
 
     if (initialExercises.length > 0) {
-      return initialExercises.map((symEx) => {
+      return initialExercises.map((symEx, exIdx) => {
         const matchingEx = exercises.find(
           (e) => e.name.toLowerCase() === symEx.name.toLowerCase() || e.id === String(symEx.id),
         );
         const exId = matchingEx ? matchingEx.id : `sym-${symEx.id}`;
+        const numSets = symEx.targetSets && symEx.targetSets > 0 ? symEx.targetSets : 3;
+        const targetReps = symEx.targetReps && symEx.targetReps > 0 ? String(symEx.targetReps) : '';
+
         return {
-          uid: `ex-${Date.now()}-${Math.random()}`,
+          uid: `ex-${Date.now()}-${exIdx}-${Math.random()}`,
           exerciseId: exId,
           symmetryId: symEx.id,
           name: symEx.name,
@@ -147,29 +157,13 @@ export function SymmetryLiveTracker({
           category: symEx.category,
           primaryMuscle: symEx.primaryMuscle,
           loadDivisor: symEx.loadDivisor,
-          sets: [
-            {
-              id: `set-init-1`,
-              weightKg: '',
-              reps: '',
-              rir: '',
-              completed: false,
-            },
-            {
-              id: `set-init-2`,
-              weightKg: '',
-              reps: '',
-              rir: '',
-              completed: false,
-            },
-            {
-              id: `set-init-3`,
-              weightKg: '',
-              reps: '',
-              rir: '',
-              completed: false,
-            },
-          ],
+          sets: Array.from({ length: numSets }, (_, sIdx) => ({
+            id: `set-init-${exIdx}-${sIdx}`,
+            weightKg: '',
+            reps: targetReps,
+            rir: '',
+            completed: false,
+          })),
         };
       });
     }
@@ -433,7 +427,7 @@ export function SymmetryLiveTracker({
             onDone();
           }}
         >
-          ‹ Cancelar
+          ‹ Descartar
         </button>
 
         <div className="sym-timer-display">
@@ -447,7 +441,7 @@ export function SymmetryLiveTracker({
           onClick={handleFinishSession}
           disabled={isFinishing}
         >
-          {isFinishing ? 'Guardando...' : 'Terminar'}
+          {isFinishing ? 'Guardando...' : 'Finalizar'}
         </button>
       </header>
 
@@ -525,11 +519,36 @@ export function SymmetryLiveTracker({
           const rankSvg = rank?.svg ?? '/symmetry/icons/ranking/rank=iron1.svg';
           const rankTierName = rank?.name ?? 'Hierro I';
           const implementLabel = IMPLEMENT_LABELS[ex.implement] ?? ex.implement;
+          const muscleImg = getMuscleImage(ex.primaryMuscle);
+          const equipImg = getEquipmentImage(ex.implement);
+
+          // Check if current session sets beat the historical 1RM for a new PR
+          const hasNewPR = ex.sets.some((s) => {
+            if (!s.completed) return false;
+            const w = parseFloat(s.weightKg);
+            const r = parseInt(s.reps, 10);
+            if (!w || !r || !last || last.weightKg <= 0) return false;
+            const current1RM = r === 1 ? w : w * (1 + r / 30);
+            const last1RM = last.reps === 1 ? last.weightKg : last.weightKg * (1 + last.reps / 30);
+            return current1RM > last1RM;
+          });
 
           return (
             <div key={ex.uid} className="sym-exercise-box">
               <div className="sym-exercise-header">
-                <img src={rankSvg} alt={rankTierName} className="sym-rank-badge-img" />
+                <div className="sym-exercise-visual">
+                  <img
+                    src={muscleImg}
+                    alt={ex.primaryMuscle}
+                    className="sym-exercise-anatomy-thumb"
+                  />
+                  <img
+                    src={equipImg}
+                    alt={ex.implement}
+                    className="sym-exercise-equipment-pip"
+                  />
+                </div>
+
                 <div className="sym-exercise-meta">
                   <h3 className="sym-exercise-name">{ex.name}</h3>
                   <div className="sym-exercise-tags">
@@ -549,16 +568,27 @@ export function SymmetryLiveTracker({
                     )}
                   </div>
                 </div>
-                <button
-                  type="button"
-                  className="sym-modal-close-btn"
-                  style={{ fontSize: 16 }}
-                  onClick={() => deleteExercise(exIdx)}
-                  title="Eliminar ejercicio"
-                >
-                  ✕
-                </button>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <img src={rankSvg} alt={rankTierName} className="sym-rank-badge-img" />
+                  <button
+                    type="button"
+                    className="sym-modal-close-btn"
+                    style={{ fontSize: 16 }}
+                    onClick={() => deleteExercise(exIdx)}
+                    title="Eliminar ejercicio"
+                  >
+                    ✕
+                  </button>
+                </div>
               </div>
+
+              {hasNewPR && (
+                <div className="sym-pr-banner">
+                  <span style={{ fontSize: 16 }}>🔥</span>
+                  <span>¡Nuevo Récord Personal alcanzado en este ejercicio!</span>
+                </div>
+              )}
 
               {/* Sets Table */}
               <table className="sym-sets-table">
@@ -721,10 +751,10 @@ export function SymmetryLiveTracker({
             <button
               type="button"
               className="sym-rest-step-btn"
-              style={{ color: 'var(--sym-red)' }}
+              style={{ color: 'var(--sym-red)', fontWeight: 700 }}
               onClick={() => setRestSecondsLeft(null)}
             >
-              ✕
+              Saltar
             </button>
           </div>
         </div>
