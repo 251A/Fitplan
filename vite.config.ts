@@ -6,6 +6,15 @@ export default defineConfig({
   // Relative base so the build works on GitHub Pages sub-paths too.
   base: './',
   plugins: [react()],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+        },
+      },
+    },
+  },
   server: {
     proxy: {
       '^/symmetry-(api|proxy)': {

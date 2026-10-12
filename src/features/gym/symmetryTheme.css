@@ -1,29 +1,44 @@
 /* Symmetry Theme Styles for FitPlan Gym Section */
 
 :root {
-  --sym-bg: #0b0c10;
-  --sym-surface: #14161f;
-  --sym-card: #191c28;
-  --sym-card-hover: #1f2333;
-  --sym-border: rgba(255, 255, 255, 0.08);
-  --sym-border-active: rgba(59, 130, 246, 0.5);
-  --sym-text-primary: #f8fafc;
-  --sym-text-muted: #94a3b8;
-  --sym-blue: #3b82f6;
-  --sym-blue-glow: rgba(59, 130, 246, 0.25);
-  --sym-emerald: #10b981;
-  --sym-emerald-glow: rgba(16, 185, 129, 0.3);
-  --sym-gold: #f59e0b;
-  --sym-purple: #8b5cf6;
-  --sym-red: #ef4444;
+  --sym-bg: var(--bg);
+  --sym-surface: var(--surface);
+  --sym-card: var(--card-raised);
+  --sym-card-hover: var(--card-raised-hover);
+  --sym-border: var(--line);
+  --sym-border-active: var(--line-active);
+  --sym-text-primary: var(--text);
+  --sym-text-muted: var(--muted);
+  --sym-blue: var(--accent);
+  --sym-blue-glow: var(--accent-glow);
+  --sym-emerald: var(--good);
+  --sym-emerald-glow: var(--good-glow);
+  --sym-gold: var(--warn);
+  --sym-purple: var(--purple);
+  --sym-red: var(--bad);
 }
 
 .symmetry-container {
-  font-family: inherit;
+  font-family: 'DM Sans', sans-serif;
   color: var(--sym-text-primary);
   background: transparent;
   min-height: 100%;
   padding-bottom: 24px;
+}
+
+.symmetry-screen-root,
+.symmetry-screen-root button,
+.symmetry-screen-root input {
+  font-family: 'DM Sans', sans-serif;
+}
+
+.symmetry-screen-root :is(h1, h2, h3, h4, h5, h6) {
+  font-family: 'Albert Sans', 'DM Sans', sans-serif;
+}
+
+.symmetry-screen-root :is(.sym-rest-timer-time, .sym-rank-ratio-text, .sym-metric-value) {
+  font-family: 'DM Mono', monospace;
+  font-variant-numeric: tabular-nums;
 }
 
 /* Header */

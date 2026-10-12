@@ -6,6 +6,8 @@ import {
   getEquipmentImage,
   type SymmetryExercise,
 } from '../../data/symmetry/symmetryCatalog';
+import { SymmetryExerciseVisual } from './SymmetryExerciseVisual';
+import { assetUrl } from '../../data/symmetry/assetHelper';
 
 const MUSCLE_FILTERS: { key: string; label: string; muscleKey?: string }[] = [
   { key: 'all', label: 'Todos' },
@@ -20,9 +22,6 @@ const MUSCLE_FILTERS: { key: string; label: string; muscleKey?: string }[] = [
   { key: 'abs', label: 'Abdomen', muscleKey: 'abs' },
 ];
 
-import { SymmetryExerciseVisual } from './SymmetryExerciseVisual';
-import { assetUrl } from '../../data/symmetry/assetHelper';
-
 interface SymmetryExercisePickerProps {
   onSelect: (exercise: SymmetryExercise) => void;
   onClose: () => void;
@@ -36,6 +35,7 @@ export function SymmetryExercisePicker({
 }: SymmetryExercisePickerProps) {
   const [query, setQuery] = useState('');
   const [selectedMuscle, setSelectedMuscle] = useState('all');
+  const [selectedEquipment, setSelectedEquipment] = useState('all');
 
   const filteredExercises = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -45,9 +45,10 @@ export function SymmetryExercisePicker({
         ex.name.toLowerCase().includes(q) ||
         (IMPLEMENT_LABELS[ex.implement] ?? ex.implement).toLowerCase().includes(q);
       const matchMuscle = selectedMuscle === 'all' || ex.primaryMuscle === selectedMuscle;
-      return matchQuery && matchMuscle;
+      const matchEquipment = selectedEquipment === 'all' || ex.implement === selectedEquipment;
+      return matchQuery && matchMuscle && matchEquipment;
     });
-  }, [query, selectedMuscle]);
+  }, [query, selectedEquipment, selectedMuscle]);
 
   return (
     <div className="sym-modal-overlay" onClick={onClose}>
@@ -105,6 +106,23 @@ export function SymmetryExercisePicker({
             })}
           </div>
 
+          <div className="sym-muscle-scroller" role="group" aria-label="Filtrar por equipamiento">
+            {[
+              { key: 'all', label: 'Todo el equipo' },
+              ...Object.entries(IMPLEMENT_LABELS).map(([key, label]) => ({ key, label })),
+            ].map((equipment) => (
+              <button
+                key={equipment.key}
+                className={`sym-muscle-chip ${selectedEquipment === equipment.key ? 'active' : ''}`}
+                onClick={() => setSelectedEquipment(equipment.key)}
+                type="button"
+                aria-pressed={selectedEquipment === equipment.key}
+              >
+                {equipment.label}
+              </button>
+            ))}
+          </div>
+
           <div className="sym-picker-list">
             {filteredExercises.length === 0 ? (
               <p style={{ textAlign: 'center', color: 'var(--sym-text-muted)', padding: '24px 0' }}>
@@ -138,6 +156,7 @@ export function SymmetryExercisePicker({
                         <img
                           src={equipImg}
                           alt=""
+                          onError={(e) => { e.currentTarget.style.display = 'none'; }}
                           style={{ width: 16, height: 16, borderRadius: 3, objectFit: 'cover', opacity: 0.8 }}
                         />
                       </div>

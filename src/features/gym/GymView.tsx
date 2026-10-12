@@ -27,6 +27,7 @@ import {
 } from '../../data/symmetry/symmetryCatalog';
 import { isSymmetryConnected } from '../../data/symmetry/symmetryApi';
 import { SymmetryLoginModal } from './SymmetryLoginModal';
+import './symmetryTheme.css';
 
 type NavTab = 'friends' | 'ranks' | 'train' | 'library' | 'profile';
 
@@ -326,18 +327,18 @@ export function GymView() {
           </header>
 
           {/* Big Action Buttons */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 20 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 8, marginBottom: 20 }}>
             <button
               type="button"
               onClick={() => setView({ kind: 'live', templateName: 'Entrenamiento Libre' })}
               style={{
-                padding: '14px 12px',
-                borderRadius: 16,
+                padding: '12px 6px',
+                borderRadius: 14,
                 background: '#ffffff',
                 color: '#000000',
                 border: 'none',
                 fontWeight: 800,
-                fontSize: 14,
+                fontSize: 12,
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
@@ -346,20 +347,42 @@ export function GymView() {
                 boxShadow: '0 4px 14px rgba(0,0,0,0.3)',
               }}
             >
-              <span>🏋️</span> Iniciar Vacío
+              <span aria-hidden="true">🏋️</span> Entrenar
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowExercisePicker(true)}
+              style={{
+                padding: '12px 6px',
+                borderRadius: 14,
+                background: 'var(--sym-card)',
+                color: '#ffffff',
+                border: '1px solid var(--sym-border)',
+                fontWeight: 800,
+                fontSize: 12,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 6,
+              }}
+              aria-label="Añadir ejercicio"
+            >
+              <span aria-hidden="true">＋</span> Ejercicio
             </button>
 
             <button
               type="button"
               onClick={() => setView({ kind: 'import' })}
               style={{
-                padding: '14px 12px',
-                borderRadius: 16,
+                padding: '12px 6px',
+                borderRadius: 14,
                 background: '#16181e',
                 color: '#ffffff',
                 border: '1px solid #282b36',
                 fontWeight: 800,
-                fontSize: 14,
+                fontSize: 12,
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
@@ -367,7 +390,7 @@ export function GymView() {
                 gap: 8,
               }}
             >
-              <span>📸</span> Importar OCR
+              <span aria-hidden="true">📸</span> Importar OCR
             </button>
           </div>
 
@@ -750,12 +773,20 @@ export function GymView() {
                           flexShrink: 0,
                         }}
                       >
+                        <SymmetryExerciseVisual
+                          exercise={{
+                            id: r.exercises[0]?.exerciseTemplateId,
+                            name: r.exercises[0]?.name || r.name,
+                          }}
+                          variant="thumbnail"
+                          size={60}
+                        />
                         <img
                           src={r.thumbnailUrl}
                           alt={r.name}
-                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
                           onError={(e) => {
-                            (e.currentTarget as HTMLImageElement).src = assetUrl('symmetry/images/default_exercise_thumbnail.png');
+                            e.currentTarget.style.display = 'none';
                           }}
                         />
                         <div

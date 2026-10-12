@@ -199,16 +199,40 @@ export const SymmetryExerciseVisual: React.FC<SymmetryExerciseVisualProps> = ({
           justifyContent: 'center',
         }}
       >
-        <img
-          src={heroImg}
-          alt={name}
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'contain',
-            filter: 'drop-shadow(0 10px 25px rgba(0,0,0,0.8))',
-          }}
-        />
+        {!loadError ? (
+          <img
+            src={heroImg}
+            alt={name}
+            onError={() => setLoadError(true)}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'contain',
+              filter: 'drop-shadow(0 10px 25px rgba(0,0,0,0.8))',
+            }}
+          />
+        ) : (
+          <div
+            role="img"
+            aria-label={name || 'Ejercicio'}
+            style={{
+              width: '72%',
+              aspectRatio: '1',
+              borderRadius: '50%',
+              display: 'grid',
+              placeItems: 'center',
+              color: '#ffffff',
+              fontFamily: 'Albert Sans, sans-serif',
+              fontSize: 36,
+              fontWeight: 800,
+              background: 'radial-gradient(circle, rgba(59,130,246,.35), rgba(19,21,26,.96) 72%)',
+              border: '1px solid rgba(96,165,250,.35)',
+              boxShadow: '0 0 36px rgba(59,130,246,.2)',
+            }}
+          >
+            {initials}
+          </div>
+        )}
 
         {/* Floating blue Symmetry 'S' badge (matching screenshot 8 & 9) */}
         <div
