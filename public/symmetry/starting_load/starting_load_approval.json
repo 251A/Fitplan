@@ -1,0 +1,79 @@
+{
+  "$doc": [
+    "Versión, estado y firma de la hoja del peso inicial (SAT-5640), y lo que falta para congelarla. Va con starting_load_rules.json, starting_load_coefficients.csv y starting_load_reference_cases.json.",
+    "Nada de este fichero decide un peso, así que no entra en 'content_sha256': la huella es de las reglas, la hoja y los casos (test_starting_load_coefficients.py la recalcula). Si el contenido cambia, la huella cambia, y una hoja congelada tiene que estrenar versión.",
+    "La app solo publica una hoja con status 'frozen' (requisito para SAT-5642; nada lo impone todavía en la app). 'frozen' exige la firma de Mauro aquí, con la huella sobre la que se transcribió igual a la actual, y en cada fila de la hoja; ninguna fila sin clasificar; una 'version' que termina en los 8 primeros caracteres de 'content_sha256'; y nada abierto abajo.",
+    "La 'version' termina siempre en los 8 primeros caracteres de 'content_sha256', también en borrador: dos borradores distintos nunca comparten versión, y la app sabe cuál copió.",
+    "Tres clases de abierto, porque se piden distinto: pending_decisions (Mauro elige), source_errors (Mauro confirma que la fuente está mal y da el número) y pending_verifications (una comprobación con dueño nombrado). Una verificación hecha pasa a done_verifications con su fecha, cómo se hizo y el resultado, y deja de bloquear la congelación.",
+    "'does_not_block_freeze' es lo que se sabe que falta pero no decide ningún peso de esta hoja: una dependencia de otro sistema, o un recuento contra algo que todavía no existe. No entra en los grupos que congelan, porque una hoja que espera a otro sistema no es una hoja sin decidir. Lo demás que se exige a un item abierto se le exige igual: dueño, clave única y que no choque con una decisión cerrada; y además su 'why_not', quién decidió que no bloquea ('decided_by') y cuándo ('decided_at'). Los tests exigen que esos campos estén; no pueden exigir que la razón sea verdad. Mover un bloqueante real aquí sigue siendo posible, y lo único que lo impide es que alguien lea el diff: lo que estos campos garantizan es que el movimiento deja un nombre y una razón que leer.",
+    "'approval' separa quién aprobó de quién lo escribió: 'approved_by' es quien dio el ok, 'transcribed_by' quien lo pasó a estos ficheros, y 'approved_scope' dice qué tenía delante al darlo. La guarda de congelado compara 'approval.content_sha256' con la huella actual, así que prueba que la firma cubre este contenido, no que el aprobador haya visto este objeto: eso lo dice 'approved_scope'. Con la hoja congelada, la guarda exige 'transcribed_by' y que 'approved_scope' nombre la 'version' actual, para que al volver a congelar nadie arrastre un alcance escrito para otro contenido. Lo que dice ese texto no lo comprueba ningún test."
+  ],
+  "version": "2026-09-24-7903159d",
+  "content_sha256": "7903159df0f48e1f4df9d04581396390ea302957593136c1d1514624bb3af26d",
+  "status": "frozen",
+  "approval": {
+    "approved_by": "Mauro",
+    "approved_at": "2026-09-24",
+    "transcribed_by": "Jesús",
+    "approved_scope": "Versión 2026-09-24-7903159d. La hoja entera, en un ok de Slack a 'doy la hoja por aprobada por ti', sin revisión fila a fila. Tenía delante los cuatro pesos medidos de heavy_rows_vs_reality. Esta versión añade a lo que vio la reclasificación de 4325 bajo su regla del 19-09 y el paso de dos verificaciones a does_not_block_freeze; ninguna cambia un kilo. Las consecuencias que no ha visto están en sheet_approved_by_mauro.",
+    "content_sha256": "7903159df0f48e1f4df9d04581396390ea302957593136c1d1514624bb3af26d"
+  },
+  "pending_decisions": [],
+  "source_errors": [],
+  "pending_verifications": [],
+  "does_not_block_freeze": [
+    {
+      "key": "coverage_of_new_plans",
+      "owner": "Muvdi",
+      "decided_by": "Jesús",
+      "decided_at": "2026-09-24",
+      "what": "Recontar la hoja contra los 80 planes nuevos cuando existan (SAT-5638, asignado a Muvdi). Mientras, un ejercicio nuevo sin fila no recibe peso.",
+      "why_not": "Esos planes no existen todavía. Cuando existan, las filas que falten se añaden, la huella cambia y la hoja estrena versión y firma. Recontar contra algo que aún no está escrito no es una pregunta abierta de esta hoja."
+    },
+    {
+      "key": "app_revalidation_rules_live",
+      "owner": "JP",
+      "decided_by": "Jesús",
+      "decided_at": "2026-09-24",
+      "what": "Las reglas exercise_level_matches_bucket e injuries del validador de planes (SAT-5623) siguen en pending. En Jira a 24-09, el resolver de la app que las aplica (SAT-5627) está bloqueado por las tablas versionadas de SAT-5624. Hasta que corran, ninguna alternativa ligera pasa la revalidación y la app sirve needs_lighter_alternative, sin peso: 106 de las 6.320 combinaciones del barrido de sheet_approved_by_mauro. Otras 9 salen sin peso pase lo que pase, porque su ejercicio no tiene alternativa; no dependen de estas reglas.",
+      "why_not": "No cambia ningún resultado de esta hoja. Los casos de referencia son la salida del calculador ANTES de esa revalidación (lighter_alternative.not_evaluable_policy), y esa misma política ya dice qué sirve la app mientras las reglas estén en pending. Que la revalidación apruebe o rechace una alternativa es del validador, no de esta hoja: cuando las reglas estén vivas, un needs_lighter_alternative puede ser correcto aunque el caso diga otra cosa."
+    }
+  ],
+  "done_verifications": [
+    {
+      "key": "implement_against_catalog",
+      "owner": "Jesús",
+      "done": "2026-09-21",
+      "how": "check_starting_load_against_catalog en producción (job dev-api-migrate, ejecución dev-api-migrate-5h9js), tras el merge de la #1034",
+      "result": "Las 155 filas son ejercicios core del catálogo y ningún nombre cambió. El comando compara el implemento de 153, las que tienen peso y las no_external_load, y las 153 cuadran con equipmentUsed. 4314 (weighted_bodyweight) y 4325 (entonces unclassified) no se comparan por su clase; la 4325 se cerró el 24-09 (ver unclassified_implement más abajo). La salida de esa corrida decía '155 rows agree' y se leía como si hubiera comparado las 155: desde el 24-09 el comando cuenta aparte las que no compara."
+    },
+    {
+      "key": "coefficients_vs_prod_ranking_v2",
+      "owner": "Jesús",
+      "done": "2026-09-21",
+      "how": "Lectura de solo lectura de rankings_lookup_table_weighted_v2 en Cloud SQL, computed_date 2026-09-13. Peldaño 4 = Bronce III (índice 21), peldaño 7 = Plata III (índice 18); la puntuación v2 se pasa a ratio lineal con el peso corporal medio de la banda (H 77 kg, M 67 kg) y el coeficiente de la hoja se lleva a la unidad registrada (coeficiente / divisor).",
+      "result": "Hoja/v2 en 292 celdas de 78 filas: mediana 1,36× (p10 0,71×, p90 2,83×). Hombres 1,14× novato y 1,09× experimentado; mujeres 1,75× y 1,67×. Por encima de 2× sobre todo compuestos con barra, smith o goblet (4248, 4, 4246 a 3,3-3,5×; 1 y 5 a 2,3×) y 4258 (4,1×); por debajo de 0,7× máquinas de aislamiento (104, 3444, 6, 1945, 1070). v2 reparte peldaños entre todos los que registran series, no entre usuarios nuevos: si la hoja se mueve lo decide rung_calibration, y la cifra va a Mauro con ella. En esa fecha v2 no tiene filas de hombre para 6, 9, 14, 17, 19, 27, 34, 48, 81 y 91."
+    },
+    {
+      "key": "rung_calibration",
+      "owner": "Jesús",
+      "done": "2026-09-21",
+      "how": "PostHog, evento log_set con scope first_workout de los últimos 60 días: peso registrado por usuario y ejercicio llevado a ratio de peso corporal con las mismas reps de la hoja, partido por lo que la hoja prescribe, por género y por respuesta de experiencia del onboarding. Solo celdas con 30 usuarios o más.",
+      "result": "Los peldaños aguantan: la mediana de lo real entre lo que pide la hoja es 1,20 en hombres novatos, 1,23 en hombres con experiencia, 0,96 en mujeres novatas y 0,86 en mujeres con experiencia. Las máquinas de aislamiento salen ligeras, que no es un riesgo. Cinco filas salen pesadas de verdad y pasan a heavy_rows_vs_reality. Las siete filas corregidas el 19-09 caen entre 1,05 y 1,89, dentro de rango. En barra, entre el 18 y el 34 por ciento de las series registradas están por debajo de 20 kg, o sea barra vacía o barras cortas; contando solo las de 20 kg o más los compuestos básicos quedan alrededor de 1,0."
+    },
+    {
+      "key": "heavy_rows_measured_against_db",
+      "owner": "Jesús",
+      "done": "2026-09-24",
+      "how": "Cloud SQL, solo lectura, 24-09: todas las series de repeticiones de los cinco ejercicios en 7 días, entrando por el índice (exerciseTemplateId, timestampCompleted) y subiendo a la sesión y al perfil por clave primaria. El peso de cada serie se lleva a ratio de peso corporal con la misma fórmula de la hoja y se toma la mediana por ejercicio, género y experiencia, con el peso corporal del onboarding. LÍMITE: la muestra son todas las series de esos 7 días, no solo primeros entrenamientos, así que la población es la que sigue entrenando, no la que estrena. Como esa gente ya progresó, su peso es un techo del peso del primer día: eso es un razonamiento, no una medición, y por él el recorte se queda del lado prudente. rung_calibration (PostHog, 21-09) sí acotó a primeros entrenamientos, pero daba un ratio por ejercicio sin distinguir el implemento real, y por eso se rehízo para estas cinco filas.",
+      "result": "Mediana de lo real entre lo que pide la hoja, por celda (entre paréntesis las series medidas):\n  4248 Press Francés Tumbado — H nov 0,61 (449) · H exp 0,53 (1.143) · M nov 0,59 (26) · M exp 0,46 (38) → factor 0,56\n  4 Sentadilla Búlgara (Smith) — H nov 0,57 (810) · H exp 0,68 (2.515) · M nov 0,58 (975) · M exp 0,68 (2.527) → factor 0,63\n  4297 Goblet (Kettlebell) — H nov 0,62 (581) · H exp 0,74 (685) · M nov 0,67 (702) · M exp 0,77 (881) → factor 0,70\n  102 Goblet (Mancuerna) — H nov 0,59 (3.939) · H exp 0,74 (4.178) · M nov 0,76 (3.146) · M exp 0,89 (3.847) → factor 0,75\n  5 Peso Muerto Rumano — H nov 0,86 (7.633) · H exp 1,08 (23.280) · M nov 0,66 (3.347) · M exp 0,84 (6.421) → NO se toca\nEl factor de cada fila es la mediana de sus cuatro celdas, redondeado a centésimas, y se aplica a las cuatro por igual. Las dos celdas femeninas del press francés tienen 26 y 38 series, muy por debajo del resto: su número es el más débil de la tabla. El peso muerto rumano se queda porque en hombres con experiencia la hoja se queda corta."
+    },
+    {
+      "key": "unclassified_implement",
+      "owner": "Jesús",
+      "done": "2026-09-24",
+      "how": "Lectura de ficheros del repo, no de producción. El nombre dice 'Con Peso' y el catálogo la da sin equipo, que es la contradicción que la dejó sin clasificar. La tabla de peso corporal que firmó Mauro (bodyweight_fractions.csv, fuente mauro_excel) la puntúa con 0,3 del peso corporal, y a la dominada lastrada con 1,0. La tabla lineal v1 de rankings (la que SAT-4684 dejó atrás) les pone topes de 1,57 y 2,57 veces el peso corporal: carga sí llevan.",
+      "result": "4325 Elevación Otis (Con Peso) es peso corporal lastrado, la misma forma que la dominada lastrada (4314). Cae en weighted_bodyweight_gets_no_weight, que Mauro firmó el 19-09, así que no recibe peso de partida y no hacía falta una decisión nueva. La fila pasa de implement 'unclassified' a 'weighted_bodyweight' y suelta su nota de revisión. Para el usuario no cambia nada: antes y después sale sin peso; lo que cambia es que ahora sale sin peso por una regla firmada y no por desconocimiento. check_starting_load_against_catalog no compara esta clase con el catálogo, así que no se volvió a correr. Lo que la vigila son dos cosas: test_a_weighted_bodyweight_row_is_one_the_signed_fractions_score, que exige que siga en la tabla de Mauro con una puntuación suya, y el caso edge-otis-weighted-bodyweight, que es lo que falla si la fila cambia de clase."
+    }
+  ]
+}

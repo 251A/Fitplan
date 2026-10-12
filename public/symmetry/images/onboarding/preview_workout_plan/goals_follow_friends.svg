@@ -1,0 +1,21 @@
+<svg width="48" height="48" viewBox="6 6 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+<!-- Background circle -->
+<circle cx="30" cy="30" r="24" fill="#22C55E" fill-opacity="0.15"/>
+
+<!-- Back avatar (yellow, behind) -->
+<circle cx="22" cy="26" r="11" fill="white"/>
+<circle cx="22" cy="26" r="10" fill="#FACC15"/>
+<circle cx="22" cy="23" r="3" fill="#1A2733"/>
+<path d="M14 33C14 28.6 17.6 25 22 25C26.4 25 30 28.6 30 33V36H14V33Z" fill="#1A2733"/>
+
+<!-- Front avatar (orange, on top) -->
+<circle cx="36" cy="34" r="13" fill="white"/>
+<circle cx="36" cy="34" r="12" fill="#F97316"/>
+<circle cx="36" cy="30.5" r="3.8" fill="#1A2733"/>
+<path d="M26 43.5C26 38.5 30.5 34.5 36 34.5C41.5 34.5 46 38.5 46 43.5V46H26V43.5Z" fill="#1A2733"/>
+
+<!-- Plus badge bottom-right of front avatar -->
+<circle cx="46" cy="44" r="5" fill="white"/>
+<circle cx="46" cy="44" r="4" fill="#22C55E"/>
+<path d="M43.8 44H48.2M46 41.8V46.2" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,195 @@
+{
+  "version": 1,
+  "_source": "PT-303 'Los tracks definidos' track pages. Los CUATRO tracks confirmados por JP el 22-ago (PT-305) contra el Notion, IDs validados uno a uno contra el catálogo — la primera entrega de Fitness traía el bloque de Atleta duplicado; la definitiva ya no. Un fichero por idioma, como quick_workouts / predefined_workout_plans: los nombres y las notas son DATO.",
+  "sessions": {
+    "powerbuilder": {
+      "durationMinutes": 30,
+      "exercises": [
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 54680,
+          "sets": 1,
+          "repsPerSet": 20,
+          "restSecondsInBetweenSets": 0,
+          "isWarmup": true
+        },
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 8,
+          "sets": 3,
+          "repsPerSet": 10,
+          "restSecondsInBetweenSets": 90,
+          "note": "Lower until you feel your chest stretch, then press up under control. The last rep should be hard, but you should get it."
+        },
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 12,
+          "sets": 3,
+          "repsPerSet": 10,
+          "restSecondsInBetweenSets": 75,
+          "note": "Drive your elbow toward your hip, not your hand. Squeeze your back at the top."
+        },
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 9,
+          "sets": 3,
+          "repsPerSet": 12,
+          "restSecondsInBetweenSets": 60,
+          "note": "Light, 4-6 kg. Raise to shoulder height and lower slowly."
+        },
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 26,
+          "sets": 2,
+          "repsPerSet": 12,
+          "restSecondsInBetweenSets": 60,
+          "note": "Back flat on the bench, let your arm hang all the way down."
+        }
+      ]
+    },
+    "hybrid": {
+      "durationMinutes": 30,
+      "exercises": [
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 52335,
+          "sets": 1,
+          "secondsPerSet": 600,
+          "restSecondsInBetweenSets": 0,
+          "isWarmup": true,
+          "note": "Conversational pace. If you cannot talk, you are going too fast. It comes first and doubles as your warm-up."
+        },
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 102,
+          "sets": 3,
+          "repsPerSet": 10,
+          "restSecondsInBetweenSets": 90,
+          "note": "One dumbbell at your chest. Squat until your thigh is flat, chest tall."
+        },
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 4281,
+          "sets": 3,
+          "repsPerSet": 10,
+          "restSecondsInBetweenSets": 75,
+          "note": "Squeeze your glutes so your lower back does not arch."
+        },
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 12,
+          "sets": 3,
+          "repsPerSet": 10,
+          "restSecondsInBetweenSets": 75,
+          "note": "Free hand on the bench. Elbow toward your hip."
+        }
+      ]
+    },
+    "athlete": {
+      "durationMinutes": 30,
+      "exercises": [
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 54657,
+          "sets": 1,
+          "repsPerSet": 20,
+          "restSecondsInBetweenSets": 0,
+          "isWarmup": true
+        },
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 54656,
+          "sets": 1,
+          "repsPerSet": 20,
+          "restSecondsInBetweenSets": 0,
+          "isWarmup": true
+        },
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 30465,
+          "sets": 4,
+          "repsPerSet": 5,
+          "restSecondsInBetweenSets": 60,
+          "note": "Five jumps, no more. Jump with intent and land soft, knees tracking over your toes. Rest fully between sets."
+        },
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 82,
+          "sets": 3,
+          "repsPerSet": 8,
+          "restSecondsInBetweenSets": 75,
+          "note": "Comfortable weight. Lower under control, drive up fast."
+        },
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 4327,
+          "sets": 3,
+          "repsPerSet": 10,
+          "restSecondsInBetweenSets": 60,
+          "note": "The rotation comes from your torso, not your arms. Keep it light."
+        },
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 52336,
+          "sets": 3,
+          "secondsPerSet": 30,
+          "restSecondsInBetweenSets": 60,
+          "note": "Fast, hips low. This is the one place you should be breathing hard."
+        }
+      ]
+    },
+    "fitness": {
+      "durationMinutes": 30,
+      "exercises": [
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 54680,
+          "sets": 1,
+          "repsPerSet": 20,
+          "restSecondsInBetweenSets": 0,
+          "isWarmup": true
+        },
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 54657,
+          "sets": 1,
+          "repsPerSet": 20,
+          "restSecondsInBetweenSets": 0,
+          "isWarmup": true
+        },
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 102,
+          "sets": 3,
+          "repsPerSet": 10,
+          "restSecondsInBetweenSets": 75,
+          "note": "One dumbbell at your chest. Lower slowly, come up at normal speed."
+        },
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 740,
+          "sets": 3,
+          "repsPerSet": 10,
+          "restSecondsInBetweenSets": 75,
+          "note": "If ten is too many, put your hands on the bench. Body in a straight line."
+        },
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 12,
+          "sets": 3,
+          "repsPerSet": 10,
+          "restSecondsInBetweenSets": 75,
+          "note": "Free hand on the bench. Elbow toward your hip."
+        },
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 110,
+          "sets": 3,
+          "secondsPerSet": 40,
+          "restSecondsInBetweenSets": 60,
+          "note": "A heavy dumbbell in each hand. Chest tall, and do not rush."
+        }
+      ]
+    }
+  }
+}

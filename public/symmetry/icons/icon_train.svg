@@ -1,0 +1,11 @@
+<svg width="75" height="75" viewBox="0 0 75 75" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="activity-heart">
+<path id="Icon" d="M48.4375 35.9375H45.3125L40.625 45.3125L34.375 26.5625L29.6875 35.9375H26.5625M37.4786 16.0494C31.2306 8.745 20.8117 6.78013 12.9834 13.4688C5.15514 20.1574 4.05302 31.3406 10.2006 39.2513C14.844 45.2264 28.0353 57.2217 34.2125 62.734C35.3481 63.7473 35.9159 64.254 36.5807 64.4534C37.1579 64.6266 37.7993 64.6266 38.3765 64.4534C39.0413 64.254 39.6091 63.7473 40.7447 62.734C46.9219 57.2217 60.1132 45.2264 64.7566 39.2513C70.9042 31.3406 69.9366 20.0871 61.9738 13.4688C54.0109 6.85049 43.7266 8.745 37.4786 16.0494Z" stroke="url(#paint0_linear_15_55)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_15_55" x1="6" y1="40.8" x2="68.4" y2="41.4" gradientUnits="userSpaceOnUse">
+<stop stop-color="#068FFF"/>
+<stop offset="1" stop-color="#40E0D0"/>
+</linearGradient>
+</defs>
+</svg>

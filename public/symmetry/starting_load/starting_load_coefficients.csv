@@ -1,0 +1,156 @@
+exercise_id,name,implement,prescribes_weight,no_weight_reason,coefficient_unit,logged_unit,load_divisor,divisor_source,coef_male_novice,coef_male_experienced,coef_female_novice,coef_female_experienced,coefficient_source,lighter_alternative_id,review_note,approved_by
+1,Sentadilla (Barra Alta),barbell,yes,,total_load,total,1,signed,0.75,0.9,0.55,0.7,rev4_mock_2025-08-21,,,Mauro
+2,Prensa 45° (Máquina),machine,yes,,total_load,total,1,signed,1.1,1.4,0.9,1.2,rev4_mock_2025-08-21,,,Mauro
+3,Peso Muerto Convencional (Barra Recta),barbell,yes,,total_load,total,1,signed,0.85,1.0,0.65,0.8,rev4_mock_2025-08-21,,,Mauro
+4,Sentadilla Búlgara (Máquina Smith),smith,yes,,total_load,total,1,signed,0.47,0.57,0.35,0.44,mauro_2026-09-24,,,Mauro
+5,Peso Muerto Rumano (Barra Recta),barbell,yes,,total_load,total,1,signed,0.85,1.0,0.65,0.8,rev4_mock_2025-08-21,,,Mauro
+6,Extensión De Rodilla (Máquina),machine,yes,,total_load,total,1,signed,0.22,0.3,0.18,0.25,rev4_mock_2025-08-21,,,Mauro
+7,Elevación De Talones de Pie (Máquina),machine,yes,,total_load,total,1,signed,0.35,0.5,0.3,0.45,rev4_mock_2025-08-21,,,Mauro
+8,Press De Banca Plano (Mancuerna),dumbbell,yes,,total_load,per_hand,2,signed,0.55,0.7,0.35,0.5,rev4_mock_2025-08-21,,,Mauro
+9,Elevaciones Laterales (Mancuerna),dumbbell,yes,,per_hand,per_hand,1,signed,0.09,0.12,0.07,0.1,rev4_mock_2025-08-21,,,Mauro
+12,Remo A Una Mano (Mancuerna),dumbbell,yes,,total_load,per_hand,2,signed,0.4,0.55,0.35,0.5,rev4_mock_2025-08-21,,,Mauro
+13,Encogimientos De Hombros (Mancuerna),dumbbell,yes,,total_load,per_hand,2,signed,0.4,0.55,0.35,0.5,mauro_2026-09-19,,,Mauro
+14,Press De Banca Inclinado (Mancuerna),dumbbell,yes,,total_load,per_hand,2,signed,0.55,0.7,0.35,0.5,rev4_mock_2025-08-21,,,Mauro
+15,Aperturas Inclinadas (Mancuerna),dumbbell,yes,,total_load,per_hand,2,signed,0.35,0.5,0.3,0.45,rev4_mock_2025-08-21,,,Mauro
+17,Aperturas De Pecho Pec Deck (Máquina),machine,yes,,total_load,total,1,signed,0.35,0.5,0.3,0.45,rev4_mock_2025-08-21,,,Mauro
+18,Remo Sentado Con Agarre Cerrado (Cable),cable,yes,,total_load,total,1,signed,0.4,0.55,0.35,0.5,rev4_mock_2025-08-21,,,Mauro
+19,Jalón Al Pecho Agarre Prono (Máquina),machine,yes,,total_load,total,1,signed,0.35,0.5,0.3,0.45,rev4_mock_2025-08-21,,,Mauro
+21,Remo (Barra Recta),barbell,yes,,total_load,total,1,signed,0.4,0.55,0.35,0.5,rev4_mock_2025-08-21,1900,,Mauro
+23,Curl Bayesian Unilateral En Polea Baja (Cable),cable,yes,,total_load,total,1,signed,0.22,0.3,0.18,0.25,rev4_mock_2025-08-21,,,Mauro
+24,Curl De Bíceps (Barra EZ),ez_bar,yes,,total_load,total,1,signed,0.22,0.3,0.18,0.25,rev4_mock_2025-08-21,,,Mauro
+25,Curl Martillo Bilateral (Mancuerna),dumbbell,yes,,total_load,per_hand,2,signed,0.22,0.3,0.18,0.25,rev4_mock_2025-08-21,,,Mauro
+26,Curl De Bíceps Inclinado Agarre Supino (Mancuerna),dumbbell,yes,,total_load,per_hand,2,signed,0.22,0.3,0.18,0.25,rev4_mock_2025-08-21,,,Mauro
+27,Extensión De Tríceps (Cuerda),cable,yes,,total_load,total,1,signed,0.35,0.5,0.3,0.45,rev4_mock_2025-08-21,,,Mauro
+28,Press Francés (Mancuerna),dumbbell,yes,,total_load,per_hand,2,signed,0.25,0.35,0.2,0.3,mauro_2026-09-19,,,Mauro
+29,Extensión De Tríceps Katana (Cuerda),cable,yes,,total_load,total,1,signed,0.35,0.5,0.3,0.45,rev4_mock_2025-08-21,,,Mauro
+31,Extensión De Tríceps Unilateral (Cable),cable,yes,,total_load,total,1,signed,0.09,0.12,0.07,0.1,rev4_mock_2025-08-21,,,Mauro
+34,Press De Hombros Sentado (Mancuerna),dumbbell,yes,,total_load,per_hand,2,signed,0.55,0.7,0.35,0.5,rev4_mock_2025-08-21,,,Mauro
+43,Dominada Agarre Prono,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+46,Jalón A La Cara En Polea Alta (Cuerda),cable,yes,,total_load,total,1,signed,0.25,0.35,0.2,0.3,mauro_2026-09-19,,,Mauro
+47,Press De Banca Inclinado (Barra Recta),barbell,yes,,total_load,total,1,signed,0.55,0.7,0.35,0.5,rev4_mock_2025-08-21,,,Mauro
+48,Press De Banca Plano (Barra Recta),barbell,yes,,total_load,total,1,signed,0.55,0.7,0.35,0.5,rev4_mock_2025-08-21,8,,Mauro
+49,Remo Unilateral En Polea Alta (Cable),cable,yes,,total_load,total,1,signed,0.4,0.55,0.35,0.5,rev4_mock_2025-08-21,,,Mauro
+50,Extensión Katana Unilateral En Polea Baja (Cable),cable,yes,,total_load,total,1,signed,0.09,0.12,0.07,0.1,rev4_mock_2025-08-21,,,Mauro
+51,Remo Unilateral Sentado (Cable),cable,yes,,total_load,total,1,signed,0.4,0.55,0.35,0.5,rev4_mock_2025-08-21,,,Mauro
+55,Elevaciones Laterales Unilaterales En Polea Baja (Cable),cable,yes,,total_load,total,1,signed,0.09,0.12,0.07,0.1,rev4_mock_2025-08-21,,,Mauro
+60,Extensión De Tríceps Unilateral (Mancuerna),dumbbell,yes,,per_hand,per_hand,1,signed,0.09,0.12,0.07,0.1,rev4_mock_2025-08-21,,,Mauro
+64,Curl De Bíceps Alternando (Mancuerna),dumbbell,yes,,total_load,per_hand,2,signed,0.22,0.3,0.18,0.25,rev4_mock_2025-08-21,,,Mauro
+66,Curl Predicador Unilateral (Mancuerna),dumbbell,yes,,total_load,per_hand,2,signed,0.22,0.3,0.18,0.25,rev4_mock_2025-08-21,,,Mauro
+73,Aperturas Inversas Pec Deck (Máquina),machine,yes,,total_load,total,1,signed,0.35,0.5,0.3,0.45,rev4_mock_2025-08-21,,,Mauro
+77,Dominada Agarre Supino,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+80,Fondos (Agarre Abierto),no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+81,Press de Banca Inclinado (Máquina Smith),smith,yes,,total_load,total,1,signed,0.55,0.7,0.35,0.5,rev4_mock_2025-08-21,14,,Mauro
+82,Zancadas (Estático),no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+83,Sentadilla Búlgara (Mancuerna),dumbbell,yes,,total_load,per_hand,2,signed,0.75,0.9,0.55,0.7,rev4_mock_2025-08-21,,,Mauro
+84,Curl Nórdico,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+85,Peso Muerto Rumano (Mancuerna),dumbbell,yes,,total_load,per_hand,2,signed,0.85,1.0,0.65,0.8,rev4_mock_2025-08-21,,,Mauro
+91,Press De Pecho (Máquina),machine,yes,,total_load,total,1,signed,0.55,0.7,0.35,0.5,rev4_mock_2025-08-21,,,Mauro
+93,Elevación De Talones (Máquina Smith),smith,yes,,total_load,total,1,signed,0.35,0.5,0.3,0.45,rev4_mock_2025-08-21,4279,,Mauro
+102,Sentadilla Goblet (Mancuerna),dumbbell,yes,,total_load,single_implement,2,signed,0.56,0.67,0.41,0.52,mauro_2026-09-24,,,Mauro
+103,Aducción De Cadera (Máquina),machine,yes,,total_load,total,1,signed,0.35,0.5,0.3,0.45,rev4_mock_2025-08-21,,,Mauro
+104,Curl Femoral Sentado (Máquina),machine,yes,,total_load,total,1,signed,0.22,0.3,0.18,0.25,rev4_mock_2025-08-21,,,Mauro
+108,Dead Bugs,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+110,Paseo Del Granjero,dumbbell,yes,,total_load,per_hand,2,signed,0.4,0.55,0.35,0.5,analogia_13_2026-09-21,,,Mauro
+111,Elevación De Talones Sentado (Máquina),machine,yes,,total_load,total,1,signed,0.35,0.5,0.3,0.45,rev4_mock_2025-08-21,,,Mauro
+112,Curl Bayesian Bilateral En Polea Baja (Cable),cable,yes,,total_load,total,1,signed,0.22,0.3,0.18,0.25,rev4_mock_2025-08-21,,,Mauro
+740,Flexión Convencional,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+741,Hip Thrust (Barra Recta),barbell,yes,,total_load,total,1,signed,0.7,1.0,0.6,0.9,rev4_mock_2025-08-21,,,Mauro
+743,Crunch Abdominal En Polea Alta (Cuerda),cable,yes,,total_load,total,1,signed,0.18,0.25,0.15,0.22,rev4_mock_2025-08-21,,,Mauro
+1070,Curl Femoral Tumbado (Máquina),machine,yes,,total_load,total,1,signed,0.22,0.3,0.18,0.25,rev4_mock_2025-08-21,,,Mauro
+1802,Elevación Frontal (Mancuerna),dumbbell,yes,,per_hand,per_hand,1,signed,0.11,0.15,0.09,0.12,mauro_2026-09-19,,,Mauro
+1812,Flexión Inclinada,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+1834,Flexión De Pica,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+1837,Fondos De Tríceps Agarre Cerrado,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+1846,Dominada Agarre Abierto,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+1847,Elevación De Rodillas (En Paralelo),no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+1865,Elevación En V En El suelo,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+1869,Dominada Agarre Cerrado,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+1875,Flexión Arquero,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+1878,Remo Sentado Con Agarre Abierto (Cable),cable,yes,,total_load,total,1,signed,0.4,0.55,0.35,0.5,rev4_mock_2025-08-21,,,Mauro
+1882,Flexión En Diamante,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+1884,Dominada De Arquero,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+1885,Sentadilla Jaca,machine,yes,,total_load,total,1,signed,0.75,0.9,0.55,0.7,rev4_mock_2025-08-21,,,Mauro
+1896,Puente De Glúteos,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+1900,Remo Inclinado De Pie (Mancuerna),dumbbell,yes,,total_load,per_hand,2,signed,0.4,0.55,0.35,0.5,rev4_mock_2025-08-21,,,Mauro
+1901,Remo Invertido,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+1908,Flexiones Con Palmada,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+1910,Dominadas Agarre Supino Cerrado,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+1913,Zancadas (Caminando),no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+1919,Elevación De Rodillas Tumbado,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+1927,Elevación De Rodillas Colgando,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+1933,Elevación De Talones De Pie Bilateral,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+1934,Crunch Abdominal Rodillas Elevadas Tumbado,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+1945,Crunch Abdominal Sentado (Máquina),machine,yes,,total_load,total,1,signed,0.18,0.25,0.15,0.22,rev4_mock_2025-08-21,,,Mauro
+1946,Elevaciones Laterales Sentado (Mancuerna),dumbbell,yes,,per_hand,per_hand,1,signed,0.09,0.12,0.07,0.1,rev4_mock_2025-08-21,,,Mauro
+1951,Crunch Abdominal Manos Tras Nuca,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+3418,Crunch Adbominal Brazos Cruzados,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+3421,Crunch Bicicleta,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+3425,Curl De Bíceps (Gomas),no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+3426,Patada De Tríceps Bilateral (Mancuerna),dumbbell,yes,,total_load,per_hand,2,signed,0.22,0.3,0.18,0.25,rev4_mock_2025-08-21,,,Mauro
+3427,Jalón Al Pecho Agarre Cerrado (Máquina),machine,yes,,total_load,total,1,signed,0.35,0.5,0.3,0.45,rev4_mock_2025-08-21,,,Mauro
+3429,Curl De Bíceps De Pie Agarre Cerrado (Barra Recta),barbell,yes,,total_load,total,1,signed,0.22,0.3,0.18,0.25,rev4_mock_2025-08-21,4280,,Mauro
+3434,Curl Predicador Bilateral (Mancuerna),dumbbell,yes,,total_load,per_hand,2,signed,0.22,0.3,0.18,0.25,rev4_mock_2025-08-21,,,Mauro
+3444,Elevaciones Laterales (Máquina),machine,yes,,total_load,total,1,signed,0.09,0.12,0.07,0.1,rev4_mock_2025-08-21,,,Mauro
+4240,Rueda Abdominal Asistida (Banda),no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+4241,Patada De Gluteo (Banda),no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+4242,Remo Bajo Unilateral (Cable),cable,yes,,total_load,total,1,signed,0.4,0.55,0.35,0.5,rev4_mock_2025-08-21,,,Mauro
+4246,Sentadilla Frontal Agarre Cruzado,barbell,yes,,total_load,total,1,signed,0.65,0.8,0.45,0.6,rev4_mock_2025-08-21,,,Mauro
+4248,Press Francés Tumbado Agarre Prono (Barra Recta),barbell,yes,,total_load,total,1,signed,0.31,0.39,0.2,0.28,mauro_2026-09-24,28,,Mauro
+4249,Remo Pendlay (Barra Recta),barbell,yes,,total_load,total,1,signed,0.4,0.55,0.35,0.5,rev4_mock_2025-08-21,,,Mauro
+4253,Remo En Pared Agarre Cerrado,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+4254,Remo Con Toalla,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+4255,Elevación De Rodillas Tumbado (Piernas Estiradas),no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+4256,Escalador Cruzado (Mountain Climbers),no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+4258,Aperturas Para Deltoide Anterior Poela Baja (Cable),cable,yes,,total_load,total,1,signed,0.35,0.5,0.3,0.45,rev4_mock_2025-08-21,,,Mauro
+4259,Pullover Tumbado (Cuerda),cable,yes,,total_load,total,1,signed,0.25,0.35,0.2,0.3,mauro_2026-09-19,,,Mauro
+4265,Flexión Militar De Rodillas,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+4267,Curl Femoral Tumbado (Mancuerna),dumbbell,yes,,total_load,single_implement,2,signed,0.22,0.3,0.18,0.25,rev4_mock_2025-08-21,,,Mauro
+4270,Apertura Inversa Unilateral Con Apoyo (Mancuerna),dumbbell,yes,,per_hand,per_hand,1,signed,0.09,0.12,0.07,0.1,rev4_mock_2025-08-21,,,Mauro
+4272,Press Frances Con Agarre Prono (Mancuerna),dumbbell,yes,,total_load,per_hand,2,signed,0.25,0.35,0.2,0.3,mauro_2026-09-19,,,Mauro
+4276,Elevaciones Laterales Sentado Con Inercia (Mancuerna),dumbbell,yes,,per_hand,per_hand,1,signed,0.09,0.12,0.07,0.1,rev4_mock_2025-08-21,,,Mauro
+4278,Crunch Oblicuo (Mancuerna),dumbbell,yes,,total_load,per_hand,2,signed,0.18,0.25,0.15,0.22,rev4_mock_2025-08-21,,,Mauro
+4279,Elevaciones De Talones Unilateral (Mancuerna),dumbbell,yes,,per_hand,per_hand,1,signed,0.09,0.12,0.07,0.1,rev4_mock_2025-08-21,,,Mauro
+4280,Curl De Bíceps De Pie (Mancuernas),dumbbell,yes,,total_load,per_hand,2,signed,0.22,0.3,0.18,0.25,rev4_mock_2025-08-21,,,Mauro
+4281,Press De Hombros De Pie (Mancuerna),dumbbell,yes,,total_load,per_hand,2,signed,0.55,0.7,0.35,0.5,rev4_mock_2025-08-21,,,Mauro
+4283,Crunch De Codo A Rodilla,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+4289,Plancha Rana,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+4291,Flexión En Plancha Completa,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+4292,Flexión De Pino,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+4293,Elevación De Piernas Rectas Colgando,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+4294,Elevación De Cadera Con Rodillas Dobladas,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+4295,Fondos Imposibles,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+4297,Sentadilla Goblet (Kettlebell),kettlebell,yes,,total_load,single_implement,2,signed,0.52,0.63,0.38,0.49,mauro_2026-09-24,,,Mauro
+4304,Elevaciones De Talones Rodilla Estirada (Máquina),machine,yes,,total_load,total,1,signed,0.4,0.55,0.35,0.5,mauro_2026-09-19,,,Mauro
+4305,Extensión De Lumbar Pronado,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+4307,Flexión Hindú,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+4310,Abducción De Cadera Sentado (Bandas De Resistencia),no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+4312,Sentadilla Búlgara Sin Peso,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+4314,Dominada (Lastrada),weighted_bodyweight,no,weighted_bodyweight,,,,,,,,,,,,Mauro
+4318,Sentadilla A Una Pierna,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+4323,Sentadilla Barra Alta (Máquina Smith),smith,yes,,total_load,total,1,signed,0.75,0.9,0.55,0.7,rev4_mock_2025-08-21,,,Mauro
+4324,Puente De Glúteo A Una Pierna,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+4325,Elevación Otis (Con Peso),weighted_bodyweight,no,weighted_bodyweight,,,,,,,,,,,,Mauro
+4327,Giro Ruso,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+30465,Sentadilla Con Salto,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+30488,Plancha Lateral,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+52336,Escaladores,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+52404,Cuerdas De Batalla,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+54584,Plancha Con Subida y Bajada,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+54600,Plancha Convencional,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+54656,Talones Al Glúteo,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+54657,Saltos Con Apertura De Pierna,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+67351,Remo Con TRX,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+68661,Sentadilla A Una Pierna Asistida,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+72329,Sentadilla Sin Peso,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+72334,Dominada Asistida (Banda),no_external_load,no,assisted,,,,,,,,,,,,Mauro
+72337,Hip Thrusts Sin Peso,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+72345,Flexión En Pared,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+72348,Flexión Abierta,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+72352,Sentadilla Sumo Sin Peso,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+72374,Fondos Asistidos (Banda),no_external_load,no,assisted,,,,,,,,,,,,Mauro
+94170,Zancada Invertida,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+94172,Dominada Escapular,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+94181,Elevación De Talón Unilateral,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+94188,Sit Up,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+94245,Dominada Negativa,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro
+115247,Fondos de Tríceps en Piso,no_external_load,no,no_external_load,,,,,,,,,,,,Mauro

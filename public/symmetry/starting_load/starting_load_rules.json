@@ -1,0 +1,269 @@
+{
+  "$doc": [
+    "Reglas del peso inicial prescrito (SAT-5640). Van con starting_load_coefficients.csv (un ejercicio por fila), starting_load_reference_cases.json (los casos que el calculador de la app, SAT-5642, tiene que reproducir) y starting_load_approval.json (versión, firma y lo que sigue abierto).",
+    "Fuente: 'Algoritmo de pesos prepoblados' rev.4 (Notion, 10-09-2026) https://app.notion.com/p/3d7fa8fde56b81b7aaced3300c4d6557 y spec del ingeniero §9 https://app.notion.com/p/3d7fa8fde56b81709547f56cf472eae4.",
+    "El cálculo vive en la app (decisión de SAT-5613, 17-09-2026). La app copia los cuatro ficheros; la versión que copia es la 'version' de starting_load_approval.json.",
+    "La hoja COPIA los coeficientes: nada lee las tablas de rangos, así que recalcularlas no mueve esta versión.",
+    "La app no recibe ningún TimedSet con peso: el tipo del set manda sobre la hoja.",
+    "Todo valor en kg es un número JSON con decimales (40.0, no 40): la app lo lee como double y un entero rompería un cast estricto."
+  ],
+  "coverage_universe": "Los 155 ejercicios de los 82 planes actuales (assets/workout_plan_templates/predefined_workout_plans.json de mobile-app), que es la base sobre la que se escribió rev.4. Los 80 planes nuevos aún no existen: al integrarlos (SAT-5638) hay que añadir a la hoja cualquier ejercicio que falte. Mientras no tenga fila, un ejercicio no recibe peso (no_coefficient).",
+  "experience_rungs": {
+    "$doc": "Peldaño de la escalera de 25 rangos, contando desde abajo (Hierro III = 1). Los coeficientes de la hoja son los de estos dos peldaños.",
+    "novice": {
+      "rung_from_bottom": 4,
+      "rank": "Bronce III",
+      "onboarding_levels": [
+        "neverTrained",
+        "beginner"
+      ]
+    },
+    "experienced": {
+      "rung_from_bottom": 7,
+      "rank": "Plata III",
+      "onboarding_levels": [
+        "intermediate",
+        "advanced"
+      ]
+    }
+  },
+  "bodyweight_bands_doc": "Se usa el peso representativo de la banda, no el del usuario. Por debajo de lower_edge_kg: light. Entre lower_edge_kg y upper_edge_kg, ambos incluidos: middle. Por encima de upper_edge_kg: heavy. Sin peso corporal: middle y el resultado sale con estimated=true.",
+  "bodyweight_bands": {
+    "male": {
+      "lower_edge_kg": 70.0,
+      "upper_edge_kg": 85.0,
+      "light_kg": 65.0,
+      "middle_kg": 77.0,
+      "heavy_kg": 92.0
+    },
+    "female": {
+      "lower_edge_kg": 60.0,
+      "upper_edge_kg": 75.0,
+      "light_kg": 55.0,
+      "middle_kg": 67.0,
+      "heavy_kg": 82.0
+    }
+  },
+  "percent_of_one_rep_max": {
+    "$doc": "Epley, 100 / (1 + reps/30), redondeado a entero con la mitad hacia arriba, para 2..20 reps y por encima de 20 (above_table). La única excepción es 1 rep = 100: una repetición es el 1RM por definición, y Epley daría 97. La tabla de rev.4 ya lo decía; se aplica serie a serie con las reps de esa serie. No se sustituye por Lander/Baechle: esos son de rangos y no se tocan.",
+    "table": {
+      "1": 100,
+      "2": 94,
+      "3": 91,
+      "4": 88,
+      "5": 86,
+      "6": 83,
+      "7": 81,
+      "8": 79,
+      "9": 77,
+      "10": 75,
+      "11": 73,
+      "12": 71,
+      "13": 70,
+      "14": 68,
+      "15": 67,
+      "16": 65,
+      "17": 64,
+      "18": 63,
+      "19": 61,
+      "20": 60
+    },
+    "above_table": "d = 30 + reps; percent = (6000 + d) // (2 * d)"
+  },
+  "arithmetic": "Todo en enteros, sin coma flotante, para que la app y estos casos den exactamente lo mismo. coef_centesimas = round(coeficiente × 100), nunca truncado: (0.29 × 100) en coma flotante da 28.999… y truncado daría 28; y \"0.3\" son 30, no 3 (la hoja nunca pasa de dos decimales). bruto_kg = coef_centesimas * banda_kg * percent / (10000 * load_divisor), como fracción exacta. Para redondear, la distancia a cada candidato de la rejilla se compara con multiplicación cruzada; un empate es igualdad exacta.",
+  "tie_direction": "down",
+  "implements_doc": "grid_kg: pesas que existen, se elige la más cercana. step_kg: múltiplo más cercano. whole_kg_below_raw_kg: si el bruto es menor que ese valor, kilo entero más cercano en vez del múltiplo. Tras redondear, si el valor queda por debajo de minimum_kg: clamp_up lo sube al mínimo (es una pesa real ligera); lighter_alternative cambia al ejercicio alternativo de la hoja y nunca prescribe la barra vacía. Por encima de la última pesa de grid_kg se prescribe esa pesa con capped=true. Fuente de rejillas, pasos y mínimos: rev.4, 'Regla 1: el redondeo va por implemento' (decisión de Mauro, 10-09-2026) y su tabla 'Mínimos por implemento'; el kilo entero por debajo de 10 kg es su fila 'Menos de 10 kg' (barra, smith, máquina y polea). Por encima de 17,5 la mancuerna sigue de 2,5 en 2,5 hasta 30 (settled_decisions.dumbbell_grid_above_17_5).",
+  "implements": {
+    "dumbbell": {
+      "grid_kg": [
+        1.0,
+        2.5,
+        3.0,
+        4.0,
+        5.0,
+        6.0,
+        7.0,
+        7.5,
+        8.0,
+        9.0,
+        10.0,
+        12.5,
+        14.0,
+        15.0,
+        16.0,
+        17.5,
+        20.0,
+        22.5,
+        25.0,
+        27.5,
+        30.0
+      ],
+      "minimum_kg": 1.0,
+      "below_minimum": "clamp_up"
+    },
+    "kettlebell": {
+      "grid_kg": [
+        4.0,
+        8.0,
+        12.0,
+        16.0,
+        20.0,
+        24.0,
+        28.0,
+        32.0
+      ],
+      "minimum_kg": 4.0,
+      "below_minimum": "clamp_up"
+    },
+    "barbell": {
+      "step_kg": 10.0,
+      "minimum_kg": 20.0,
+      "below_minimum": "lighter_alternative"
+    },
+    "smith": {
+      "step_kg": 10.0,
+      "minimum_kg": 20.0,
+      "below_minimum": "lighter_alternative"
+    },
+    "ez_bar": {
+      "step_kg": 10.0,
+      "minimum_kg": 10.0,
+      "below_minimum": "lighter_alternative"
+    },
+    "machine": {
+      "step_kg": 10.0,
+      "whole_kg_below_raw_kg": 10.0,
+      "minimum_kg": 5.0,
+      "below_minimum": "clamp_up"
+    },
+    "cable": {
+      "step_kg": 10.0,
+      "whole_kg_below_raw_kg": 10.0,
+      "minimum_kg": 5.0,
+      "below_minimum": "clamp_up"
+    }
+  },
+  "load_unit": {
+    "$doc": "Cada fila de la hoja declara coefficient_unit (total_load: el coeficiente describe la carga total del patrón; per_hand: ya está a escala de una mano), logged_unit (total, per_hand o single_implement, según load_sides.csv para mancuernas y kettlebells) y load_divisor. El peso que sale está en logged_unit: lo que el usuario coge con cada mano (per_hand), el total del aparato (total) o el único hierro que coge con las dos manos (single_implement). El divisor no es un reparto entre manos: dice si el coeficiente describe la carga total del patrón (divisor 2 si es mancuerna o kettlebell, porque el patrón con barra carga el doble) o ya está a escala de un hierro (divisor 1). Por eso un goblet o un curl femoral con una sola mancuerna (single_implement) lleva divisor 2 como cualquier mancuerna (settled_decisions.single_implement_divisor): con divisor 1 un novato cogería el doble. El divisor sale de la regla del 0,15 de rev.4 (firmada, settled_decisions.load_divisor), aplicada una sola vez por ejercicio sobre el coeficiente de hombre novato, para que un mismo ejercicio no cambie de divisor entre celdas (con la regla por celda, 4278 daba a una mujer novata más peso que a una experimentada).",
+    "draft_divisor_rule": "mancuerna o kettlebell con coef_male_novice > 0.15: load_divisor 2; si no, 1. Barra, smith, EZ, máquina y polea: 1."
+  },
+  "no_weight": {
+    "$doc": "Nunca se inventa un peso. Resultados sin peso: no_weight con su reason (no_external_load, weighted_bodyweight, assisted, unclassified_implement, o missing_profile si falta el género o la experiencia), no_coefficient (el ejercicio no está en la hoja; los customs no están: el alcance es el onboarding) y needs_lighter_alternative (barra por debajo de su mínimo y la hoja aún no tiene su alternativa). Orden de evaluación: 1) el ejercicio no está en la hoja -> no_coefficient; 2) la fila no prescribe peso -> no_weight con el motivo de la fila; 3) falta el género o la experiencia -> no_weight missing_profile; 4) se calcula. Los casos edge-missing-profile-* fijan ese orden."
+  },
+  "lighter_alternative": {
+    "$doc": "Un solo salto. El resultado cambia exercise_id al de la alternativa y el peso se calcula con la fila de la alternativa. La alternativa nunca es de barra, smith ni EZ (lo valida test_starting_load_coefficients.py) y todo implemento que no es barra sube a su mínimo, así que la alternativa siempre da un peso.",
+    "app_must_revalidate": [
+      "no_forbidden_exercises",
+      "no_banned_equipment",
+      "equipment_tier_matches",
+      "exercise_level_matches_bucket",
+      "no_repeated_exercise_in_session",
+      "session_duration",
+      "injuries"
+    ],
+    "app_must_revalidate_source": "reglas del validador de planes de SAT-5623 (mobile-app tools/plans/rules_config.json), por su clave. Aún no están en main de mobile-app; exercise_level_matches_bucket e injuries están 'pending' allí y devuelven notEvaluable.",
+    "not_evaluable_policy": "Una regla que no se puede evaluar (notEvaluable, pending) cuenta como fallo. Si alguna de app_must_revalidate falla o no se puede evaluar, el resultado es el del ejercicio original sin alternativa: needs_lighter_alternative, sin peso. Los casos de referencia son la salida del calculador ANTES de esa revalidación. Mientras exercise_level_matches_bucket e injuries sigan en pending, ninguna alternativa pasa: en Jira a 24-09, el resolver de la app que las aplica (SAT-5627) está bloqueado por las tablas versionadas de SAT-5624 (starting_load_approval.json, does_not_block_freeze.app_revalidation_rules_live)."
+  },
+  "app_rules": {
+    "$doc": "Lo que la app aplica y esta hoja no calcula.",
+    "precedence": "edición manual > historial (desde el primer set registrado del ejercicio manda progressive_overload) > peso inicial.",
+    "stop_after_first_logged_set": "Tras el primer set registrado de un ejercicio, ese ejercicio sale del cálculo para siempre.",
+    "recompute_on_band_change": "Si el peso corporal cambia de banda antes de la primera sesión, se recalculan solo los sets que nunca se han registrado ni editado a mano (rev.4 'Cuándo se recalcula', más la prioridad de la edición manual del ticket).",
+    "per_set": "Cada serie con sus propias reps (formato v2: sets[].reps).",
+    "units": "El peso sale en kg. En lb la app convierte con 2.2046226218 (el mismo factor de weight_unit.dart).",
+    "timed_sets": "Nunca llevan peso.",
+    "proposed_for_persistence": "Propuesta para el contrato de SAT-5647, no acordada: guardar junto al peso la 'version' de estas reglas, 'estimated' y la unidad del peso ('per': total, per_hand o single_implement), porque el write path de SAT-5108 convierte un peso por mano en total y un 16 sin unidad vale 16 o 32."
+  },
+  "settled_decisions": [
+    {
+      "key": "coefficient_source",
+      "rule": "Coeficientes del mock de estándares de rev.4 (mobile-app assets/exercise_ranking_mock.json), peldaños 4 y 7. Frente a la tabla lineal v1 del backend (rankings/features/get_exercise_ranks_feature/thresholds.json, la escala que SAT-4684 dejó atrás) no hay factor común (mediana 1,85 veces, 0,45-5,1 entre p10 y p90). La comparación con los umbrales v2 de producción está en starting_load_approval.json (done_verifications.coefficients_vs_prod_ranking_v2). Mauro no revisó las filas una a una: dio la hoja entera por aprobada el 24-09 (sheet_approved_by_mauro), así que las filas que siguen con rev4_mock_ llevan el número de su propio documento de producto sin que nadie lo haya mirado fila a fila.",
+      "source": "rev.4 'Punto de partida' y AC de SAT-5640 ('partir de la fuente declarada en rev.4')"
+    },
+    {
+      "key": "single_implement_divisor",
+      "rule": "El goblet con mancuerna (102) o kettlebell (4297) y el curl femoral con mancuerna (4267) siguen la regla del divisor como cualquier mancuerna.",
+      "source": "rev.4, regla de unidad de carga ('vale también para los unilaterales') y ejemplos t2-4, t2-5 y t2-19"
+    },
+    {
+      "key": "tie_direction",
+      "rule": "Empate exacto entre dos pesas: la más ligera.",
+      "source": "rev.4 'Sesgo bajo, deliberado'"
+    },
+    {
+      "key": "clamp_up_to_minimum",
+      "rule": "Mancuerna, kettlebell, máquina y polea por debajo de su mínimo suben al mínimo; barra, smith y EZ van a su alternativa ligera.",
+      "source": "rev.4, tabla de mínimos, paso 7 y ejemplo t2-31 (3,7 kg en máquina → 5)"
+    },
+    {
+      "key": "band_edge_inclusivity",
+      "rule": "70 y 85 kg (hombre), 60 y 75 kg (mujer) caen en la banda media.",
+      "source": "rev.4, bandas '70 a 85 kg' y '60 a 75 kg'"
+    },
+    {
+      "key": "recompute_scope",
+      "rule": "La de app_rules.recompute_on_band_change.",
+      "source": "rev.4 'Cuándo se recalcula' y AC de SAT-5640 (prioridad manual > historial > inicial)"
+    },
+    {
+      "key": "lb_display",
+      "rule": "El peso sale en kg; en lb la app lo convierte como cualquier otro peso (app_rules.units).",
+      "source": "weight_unit.dart de la app"
+    },
+    {
+      "key": "missing_profile",
+      "rule": "Sin género o sin experiencia no hay peso: no_weight con reason missing_profile.",
+      "source": "AC de SAT-5640 ('no inventar valores para garantizar una carga')"
+    },
+    {
+      "key": "machine_units",
+      "rule": "La hoja va en kg. Mostrar placas en vez de kilos es presentación de la app, no cálculo.",
+      "source": "decisión de alcance de Jesús (18-09-2026): rev.4 deja abierto kilos o placas como decisión de pantalla; la hoja no la resuelve y su sitio es la integración (SAT-5643)"
+    },
+    {
+      "key": "kettlebell_cap",
+      "rule": "Tope en la kettlebell de 32 kg, con capped.",
+      "source": "no se alcanza en los 82 planes con el divisor del borrador (2): la única kettlebell (4297) solo aparece a 12 reps y, en los 2 géneros × 2 experiencias × 3 bandas, llega como mucho a 29,4 kg brutos. Con divisor 1 serían 58,8, pero la regla del divisor ya está firmada (settled_decisions.load_divisor)"
+    },
+    {
+      "key": "load_divisor",
+      "rule": "La regla del 0,15 de rev.4 se aplica una sola vez por ejercicio, sobre el coeficiente de hombre novato (load_unit.draft_divisor_rule), y no celda a celda: celda a celda el crunch oblicuo (4278) daba a una mujer novata más peso que a una experimentada. Mauro firmó la regla el 19-09 y la hoja entera el 24-09; divisor_source 'signed' quiere decir que la fila queda cubierta por ese ok a la hoja, no que él revisara su divisor fila a fila.",
+      "source": "Mauro, respuesta en Slack del 19-09-2026 al mensaje de Jesús del 18-09 ('me parece bien'): https://symmetryhqworkspace.slack.com/archives/D0A211866TY/p1789806601179549?thread_ts=1789762335.020949&cid=D0A211866TY"
+    },
+    {
+      "key": "lighter_alternative_ids",
+      "rule": "La alternativa ligera de una barra o smith es la versión con mancuerna del mismo movimiento: remo 21 → 1900, press inclinado en smith 81 → 14, talones en smith 93 → 4279, curl de pie agarre cerrado 3429 → 4280, press francés con barra 4248 → 28 (48 → 8 ya venía en rev.4). La del 4248 hereda la corrección pendiente del 28 (source_errors).",
+      "source": "Mauro, respuesta en Slack del 19-09-2026 al mensaje de Jesús del 18-09 ('me parece bien'): https://symmetryhqworkspace.slack.com/archives/D0A211866TY/p1789806601179549?thread_ts=1789762335.020949&cid=D0A211866TY y rev.4 (48 → 8)"
+    },
+    {
+      "key": "weighted_bodyweight_gets_no_weight",
+      "rule": "Un ejercicio de peso corporal no recibe peso de partida, tampoco lastrado: la dominada lastrada (4314) y la elevación Otis con peso (4325) se quedan sin peso (no_weight, weighted_bodyweight). La 4325 llegó a esta hoja como 'unclassified' porque el catálogo la da sin equipo y el nombre dice que lleva carga. Lo que la clasifica es la tabla de peso corporal que firmó Mauro (bodyweight_fractions.csv, fuente mauro_excel): puntúa la 4325 con 0,3 del peso corporal y la 4314 con 1,0, las dos con fuente mauro_excel, así que las dos son ejercicios de peso corporal para él. Dos tests lo sostienen en las dos direcciones: test_a_weighted_bodyweight_row_is_one_the_signed_fractions_score exige que toda fila weighted_bodyweight esté en esa tabla con una puntuación suya (no una analogy_), y test_no_row_with_a_starting_weight_is_one_the_signed_fractions_score que ninguna fila con peso lo esté. La tabla puntúa más ejercicios que estos dos; los demás son no_external_load en esta hoja. Consecuencia declarada: los dos SÍ llevan kilos en la práctica (la tabla lineal v1 de rankings, la que SAT-4684 dejó atrás, les pone topes de 2,57 y 1,57 veces el peso corporal), así que el usuario les cuelga los que quiera y la hoja no le propone ninguno. La regla no dice que no lleven peso, dice que esta hoja no elige con cuántos empezar. Ojo con el catálogo de sesiones, que en estas dos se contradice: marca la dominada lastrada con is_bodyweight false y la elevación Otis con true, y las dos llevan carga por el nombre. Ese flag no decide la clase.",
+      "source": "Mauro, respuesta en Slack del 19-09-2026 al mensaje de Jesús del 18-09 ('me parece bien'): https://symmetryhqworkspace.slack.com/archives/D0A211866TY/p1789806601179549?thread_ts=1789762335.020949&cid=D0A211866TY: 'para ejercicios de peso corporal no debe de haber pesos para ningún ejercicio'. La clase de cada fila, de bodyweight_fractions.csv (fuente mauro_excel)."
+    },
+    {
+      "key": "dumbbell_grid_above_17_5",
+      "rule": "La rejilla de mancuerna sigue por encima de 17,5 con 20, 22,5, 25, 27,5 y 30; por encima de 30 se prescribe 30 con capped=true. Rev.4 lo dejaba como 'falta definir'.",
+      "source": "Mauro, en el mismo hilo de Slack ('para la última pregunta sí, súbelo con esos escalones'), a la propuesta de Jesús de 20, 22,5, 25, 27,5 y 30: https://symmetryhqworkspace.slack.com/archives/D0A211866TY/p1789880032729389?thread_ts=1789762335.020949&cid=D0A211866TY"
+    },
+    {
+      "key": "coefficient_corrections",
+      "rule": "Las filas en las que el mock de rev.4 estaba mal copian el coeficiente de un ejercicio parecido y lo suben un poco, que es lo que pidió Mauro para todos los coeficientes nuevos. Press francés con mancuerna (28, 4272), face pull (46) y pullover con cuerda (4259): de la clase del curl y la patada de tríceps (0,22) a 0,25/0,35/0,2/0,3. Elevación frontal (1802): de la lateral (0,09 por mano) a 0,11/0,15/0,09/0,12, también por mano y con divisor 1, como la lateral. Elevación de talones con rodilla estirada en máquina (4304) y encogimientos (13): de la de pie en máquina y de las aperturas (0,35) a 0,4/0,55/0,35/0,5. En polea y máquina la rejilla va de 10 en 10 kg, así que el aumento casi no se nota: el face pull y el pullover se quedan en 10 kg para un novato de 77 kg. Mauro confirmó el 21-09 que el aumento era para todos los coeficientes nuevos, que es como se había aplicado.",
+      "source": "Mauro, en el hilo de Slack del 18-09, respondiendo el 19-09 a la propuesta de Jesús (https://symmetryhqworkspace.slack.com/archives/D0A211866TY/p1789847807757529?thread_ts=1789762335.020949&cid=D0A211866TY): 'para el nuevo coeficiente lo puedes subir un pelín, no mucho, pero sí un poco. Y ya lo puedes cerrar': https://symmetryhqworkspace.slack.com/archives/D0A211866TY/p1789880048397169?thread_ts=1789762335.020949&cid=D0A211866TY Confirmado el 21-09 ('1. para todos'): https://symmetryhqworkspace.slack.com/archives/D0A211866TY/p1790046186829749?thread_ts=1789762335.020949&cid=D0A211866TY"
+    },
+    {
+      "key": "farmer_walk_loaded",
+      "rule": "El paseo del granjero (110) prescribe peso, con el coeficiente de los encogimientos (13): 0,4/0,55/0,35/0,5 sobre el total, divisor 2, mancuerna en cada mano. Un hombre novato de 77 kg empieza con 12,5 kg por mano. Lo que firmó Mauro el 21-09 es que la fila lleve peso; la magnitud la eligió esta hoja copiando la fila 13, y por eso coefficient_source dice analogia_13_2026-09-21 y no lleva su nombre. La fila sigue en el tier 0 de progresión que Mauro firmó el 05-08-2026, y eso NO cambia aquí: el motor de carga progresiva la excluye (classify_tier.py devuelve TIER_EXCLUDED en cuanto el tier es 0, y el usuario recibe SKIPPED_REASON_EXCLUDED), así que el peso de partida no sube solo nunca. Son dos decisiones distintas: el tier dice si la carga progresa, esta hoja dice con cuánto se empieza. Mauro no lo sabe: al congelar, Jesús decidió el 24-09 no llevarle otra pregunta, y la consecuencia queda declarada aquí y en sheet_approved_by_mauro en vez de firmada por él. El motivo progression_tier_0 desaparece de esta hoja porque 110 era su única fila.",
+      "source": "Mauro, en el hilo de Slack del 18-09, respondiendo el 21-09 a 'el paseo del granjero, ¿le ponemos peso o lo dejamos sin peso?': 'con peso'. Es un sí, no un número: https://symmetryhqworkspace.slack.com/archives/D0A211866TY/p1790046186829749?thread_ts=1789762335.020949&cid=D0A211866TY"
+    },
+    {
+      "key": "heavy_rows_vs_reality",
+      "rule": "Cuatro filas que pedían más de lo que la gente levanta bajan al factor medido en producción: sentadilla búlgara en smith (4) x0,63, press francés tumbado (4248) x0,56, sentadilla goblet con mancuerna (102) x0,75 y con kettlebell (4297) x0,70. El factor de cada fila es la mediana de sus cuatro celdas medidas, y el coeficiente nuevo es el viejo por ese factor. Las dos operaciones redondean igual: a centésimas, y el empate cae hacia abajo, porque en un peso de partida el empate se resuelve del lado ligero. El goblet con kettlebell es el único empate: su mediana es 0,705 y el factor queda en 0,70. A 10 repeticiones, un hombre novato de 77 kg queda en 30, 20, 16 y 16 kg; a otras repeticiones los kilos cambian, porque el redondeo va por implemento. Lo que se le enseñó a Mauro fueron esos cuatro kilos de ese perfil; las otras doce celdas salen del mismo factor. El peso muerto rumano (5) NO se toca: sale a 0,85 y los hombres con experiencia levantan 1,08 veces lo que pide la hoja. Con el coeficiente nuevo el tope de 32 kg de la rejilla de kettlebell deja de ser alcanzable por cualquier perfil (el máximo es 28), así que edge-kettlebell-cap pasa a ser edge-kettlebell-top, que fija ese máximo; el tope de la rejilla de mancuerna lo sigue fijando edge-dumbbell-cap, y el de kettlebell queda cubierto por test_kettlebell_above_the_grid_is_capped_and_flagged.",
+      "source": "Mauro, en el hilo de Slack del 18-09, respondiendo el 24-09 a la propuesta de Jesús con los cuatro pesos medidos: 'Me parece perfecto. Tiene todo el sentido del mundo'. El hilo entero: https://symmetryhqworkspace.slack.com/archives/D0A211866TY/p1789762335020949"
+    },
+    {
+      "key": "sheet_approved_by_mauro",
+      "rule": "Mauro dio la hoja entera por aprobada el 24-09-2026: respondió 'me parece perfecto' a un mensaje que decía 'con tu ok lo aplico y doy la hoja por aprobada por ti'. Lo que tenía delante eran los cuatro pesos medidos de ese mensaje, no las filas una a una; las 67 filas con peso que siguen en rev4_mock_ llevan el número de su propio documento sin que nadie lo haya revisado fila a fila. Jesús transcribió la firma ese mismo día sobre este contenido (starting_load_approval.json, transcribed_by y approved_scope), que añade a lo que Mauro vio la reclasificación de 4325 bajo la regla que él firmó el 19-09 y el paso de dos verificaciones a does_not_block_freeze; ninguna de las dos cambia un kilo. Si la hoja cambia, la huella cambia y hay que volver a firmarla: eso es lo que hace que una versión congelada no se mueva bajo la app que la copió. Cuatro consecuencias de producto que salen de reglas suyas y que Mauro no ha visto, porque Jesús decidió el 24-09 no llevarle otra pregunta; quedan declaradas aquí, no firmadas: el peso del paseo del granjero no progresa nunca (farmer_walk_loaded); los dos ejercicios de peso corporal lastrado no reciben peso de partida (weighted_bodyweight_gets_no_weight); el curl de pie agarre cerrado (3429) queda bajo la barra vacía hasta en hombres y salta a su alternativa, aviso que se le hizo el 18-09 y no contestó; y mientras las reglas del validador sigan en pending, todo salto a una alternativa sale sin peso (lighter_alternative.not_evaluable_policy). Medido con el calculador de los casos sobre 79 filas × 2 géneros × 2 experiencias × 55/67/77/92 kg × 6/8/10/12/15 reps: 115 de 6.320 combinaciones (1,8 %) salen sin peso, en 14 de los 16 perfiles (solo el hombre con experiencia de 77 y de 92 kg no se queda nunca sin peso); 106 saltarían a una alternativa y 9 no tienen ninguna, las nueve de mujer novata de 55 kg (4, 47 y 4249 a 10, 12 y 15 reps).",
+      "source": "Mauro, en el hilo de Slack del 18-09, el 24-09: 'Me parece perfecto. Tiene todo el sentido del mundo', respondiendo a 'con tu ok lo aplico y doy la hoja por aprobada por ti. ¿le damos?'. El hilo entero: https://symmetryhqworkspace.slack.com/archives/D0A211866TY/p1789762335020949"
+    }
+  ]
+}

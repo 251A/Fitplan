@@ -1,0 +1,41 @@
+<svg width="48" height="48" viewBox="6 6 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+<!-- Background circle -->
+<circle cx="30" cy="30" r="24" fill="#3781FA" fill-opacity="0.15"/>
+
+<!-- Phone body -->
+<rect x="18" y="10" width="24" height="40" rx="3.5" fill="#1A2733"/>
+
+<!-- Screen -->
+<rect x="20.5" y="13" width="19" height="34" rx="1.5" fill="#0F1620"/>
+
+<!-- Set rows -->
+<rect x="22.5" y="16" width="15" height="6" rx="1" fill="#2C3845"/>
+<circle cx="25" cy="19" r="1.8" fill="#22C55E"/>
+<path d="M24 19L24.7 19.7L26 18.3" stroke="white" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="28" y="17.6" width="7" height="0.9" rx="0.45" fill="#5A6F85"/>
+<rect x="28" y="19.4" width="4.5" height="0.7" rx="0.35" fill="#3781FA"/>
+
+<rect x="22.5" y="24" width="15" height="6" rx="1" fill="#2C3845"/>
+<circle cx="25" cy="27" r="1.8" fill="#22C55E"/>
+<path d="M24 27L24.7 27.7L26 26.3" stroke="white" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="28" y="25.6" width="7" height="0.9" rx="0.45" fill="#5A6F85"/>
+<rect x="28" y="27.4" width="5" height="0.7" rx="0.35" fill="#3781FA"/>
+
+<rect x="22.5" y="32" width="15" height="6" rx="1" fill="#2C3845"/>
+<circle cx="25" cy="35" r="1.8" fill="#FACC15"/>
+<rect x="28" y="33.6" width="7" height="0.9" rx="0.45" fill="#5A6F85"/>
+<rect x="28" y="35.4" width="3.2" height="0.7" rx="0.35" fill="#FACC15"/>
+
+<!-- CTA button -->
+<rect x="22.5" y="40" width="15" height="4" rx="2" fill="#3781FA"/>
+
+<!-- Home indicator -->
+<rect x="27" y="48" width="6" height="0.6" rx="0.3" fill="#5A6F85"/>
+
+<!-- Pencil floating -->
+<g transform="translate(43 30) rotate(35)">
+  <rect x="0" y="0" width="2.2" height="11" rx="0.4" fill="#F97316"/>
+  <rect x="0" y="0" width="2.2" height="2" fill="#FACC15"/>
+  <path d="M0 11L1.1 13L2.2 11Z" fill="#1A2733"/>
+</g>
+</svg>

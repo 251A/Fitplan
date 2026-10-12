@@ -20,6 +20,8 @@ const MUSCLE_FILTERS: { key: string; label: string; muscleKey?: string }[] = [
   { key: 'abs', label: 'Abdomen', muscleKey: 'abs' },
 ];
 
+import { SymmetryExerciseVisual } from './SymmetryExerciseVisual';
+
 interface SymmetryExercisePickerProps {
   onSelect: (exercise: SymmetryExercise) => void;
   onClose: () => void;
@@ -109,7 +111,6 @@ export function SymmetryExercisePicker({
               </p>
             ) : (
               filteredExercises.map((ex) => {
-                const muscleImg = getMuscleImage(ex.primaryMuscle);
                 const equipImg = getEquipmentImage(ex.implement);
                 const implementLabel = IMPLEMENT_LABELS[ex.implement] ?? ex.implement;
 
@@ -123,13 +124,7 @@ export function SymmetryExercisePicker({
                       onClose();
                     }}
                   >
-                    <div className="sym-picker-item-icon" style={{ position: 'relative', width: 44, height: 44, overflow: 'hidden' }}>
-                      <img
-                        src={muscleImg}
-                        alt={ex.primaryMuscle}
-                        style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                      />
-                    </div>
+                    <SymmetryExerciseVisual exercise={ex} variant="thumbnail" size={44} />
                     <div className="sym-picker-item-info">
                       <div className="sym-picker-item-name">{ex.name}</div>
                       <div className="sym-picker-item-sub" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>

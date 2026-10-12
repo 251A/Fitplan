@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 -1.3 28.6 28.6" fill="none">
+  <defs>
+    <linearGradient id="rg" x1="32%" y1="3%" x2="68%" y2="97%">
+      <stop offset="14%" stop-color="#F29393"/>
+      <stop offset="89%" stop-color="#EF4444"/>
+    </linearGradient>
+  </defs>
+  <g opacity="0.48">
+    <circle cx="9.1" cy="3.9" r="3.9" fill="url(#rg)"/>
+    <circle cx="19.5" cy="3.9" r="3.9" fill="url(#rg)"/>
+    <circle cx="3.9" cy="13" r="3.9" fill="url(#rg)"/>
+    <circle cx="14.3" cy="13" r="3.9" fill="url(#rg)"/>
+    <circle cx="24.7" cy="13" r="3.9" fill="url(#rg)"/>
+    <circle cx="9.1" cy="22.1" r="3.9" fill="url(#rg)"/>
+    <circle cx="19.5" cy="22.1" r="3.9" fill="url(#rg)"/>
+  </g>
+  <g>
+    <circle cx="9.1" cy="3.9" r="3.9" fill="url(#rg)"/>
+    <circle cx="19.5" cy="3.9" r="3.9" fill="url(#rg)"/>
+    <circle cx="3.9" cy="13" r="3.9" fill="url(#rg)"/>
+    <circle cx="14.3" cy="13" r="3.9" fill="url(#rg)"/>
+    <circle cx="24.7" cy="13" r="3.9" fill="url(#rg)"/>
+    <circle cx="9.1" cy="22.1" r="3.9" fill="url(#rg)"/>
+    <circle cx="19.5" cy="22.1" r="3.9" fill="url(#rg)"/>
+  </g>
+</svg>

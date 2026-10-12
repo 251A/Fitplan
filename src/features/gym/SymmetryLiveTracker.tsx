@@ -6,15 +6,13 @@ import { saveGymSessions, saveExercises } from '../../data/db/repository';
 import {
   findSymmetryExercise,
   calculateSymmetryRank,
-  IMPLEMENT_LABELS,
-  getMuscleImage,
-  getEquipmentImage,
   type SymmetryExercise,
   type CalculatedRank,
 } from '../../data/symmetry/symmetryCatalog';
 import { isSymmetryConnected, pushWorkoutToSymmetry } from '../../data/symmetry/symmetryApi';
 import { lastSetFor } from './gymStats';
 import { SymmetryExercisePicker } from './SymmetryExercisePicker';
+import { SymmetryExerciseVisual } from './SymmetryExerciseVisual';
 
 interface TrackerSet {
   id: string;
@@ -94,6 +92,7 @@ export function SymmetryLiveTracker({
   const [elapsedSeconds, setElapsedSeconds] = useState<number>(
     existingSession?.durationMin ? existingSession.durationMin * 60 : 0,
   );
+  const [activeExerciseIndex, setActiveExerciseIndex] = useState<number>(0);
   const [showPicker, setShowPicker] = useState(false);
   const [restSecondsLeft, setRestSecondsLeft] = useState<number | null>(null);
   const [isFinishing, setIsFinishing] = useState(false);
@@ -415,33 +414,61 @@ export function SymmetryLiveTracker({
   return (
     <div className="symmetry-container sym-live-tracker">
       {/* Sticky top header with elapsed timer and Finish button */}
-      <header className="sym-live-header">
-        <button
-          type="button"
-          className="sym-btn-secondary"
-          style={{ padding: '6px 12px', fontSize: 13 }}
-          onClick={() => {
-            if (workoutExercises.some((e) => e.sets.some((s) => s.completed))) {
-              if (!confirm('¿Deseas descartar los cambios del entrenamiento actual?')) return;
-            }
-            onDone();
-          }}
-        >
-          ‹ Descartar
-        </button>
+      {/* Sticky top header matching Screenshots 8 & 9 */}
+      <header
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '12px 4px',
+          marginBottom: 12,
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <button
+            type="button"
+            onClick={() => {
+              if (workoutExercises.some((e) => e.sets.some((s) => s.completed))) {
+                if (!confirm('¿Deseas salir del entrenamiento en curso?')) return;
+              }
+              onDone();
+            }}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#ffffff',
+              fontSize: 22,
+              cursor: 'pointer',
+              padding: '0 4px',
+            }}
+          >
+            ∨
+          </button>
 
-        <div className="sym-timer-display">
-          <span className="sym-timer-pulse" />
-          <span className="sym-timer-number">{formatTimer(elapsedSeconds)}</span>
+          <div style={{ fontSize: 18, fontWeight: 800, color: '#ffffff', letterSpacing: 0.5 }}>
+            {formatTimer(elapsedSeconds)}
+          </div>
+
+          <span style={{ fontSize: 16, color: '#9ca3af', cursor: 'pointer' }}>⏱️</span>
+          <span style={{ fontSize: 16, color: '#9ca3af', cursor: 'pointer' }}>⚙️</span>
         </div>
 
         <button
           type="button"
-          className="sym-btn-finish"
           onClick={handleFinishSession}
           disabled={isFinishing}
+          style={{
+            padding: '8px 18px',
+            borderRadius: 14,
+            background: '#16181e',
+            border: '1px solid #292d38',
+            color: '#ffffff',
+            fontSize: 13,
+            fontWeight: 800,
+            cursor: 'pointer',
+          }}
         >
-          {isFinishing ? 'Guardando...' : 'Finalizar'}
+          {isFinishing ? 'Guardando...' : 'Terminar'}
         </button>
       </header>
 
@@ -472,7 +499,35 @@ export function SymmetryLiveTracker({
         </div>
       )}
 
-      {/* Exercise Boxes */}
+      {/* Exercise Circular Carousel (Screenshots 8 & 9) */}
+      {workoutExercises.length > 0 && (
+        <div
+          style={{
+            display: 'flex',
+            gap: 12,
+            overflowX: 'auto',
+            padding: '8px 4px 16px',
+            marginBottom: 8,
+            alignItems: 'center',
+          }}
+        >
+          {workoutExercises.map((ex, idx) => {
+            const isActive = idx === activeExerciseIndex;
+            return (
+              <SymmetryExerciseVisual
+                key={ex.uid}
+                exercise={{ id: ex.symmetryId, name: ex.name }}
+                variant="circular"
+                size={58}
+                active={isActive}
+                onClick={() => setActiveExerciseIndex(idx)}
+              />
+            );
+          })}
+        </div>
+      )}
+
+      {/* Main Guided Workout Content */}
       {workoutExercises.length === 0 ? (
         <div
           style={{
@@ -503,11 +558,12 @@ export function SymmetryLiveTracker({
           </button>
         </div>
       ) : (
-        workoutExercises.map((ex, exIdx) => {
-          // Last performance for this exercise
+        (() => {
+          const ex = workoutExercises[activeExerciseIndex] ?? workoutExercises[0];
+          if (!ex) return null;
+          const exIdx = activeExerciseIndex;
           const last = lastSetFor(ex.exerciseId, gymSessions, bestSets);
 
-          // Calculate rank
           let rank: CalculatedRank | null = null;
           if (ex.symmetryId) {
             const topWeight = last ? last.weightKg : 0;
@@ -516,197 +572,392 @@ export function SymmetryLiveTracker({
             rank = calculateSymmetryRank(ex.symmetryId, oneRepMax, userWeightKg, 'male');
           }
 
-          const rankSvg = rank?.svg ?? '/symmetry/icons/ranking/rank=iron1.svg';
-          const rankTierName = rank?.name ?? 'Hierro I';
-          const implementLabel = IMPLEMENT_LABELS[ex.implement] ?? ex.implement;
-          const muscleImg = getMuscleImage(ex.primaryMuscle);
-          const equipImg = getEquipmentImage(ex.implement);
-
-          // Check if current session sets beat the historical 1RM for a new PR
-          const hasNewPR = ex.sets.some((s) => {
-            if (!s.completed) return false;
-            const w = parseFloat(s.weightKg);
-            const r = parseInt(s.reps, 10);
-            if (!w || !r || !last || last.weightKg <= 0) return false;
-            const current1RM = r === 1 ? w : w * (1 + r / 30);
-            const last1RM = last.reps === 1 ? last.weightKg : last.weightKg * (1 + last.reps / 30);
-            return current1RM > last1RM;
-          });
+          const rankSvg = rank?.svg ?? '/symmetry/icons/ranking/rank=ruby2.svg';
+          const rankTierName = rank?.name ?? 'Rubí II';
 
           return (
-            <div key={ex.uid} className="sym-exercise-box">
-              <div className="sym-exercise-header">
-                <div className="sym-exercise-visual">
-                  <img
-                    src={muscleImg}
-                    alt={ex.primaryMuscle}
-                    className="sym-exercise-anatomy-thumb"
-                  />
-                  <img
-                    src={equipImg}
-                    alt={ex.implement}
-                    className="sym-exercise-equipment-pip"
-                  />
-                </div>
+            <div key={ex.uid} className="sym-exercise-hero-container">
+              {/* Hero 3D Render (Screenshots 8 & 9) */}
+              <div style={{ marginBottom: 16 }}>
+                <SymmetryExerciseVisual
+                  exercise={{ id: ex.symmetryId, name: ex.name }}
+                  variant="hero"
+                />
+              </div>
 
-                <div className="sym-exercise-meta">
-                  <h3 className="sym-exercise-name">{ex.name}</h3>
-                  <div className="sym-exercise-tags">
-                    <span className="sym-tag-pill">{implementLabel}</span>
-                    <span className="sym-tag-pill" style={{ color: rank?.color ?? '#9ca3af' }}>
-                      {rankTierName}
-                    </span>
-                    {last && (
-                      <span className="sym-overload-chip">
-                        <img
-                          src="/symmetry/icons/button_overload_blue.svg"
-                          alt=""
-                          style={{ width: 12, height: 12 }}
-                        />
-                        Ant: {last.weightKg} kg × {last.reps}
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <img src={rankSvg} alt={rankTierName} className="sym-rank-badge-img" />
-                  <button
-                    type="button"
-                    className="sym-modal-close-btn"
-                    style={{ fontSize: 16 }}
-                    onClick={() => deleteExercise(exIdx)}
-                    title="Eliminar ejercicio"
-                  >
-                    ✕
-                  </button>
+              {/* Title & Rep Interval */}
+              <div style={{ textAlign: 'center', marginBottom: 16 }}>
+                <h2
+                  style={{
+                    fontSize: 20,
+                    fontWeight: 800,
+                    color: '#ffffff',
+                    margin: '0 0 4px',
+                    letterSpacing: '-0.3px',
+                  }}
+                >
+                  {ex.name}
+                </h2>
+                <div style={{ fontSize: 14, color: '#9ca3af', fontWeight: 600 }}>
+                  Intervalo 8–10
                 </div>
               </div>
 
-              {hasNewPR && (
-                <div className="sym-pr-banner">
-                  <span style={{ fontSize: 16 }}>🔥</span>
-                  <span>¡Nuevo Récord Personal alcanzado en este ejercicio!</span>
+              {/* Action Pills Row (Screenshots 8 & 9) */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 8,
+                  marginBottom: 24,
+                  flexWrap: 'wrap',
+                }}
+              >
+                {/* Rank Badge Pill */}
+                <div
+                  style={{
+                    width: 38,
+                    height: 38,
+                    borderRadius: '50%',
+                    background: '#1a1d24',
+                    border: '1px solid #282b35',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                  title={rankTierName}
+                >
+                  <img src={rankSvg} alt="" style={{ width: 22, height: 22 }} />
                 </div>
-              )}
 
-              {/* Sets Table */}
-              <table className="sym-sets-table">
-                <thead>
-                  <tr>
-                    <th style={{ width: 44 }}>SERIE</th>
-                    <th style={{ width: 70 }}>ANTERIOR</th>
-                    <th>KG</th>
-                    <th>REPS</th>
-                    <th style={{ width: 44 }}>RIR</th>
-                    <th style={{ width: 44 }}>✓</th>
-                  </tr>
-                </thead>
-                <tbody>
+                {/* Tutorial Pill */}
+                <button
+                  type="button"
+                  style={{
+                    padding: '8px 14px',
+                    borderRadius: 20,
+                    background: '#1c1e25',
+                    border: '1px solid #282b35',
+                    color: '#ffffff',
+                    fontSize: 13,
+                    fontWeight: 700,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    cursor: 'pointer',
+                  }}
+                >
+                  <span>▶</span> Tutorial
+                </button>
+
+                {/* Reemplazar Pill */}
+                <button
+                  type="button"
+                  onClick={() => setShowPicker(true)}
+                  style={{
+                    padding: '8px 14px',
+                    borderRadius: 20,
+                    background: '#1c1e25',
+                    border: '1px solid #282b35',
+                    color: '#ffffff',
+                    fontSize: 13,
+                    fontWeight: 700,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    cursor: 'pointer',
+                  }}
+                >
+                  <span>🔄</span> Reemplazar
+                </button>
+
+                {/* Notas Pill */}
+                <button
+                  type="button"
+                  style={{
+                    padding: '8px 14px',
+                    borderRadius: 20,
+                    background: '#1c1e25',
+                    border: '1px solid #282b35',
+                    color: '#ffffff',
+                    fontSize: 13,
+                    fontWeight: 700,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    cursor: 'pointer',
+                  }}
+                >
+                  <span>✏️</span> Notas
+                </button>
+              </div>
+
+              {/* Sets Table (Screenshots 8 & 9) */}
+              <div
+                style={{
+                  background: '#111216',
+                  borderRadius: 18,
+                  padding: '16px 14px',
+                  border: '1px solid #1c1e25',
+                  marginBottom: 20,
+                }}
+              >
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '44px 1fr 70px 70px 44px',
+                    gap: 8,
+                    color: '#9ca3af',
+                    fontSize: 11,
+                    fontWeight: 800,
+                    letterSpacing: 0.5,
+                    marginBottom: 12,
+                    textAlign: 'center',
+                  }}
+                >
+                  <div>SERIE</div>
+                  <div style={{ textAlign: 'left', paddingLeft: 8 }}>PREVIA</div>
+                  <div>KG</div>
+                  <div>REPES</div>
+                  <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <div
+                      style={{
+                        width: 24,
+                        height: 24,
+                        borderRadius: '50%',
+                        background: '#2563eb',
+                        color: '#ffffff',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: 12,
+                      }}
+                    >
+                      ✨
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                   {ex.sets.map((set, setIdx) => {
-                    const prevDisplay = last
-                      ? `${last.weightKg} × ${last.reps}`
-                      : '-';
+                    const prevDisplay = last ? `${last.weightKg} × ${last.reps}` : '-';
 
                     return (
-                      <tr
+                      <div
                         key={set.id}
-                        className={`sym-set-row ${set.completed ? 'completed' : ''}`}
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: '44px 1fr 70px 70px 44px',
+                          gap: 8,
+                          alignItems: 'center',
+                        }}
                       >
-                        <td className="sym-set-index">
-                          <button
-                            type="button"
-                            onClick={() => deleteSet(exIdx, setIdx)}
-                            style={{
-                              background: 'transparent',
-                              border: 'none',
-                              color: 'var(--sym-text-muted)',
-                              cursor: 'pointer',
-                              padding: '2px 4px',
-                              fontSize: 11,
-                              marginRight: 2,
-                            }}
-                            title="Eliminar serie"
-                          >
-                            ×
-                          </button>
+                        {/* Serie Number */}
+                        <div
+                          style={{
+                            height: 38,
+                            borderRadius: 10,
+                            background: '#1c1e25',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: '#9ca3af',
+                            fontWeight: 700,
+                            fontSize: 13,
+                          }}
+                        >
                           {setIdx + 1}
-                        </td>
-                        <td className="sym-set-cell sym-set-prev">{prevDisplay}</td>
-                        <td className="sym-set-cell">
-                          <input
-                            type="text"
-                            inputMode="decimal"
-                            className="sym-input-number"
-                            placeholder="0"
-                            value={set.weightKg}
-                            onChange={(e) =>
-                              updateSetValue(exIdx, setIdx, 'weightKg', e.target.value)
-                            }
-                          />
-                        </td>
-                        <td className="sym-set-cell">
-                          <input
-                            type="text"
-                            inputMode="numeric"
-                            className="sym-input-number"
-                            placeholder="0"
-                            value={set.reps}
-                            onChange={(e) =>
-                              updateSetValue(exIdx, setIdx, 'reps', e.target.value)
-                            }
-                          />
-                        </td>
-                        <td className="sym-set-cell">
-                          <input
-                            type="text"
-                            inputMode="numeric"
-                            className="sym-input-number"
-                            style={{ width: 40 }}
-                            placeholder="-"
-                            value={set.rir}
-                            onChange={(e) =>
-                              updateSetValue(exIdx, setIdx, 'rir', e.target.value)
-                            }
-                          />
-                        </td>
-                        <td className="sym-set-cell">
-                          <button
-                            type="button"
-                            className={`sym-check-btn ${set.completed ? 'checked' : ''}`}
-                            onClick={() => toggleSetCompleted(exIdx, setIdx)}
-                            aria-label="Completar serie"
-                          >
-                            <svg
-                              width="16"
-                              height="16"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="3"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                          </button>
-                        </td>
-                      </tr>
+                        </div>
+
+                        {/* Previa */}
+                        <div
+                          style={{
+                            fontSize: 13,
+                            color: '#9ca3af',
+                            fontWeight: 600,
+                            paddingLeft: 8,
+                          }}
+                        >
+                          {prevDisplay}
+                        </div>
+
+                        {/* KG Input Box */}
+                        <input
+                          type="text"
+                          inputMode="decimal"
+                          value={set.weightKg}
+                          placeholder="0"
+                          onChange={(e) =>
+                            updateSetValue(exIdx, setIdx, 'weightKg', e.target.value)
+                          }
+                          style={{
+                            height: 38,
+                            borderRadius: 10,
+                            background: '#242730',
+                            border: '1px solid #303440',
+                            color: '#ffffff',
+                            fontSize: 15,
+                            fontWeight: 700,
+                            textAlign: 'center',
+                            outline: 'none',
+                          }}
+                        />
+
+                        {/* Repes Input Box */}
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          value={set.reps}
+                          placeholder="0"
+                          onChange={(e) =>
+                            updateSetValue(exIdx, setIdx, 'reps', e.target.value)
+                          }
+                          style={{
+                            height: 38,
+                            borderRadius: 10,
+                            background: '#242730',
+                            border: '1px solid #303440',
+                            color: '#ffffff',
+                            fontSize: 15,
+                            fontWeight: 700,
+                            textAlign: 'center',
+                            outline: 'none',
+                          }}
+                        />
+
+                        {/* Circular Checkmark Button */}
+                        <button
+                          type="button"
+                          onClick={() => toggleSetCompleted(exIdx, setIdx)}
+                          style={{
+                            width: 38,
+                            height: 38,
+                            borderRadius: '50%',
+                            background: set.completed ? '#22c55e' : '#262933',
+                            border: 'none',
+                            color: '#ffffff',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            cursor: 'pointer',
+                            fontSize: 16,
+                            transition: 'all 0.2s ease',
+                          }}
+                        >
+                          ✓
+                        </button>
+                      </div>
                     );
                   })}
-                </tbody>
-              </table>
+                </div>
 
-              <button
-                type="button"
-                className="sym-add-set-btn"
-                onClick={() => addSet(exIdx)}
-              >
-                + Añadir Serie
-              </button>
+                {/* Add set & delete actions */}
+                <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
+                  <button
+                    type="button"
+                    onClick={() => addSet(exIdx)}
+                    style={{
+                      flex: 1,
+                      padding: '10px',
+                      background: 'transparent',
+                      border: '1px dashed #2d313d',
+                      borderRadius: 10,
+                      color: '#9ca3af',
+                      fontSize: 13,
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    + Añadir Serie
+                  </button>
+                  {ex.sets.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => deleteSet(exIdx, ex.sets.length - 1)}
+                      style={{
+                        padding: '10px 14px',
+                        background: 'transparent',
+                        border: '1px solid rgba(239, 68, 68, 0.3)',
+                        borderRadius: 10,
+                        color: '#f87171',
+                        fontSize: 13,
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                      }}
+                      title="Eliminar última serie"
+                    >
+                      − Serie
+                    </button>
+                  )}
+                  {workoutExercises.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        deleteExercise(exIdx);
+                        setActiveExerciseIndex((prev) => Math.max(0, prev - 1));
+                      }}
+                      style={{
+                        padding: '10px 14px',
+                        background: 'transparent',
+                        border: '1px solid rgba(239, 68, 68, 0.3)',
+                        borderRadius: 10,
+                        color: '#f87171',
+                        fontSize: 13,
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                      }}
+                      title="Eliminar ejercicio"
+                    >
+                      🗑️
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Navigation buttons: Next / Previous Exercise */}
+              <div style={{ display: 'flex', gap: 12, marginBottom: 30 }}>
+                {activeExerciseIndex > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setActiveExerciseIndex(activeExerciseIndex - 1)}
+                    style={{
+                      flex: 1,
+                      padding: 12,
+                      borderRadius: 12,
+                      background: '#1a1c22',
+                      border: '1px solid #282b35',
+                      color: '#ffffff',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    ← Ejercicio Anterior
+                  </button>
+                )}
+
+                {activeExerciseIndex < workoutExercises.length - 1 && (
+                  <button
+                    type="button"
+                    onClick={() => setActiveExerciseIndex(activeExerciseIndex + 1)}
+                    style={{
+                      flex: 1,
+                      padding: 12,
+                      borderRadius: 12,
+                      background: '#1a1c22',
+                      border: '1px solid #282b35',
+                      color: '#ffffff',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Siguiente Ejercicio →
+                  </button>
+                )}
+              </div>
             </div>
           );
-        })
+        })()
       )}
 
       {/* Add exercise action */}

@@ -1,0 +1,195 @@
+{
+  "version": 1,
+  "_source": "PT-303 'Los tracks definidos' track pages. Los CUATRO tracks confirmados por JP el 22-ago (PT-305) contra el Notion, IDs validados uno a uno contra el catálogo — la primera entrega de Fitness traía el bloque de Atleta duplicado; la definitiva ya no. Un fichero por idioma, como quick_workouts / predefined_workout_plans: los nombres y las notas son DATO.",
+  "sessions": {
+    "powerbuilder": {
+      "durationMinutes": 30,
+      "exercises": [
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 54680,
+          "sets": 1,
+          "repsPerSet": 20,
+          "restSecondsInBetweenSets": 0,
+          "isWarmup": true
+        },
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 8,
+          "sets": 3,
+          "repsPerSet": 10,
+          "restSecondsInBetweenSets": 90,
+          "note": "Baja hasta notar el pecho estirado y sube controlando. Que la última cueste, pero que salga."
+        },
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 12,
+          "sets": 3,
+          "repsPerSet": 10,
+          "restSecondsInBetweenSets": 75,
+          "note": "Codo hacia la cadera, no la mano. Aprieta la espalda arriba."
+        },
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 9,
+          "sets": 3,
+          "repsPerSet": 12,
+          "restSecondsInBetweenSets": 60,
+          "note": "Ligero, 4-6 kg. Sube hasta el hombro y baja despacio."
+        },
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 26,
+          "sets": 2,
+          "repsPerSet": 12,
+          "restSecondsInBetweenSets": 60,
+          "note": "Espalda pegada al banco, deja el brazo caer del todo abajo."
+        }
+      ]
+    },
+    "hybrid": {
+      "durationMinutes": 30,
+      "exercises": [
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 52335,
+          "sets": 1,
+          "secondsPerSet": 600,
+          "restSecondsInBetweenSets": 0,
+          "isWarmup": true,
+          "note": "Ritmo de conversación. Si no puedes hablar, vas demasiado rápido. Va primero y hace de calentamiento."
+        },
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 102,
+          "sets": 3,
+          "repsPerSet": 10,
+          "restSecondsInBetweenSets": 90,
+          "note": "Una mancuerna al pecho. Baja hasta que el muslo quede plano, pecho alto."
+        },
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 4281,
+          "sets": 3,
+          "repsPerSet": 10,
+          "restSecondsInBetweenSets": 75,
+          "note": "Aprieta el glúteo para no arquear la espalda."
+        },
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 12,
+          "sets": 3,
+          "repsPerSet": 10,
+          "restSecondsInBetweenSets": 75,
+          "note": "Apoya la mano libre en el banco. Codo hacia la cadera."
+        }
+      ]
+    },
+    "athlete": {
+      "durationMinutes": 30,
+      "exercises": [
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 54657,
+          "sets": 1,
+          "repsPerSet": 20,
+          "restSecondsInBetweenSets": 0,
+          "isWarmup": true
+        },
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 54656,
+          "sets": 1,
+          "repsPerSet": 20,
+          "restSecondsInBetweenSets": 0,
+          "isWarmup": true
+        },
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 30465,
+          "sets": 4,
+          "repsPerSet": 5,
+          "restSecondsInBetweenSets": 60,
+          "note": "Cinco saltos, no más. Salta con ganas y cae blando, rodillas hacia la punta del pie. Descansa entero entre series."
+        },
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 82,
+          "sets": 3,
+          "repsPerSet": 8,
+          "restSecondsInBetweenSets": 75,
+          "note": "Peso cómodo. Baja controlado y sube rápido."
+        },
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 4327,
+          "sets": 3,
+          "repsPerSet": 10,
+          "restSecondsInBetweenSets": 60,
+          "note": "El giro sale del tronco, no de los brazos. Ligero."
+        },
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 52336,
+          "sets": 3,
+          "secondsPerSet": 30,
+          "restSecondsInBetweenSets": 60,
+          "note": "Rápido, con la cadera baja. Es el único sitio donde vas a respirar fuerte."
+        }
+      ]
+    },
+    "fitness": {
+      "durationMinutes": 30,
+      "exercises": [
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 54680,
+          "sets": 1,
+          "repsPerSet": 20,
+          "restSecondsInBetweenSets": 0,
+          "isWarmup": true
+        },
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 54657,
+          "sets": 1,
+          "repsPerSet": 20,
+          "restSecondsInBetweenSets": 0,
+          "isWarmup": true
+        },
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 102,
+          "sets": 3,
+          "repsPerSet": 10,
+          "restSecondsInBetweenSets": 75,
+          "note": "Una mancuerna al pecho. Baja despacio, sube normal."
+        },
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 740,
+          "sets": 3,
+          "repsPerSet": 10,
+          "restSecondsInBetweenSets": 75,
+          "note": "Si no salen diez, apoya las manos en el banco. Cuerpo en línea."
+        },
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 12,
+          "sets": 3,
+          "repsPerSet": 10,
+          "restSecondsInBetweenSets": 75,
+          "note": "Apoya la mano libre en el banco. Codo hacia la cadera."
+        },
+        {
+          "kind": "exercise",
+          "exerciseTemplateId": 110,
+          "sets": 3,
+          "secondsPerSet": 40,
+          "restSecondsInBetweenSets": 60,
+          "note": "Una mancuerna pesada en cada mano. Pecho alto y no corras."
+        }
+      ]
+    }
+  }
+}

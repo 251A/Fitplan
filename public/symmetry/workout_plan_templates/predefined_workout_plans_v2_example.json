@@ -1,0 +1,262 @@
+[
+  {
+    "formatVersion": 2,
+    "planId": "v2:noeq_1-3d_nov_m:hypertrophy",
+    "ruleset": "hypertrophy",
+    "equipmentCategory": "noEquipment",
+    "level": "beginner",
+    "gender": "male",
+    "name": "Cuerpo Completo · 3 días",
+    "description": "Tres sesiones de cuerpo completo. Quien entrena menos días recibe solo las primeras.",
+    "thumbnailURL": null,
+    "durationPerSession": 35,
+    "trainingSessions": [
+      {
+        "dayOfWeek": 1,
+        "name": "Cuerpo Completo A",
+        "description": "La sesión base: completa por sí sola.",
+        "exercises": [
+          {
+            "exerciseTemplateId": 740,
+            "note": "Cuerpo recto de la cabeza a los talones.",
+            "sets": [
+              {
+                "reps": 12,
+                "restSeconds": 90
+              },
+              {
+                "reps": 12,
+                "restSeconds": 90
+              },
+              {
+                "reps": 10,
+                "restSeconds": 90
+              }
+            ]
+          },
+          {
+            "exerciseTemplateId": 1901,
+            "note": "Escápulas retraídas durante todo el recorrido.",
+            "sets": [
+              {
+                "reps": 10,
+                "restSeconds": 90
+              },
+              {
+                "reps": 10,
+                "restSeconds": 90
+              },
+              {
+                "reps": 8,
+                "restSeconds": 90
+              }
+            ]
+          },
+          {
+            "exerciseTemplateId": 72329,
+            "sets": [
+              {
+                "reps": 15,
+                "restSeconds": 90
+              },
+              {
+                "reps": 15,
+                "restSeconds": 90
+              },
+              {
+                "reps": 15,
+                "restSeconds": 90
+              }
+            ]
+          },
+          {
+            "exerciseTemplateId": 94233,
+            "note": "La cadera va atrás, la espalda no se redondea.",
+            "sets": [
+              {
+                "reps": 12,
+                "restSeconds": 75
+              },
+              {
+                "reps": 12,
+                "restSeconds": 75
+              }
+            ]
+          },
+          {
+            "exerciseTemplateId": 54600,
+            "note": "Glúteo apretado; sin hundir la lumbar.",
+            "sets": [
+              {
+                "durationSeconds": 40,
+                "restSeconds": 60
+              },
+              {
+                "durationSeconds": 40,
+                "restSeconds": 60
+              },
+              {
+                "durationSeconds": 30,
+                "restSeconds": 60
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "dayOfWeek": 3,
+        "name": "Cuerpo Completo B",
+        "description": "Añade variación sobre A; no la completa.",
+        "exercises": [
+          {
+            "exerciseTemplateId": 1834,
+            "note": "Cadera alta, la vista entre las manos.",
+            "sets": [
+              {
+                "reps": 10,
+                "restSeconds": 90
+              },
+              {
+                "reps": 10,
+                "restSeconds": 90
+              },
+              {
+                "reps": 8,
+                "restSeconds": 90
+              }
+            ]
+          },
+          {
+            "exerciseTemplateId": 4254,
+            "sets": [
+              {
+                "reps": 10,
+                "restSeconds": 90
+              },
+              {
+                "reps": 10,
+                "restSeconds": 90
+              },
+              {
+                "reps": 8,
+                "restSeconds": 90
+              }
+            ],
+            "note": "La toalla anclada en la puerta; el pecho llega a las manos."
+          },
+          {
+            "exerciseTemplateId": 4312,
+            "note": "La rodilla de delante no pasa de la punta del pie.",
+            "sets": [
+              {
+                "reps": 12,
+                "restSeconds": 90
+              },
+              {
+                "reps": 12,
+                "restSeconds": 90
+              }
+            ]
+          },
+          {
+            "exerciseTemplateId": 1896,
+            "sets": [
+              {
+                "reps": 15,
+                "restSeconds": 75
+              },
+              {
+                "reps": 15,
+                "restSeconds": 75
+              }
+            ]
+          },
+          {
+            "exerciseTemplateId": 1933,
+            "note": "Pausa de un segundo arriba.",
+            "sets": [
+              {
+                "reps": 20,
+                "restSeconds": 60
+              },
+              {
+                "reps": 20,
+                "restSeconds": 60
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "dayOfWeek": 5,
+        "name": "Cuerpo Completo C",
+        "description": "Cierra la semana con la tercera variación.",
+        "exercises": [
+          {
+            "exerciseTemplateId": 1812,
+            "note": "Las manos en un escalón o un banco; cuanto más alto, más fácil.",
+            "sets": [
+              {
+                "reps": 12,
+                "restSeconds": 90
+              },
+              {
+                "reps": 12,
+                "restSeconds": 90
+              },
+              {
+                "reps": 10,
+                "restSeconds": 90
+              }
+            ]
+          },
+          {
+            "exerciseTemplateId": 1901,
+            "sets": [
+              {
+                "reps": 10,
+                "restSeconds": 90
+              },
+              {
+                "reps": 10,
+                "restSeconds": 90
+              },
+              {
+                "reps": 8,
+                "restSeconds": 90
+              }
+            ]
+          },
+          {
+            "exerciseTemplateId": 72337,
+            "note": "Empuja con los talones; arriba, glúteo apretado.",
+            "sets": [
+              {
+                "reps": 15,
+                "restSeconds": 75
+              },
+              {
+                "reps": 15,
+                "restSeconds": 75
+              }
+            ]
+          },
+          {
+            "exerciseTemplateId": 3421,
+            "note": "Lento: el codo busca la rodilla contraria.",
+            "sets": [
+              {
+                "reps": 20,
+                "restSeconds": 60
+              },
+              {
+                "reps": 20,
+                "restSeconds": 60
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

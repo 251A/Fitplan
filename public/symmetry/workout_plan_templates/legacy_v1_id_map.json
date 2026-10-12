@@ -1,0 +1,450 @@
+{
+  "$doc": [
+    "FROZEN — the identity table of the v1 plan set. The ids are never regenerated.",
+    "",
+    "WHY IT EXISTS. Before this package a predefined plan's id WAS its index in the",
+    "asset array (predefined_workout_plan_model.dart:57). That index is PERSISTED: a",
+    "guest's chosen plan is stored as selectedWorkoutPlanId in FlutterSecureStorage",
+    "(Keychain / EncryptedSharedPreferences, so it survives app updates and, on iOS,",
+    "reinstalls) and resolved against a LATER load of the asset when they register.",
+    "Reorder the file between those two moments and the guest silently receives a",
+    "different plan than the one they previewed.",
+    "",
+    "WHAT IT STORES. index -> { stable id, name, nameEn }. ONE ROW PER PLAN, NOT PER",
+    "FILE: the same plan is written twice, once per language, and index i of",
+    "predefined_workout_plans.json and of predefined_workout_plans_en.json is the same",
+    "plan (verified at generation: same exercise ids, same duration, same session",
+    "count). The table has to carry BOTH names because the reader resolves a document",
+    "by the name it reads, and an English document only ever says its English name.",
+    "A table with the Spanish column alone made every English plan unresolvable.",
+    "",
+    "THE NAME IS THE LOAD-BEARING HALF: an id alone cannot find a plan again once the",
+    "array moved. The 82 Spanish names are unique. The English ones are NOT — indices",
+    "11 and 48 both read \"Volume Push Pull Legs\", which is a copy defect of the v1",
+    "asset and not something this table may fix — so a name that matches more than one",
+    "row is disambiguated by the index, and a name that matches none rejects the plan",
+    "rather than dropping it in silence. Pinned in both directions and for both",
+    "languages by legacy_v1_id_map_pin_test.",
+    "",
+    "DO NOT regenerate against a reordered asset — that reintroduces the very bug.",
+    "DO NOT add entries: new content is v2, which carries its own written planId."
+  ],
+  "generatedFrom": [
+    "assets/workout_plan_templates/predefined_workout_plans.json",
+    "assets/workout_plan_templates/predefined_workout_plans_en.json"
+  ],
+  "generatedOn": "2026-09-16",
+  "planCount": 82,
+  "byIndex": {
+    "0": {
+      "id": "v1:0",
+      "name": "Estética con Peso Corporal",
+      "nameEn": "Bodyweight Aesthetics"
+    },
+    "1": {
+      "id": "v1:1",
+      "name": "Fuerza Total en Casa",
+      "nameEn": "Total Strength at Home"
+    },
+    "2": {
+      "id": "v1:2",
+      "name": "Tonificación en Casa",
+      "nameEn": "Home Toning"
+    },
+    "3": {
+      "id": "v1:3",
+      "name": "Transformación Sin Equipo",
+      "nameEn": "Equipment-Free Transformation"
+    },
+    "4": {
+      "id": "v1:4",
+      "name": "Push Pull Legs Estético",
+      "nameEn": "Aesthetic Push Pull Legs"
+    },
+    "5": {
+      "id": "v1:5",
+      "name": "Upper Lower de Fuerza",
+      "nameEn": "Strength Upper Lower"
+    },
+    "6": {
+      "id": "v1:6",
+      "name": "Full Body en el Gym",
+      "nameEn": "Gym Full Body"
+    },
+    "7": {
+      "id": "v1:7",
+      "name": "Híbrido de Hipertrofia",
+      "nameEn": "Hypertrophy Hybrid"
+    },
+    "8": {
+      "id": "v1:8",
+      "name": "Fuerza con Equipo Básico",
+      "nameEn": "Strength with Basic Equipment"
+    },
+    "9": {
+      "id": "v1:9",
+      "name": "Estética en Gym Pequeño",
+      "nameEn": "Small Gym Aesthetics"
+    },
+    "10": {
+      "id": "v1:10",
+      "name": "Full Body en Gym Pequeño",
+      "nameEn": "Small Gym Full Body"
+    },
+    "11": {
+      "id": "v1:11",
+      "name": "Push Pull Legs de Volumen",
+      "nameEn": "Volume Push Pull Legs"
+    },
+    "12": {
+      "id": "v1:12",
+      "name": "Hipertrofia con Calistenia",
+      "nameEn": "Hypertrophy with Calisthenics"
+    },
+    "13": {
+      "id": "v1:13",
+      "name": "Calistenia Extrema",
+      "nameEn": "Advanced Full Body & Splits"
+    },
+    "14": {
+      "id": "v1:14",
+      "name": "Control Corporal Calisténico",
+      "nameEn": "Calisthenic Body Control"
+    },
+    "15": {
+      "id": "v1:15",
+      "name": "Trilogía Calisténica",
+      "nameEn": "Push Pull Legs with Calisthenics"
+    },
+    "16": {
+      "id": "v1:16",
+      "name": "Clasico y Estético",
+      "nameEn": "Classic and Aesthetic"
+    },
+    "17": {
+      "id": "v1:17",
+      "name": "Definición en Gym Pequeño",
+      "nameEn": "Small Gym Definition"
+    },
+    "18": {
+      "id": "v1:18",
+      "name": "Empieza en Gym Pequeño",
+      "nameEn": "Start at Small Gym"
+    },
+    "19": {
+      "id": "v1:19",
+      "name": "Push Pull Legs en Gym Pequeño",
+      "nameEn": "Small Gym Push Pull Legs"
+    },
+    "20": {
+      "id": "v1:20",
+      "name": "Culturismo Clásico",
+      "nameEn": "Classic Bodybuilding"
+    },
+    "21": {
+      "id": "v1:21",
+      "name": "Upper Lower Estético",
+      "nameEn": "Aesthetic Upper Lower"
+    },
+    "22": {
+      "id": "v1:22",
+      "name": "Full Body para Empezar en el Gym",
+      "nameEn": "Gym Full Body to Start"
+    },
+    "23": {
+      "id": "v1:23",
+      "name": "Híbrido de Fuerza y Volumen",
+      "nameEn": "Strength & Volume Hybrid"
+    },
+    "24": {
+      "id": "v1:24",
+      "name": "Primeros Pasos en Casa",
+      "nameEn": "First Steps at Home"
+    },
+    "25": {
+      "id": "v1:25",
+      "name": "Tu Primera Rutina",
+      "nameEn": "Your First Routine"
+    },
+    "26": {
+      "id": "v1:26",
+      "name": "Hábito de Entrenar en Casa",
+      "nameEn": "Build Your Training Habit"
+    },
+    "27": {
+      "id": "v1:27",
+      "name": "Movimiento Diario",
+      "nameEn": "Daily Movement"
+    },
+    "28": {
+      "id": "v1:28",
+      "name": "Fuerza Básica en Casa",
+      "nameEn": "Basic Home Strength"
+    },
+    "29": {
+      "id": "v1:29",
+      "name": "Músculo en Casa",
+      "nameEn": "Home Muscle Building"
+    },
+    "30": {
+      "id": "v1:30",
+      "name": "Transformación Total en Casa",
+      "nameEn": "Home Double Push Pull Legs"
+    },
+    "31": {
+      "id": "v1:31",
+      "name": "Intensidad Concentrada en Casa",
+      "nameEn": "Express Strength at Home"
+    },
+    "32": {
+      "id": "v1:32",
+      "name": "Definición en Casa",
+      "nameEn": "Home Definition"
+    },
+    "33": {
+      "id": "v1:33",
+      "name": "Equilibrio de Fuerza en Casa",
+      "nameEn": "Balanced Strength at Home"
+    },
+    "34": {
+      "id": "v1:34",
+      "name": "Potencia Concentrada en Casa",
+      "nameEn": "Concentrated Power at Home"
+    },
+    "35": {
+      "id": "v1:35",
+      "name": "Triple Impacto en Casa",
+      "nameEn": "Triple Impact at Home"
+    },
+    "36": {
+      "id": "v1:36",
+      "name": "Fuerza y Estética en Casa",
+      "nameEn": "Strength & Aesthetics at Home"
+    },
+    "37": {
+      "id": "v1:37",
+      "name": "Rendimiento Total en Casa",
+      "nameEn": "Total Performance at Home"
+    },
+    "38": {
+      "id": "v1:38",
+      "name": "Dominación Total en Casa",
+      "nameEn": "Total Domination at Home"
+    },
+    "39": {
+      "id": "v1:39",
+      "name": "Tu Primera Dominada",
+      "nameEn": "Your First Pull-up"
+    },
+    "40": {
+      "id": "v1:40",
+      "name": "Calistenia Desde Cero",
+      "nameEn": "Calisthenics From Zero"
+    },
+    "41": {
+      "id": "v1:41",
+      "name": "Dominadas y Fondos Básicos",
+      "nameEn": "Basic Pull-ups & Dips"
+    },
+    "42": {
+      "id": "v1:42",
+      "name": "Bases de la Calistenia",
+      "nameEn": "Calisthenics Foundations"
+    },
+    "43": {
+      "id": "v1:43",
+      "name": "Progresión Calisténica",
+      "nameEn": "Calisthenics Progression"
+    },
+    "44": {
+      "id": "v1:44",
+      "name": "Desarrollo Calisténico",
+      "nameEn": "Calisthenics Development"
+    },
+    "45": {
+      "id": "v1:45",
+      "name": "Calistenia de Alta Frecuencia",
+      "nameEn": "High Frequency Calisthenics"
+    },
+    "46": {
+      "id": "v1:46",
+      "name": "Intensidad Calisténica",
+      "nameEn": "Calisthenics Intensity"
+    },
+    "47": {
+      "id": "v1:47",
+      "name": "Calistenia Integral",
+      "nameEn": "Integral Calisthenics"
+    },
+    "48": {
+      "id": "v1:48",
+      "name": "Dominio corporal total",
+      "nameEn": "Volume Push Pull Legs"
+    },
+    "49": {
+      "id": "v1:49",
+      "name": "Potencia Calisténica",
+      "nameEn": "Calisthenics Power"
+    },
+    "50": {
+      "id": "v1:50",
+      "name": "Fuerza bruta calisténica",
+      "nameEn": "Strength Push Pull Legs"
+    },
+    "51": {
+      "id": "v1:51",
+      "name": "Maestria corporal avanzada",
+      "nameEn": "Power Upper Lower"
+    },
+    "52": {
+      "id": "v1:52",
+      "name": "Glúteos y Pierna",
+      "nameEn": "Glutes & Legs"
+    },
+    "53": {
+      "id": "v1:53",
+      "name": "Tonificación Gym Pequeño",
+      "nameEn": "Small Gym Toning"
+    },
+    "54": {
+      "id": "v1:54",
+      "name": "Tu Primer Día en el Gym",
+      "nameEn": "Your First Day at the Gym"
+    },
+    "55": {
+      "id": "v1:55",
+      "name": "Adaptación al Gym Pequeño",
+      "nameEn": "Small Gym Adaptation"
+    },
+    "56": {
+      "id": "v1:56",
+      "name": "Hipertrofia con Equipo Básico",
+      "nameEn": "Hypertrophy with Basic Equipment"
+    },
+    "57": {
+      "id": "v1:57",
+      "name": "Tonificación Femenina en Casa",
+      "nameEn": "Feminine Toning at Home"
+    },
+    "58": {
+      "id": "v1:58",
+      "name": "Cuerpo Femenino en el Gym",
+      "nameEn": "Feminine Body at the Gym"
+    },
+    "59": {
+      "id": "v1:59",
+      "name": "Calistenia Femenina",
+      "nameEn": "Feminine Calisthenics"
+    },
+    "60": {
+      "id": "v1:60",
+      "name": "Definición Femenina en Gym Pequeño",
+      "nameEn": "Feminine Definition in Small Gym"
+    },
+    "61": {
+      "id": "v1:61",
+      "name": "Primer Contacto con el Gym",
+      "nameEn": "First Contact with the Gym"
+    },
+    "62": {
+      "id": "v1:62",
+      "name": "Primer Contacto con Gym Pequeño",
+      "nameEn": "First Contact with Small Gym"
+    },
+    "63": {
+      "id": "v1:63",
+      "name": "Tu Sesión Esencial en Casa",
+      "nameEn": "Your Essential Home Session"
+    },
+    "64": {
+      "id": "v1:64",
+      "name": "Full Body Semanal en Casa",
+      "nameEn": "Weekly Full Body at Home"
+    },
+    "65": {
+      "id": "v1:65",
+      "name": "Primer Contacto con la Barra",
+      "nameEn": "First Contact with the Bar"
+    },
+    "66": {
+      "id": "v1:66",
+      "name": "Calistenia Total en un Día",
+      "nameEn": "One-Day Total Calisthenics"
+    },
+    "67": {
+      "id": "v1:67",
+      "name": "Tu Primer Full Body con Mancuernas",
+      "nameEn": "Your First Dumbbell Full Body"
+    },
+    "68": {
+      "id": "v1:68",
+      "name": "Full Body Cargado Semanal",
+      "nameEn": "Weekly Loaded Full Body"
+    },
+    "69": {
+      "id": "v1:69",
+      "name": "Tu Primer Full Body en el Gym",
+      "nameEn": "Your First Gym Full Body"
+    },
+    "70": {
+      "id": "v1:70",
+      "name": "Día Completo de Gym",
+      "nameEn": "All-In Gym Day"
+    },
+    "71": {
+      "id": "v1:71",
+      "name": "Doble Full Body en Gym Pequeño",
+      "nameEn": "Small Gym Double Full Body"
+    },
+    "72": {
+      "id": "v1:72",
+      "name": "Doble Full Body en el Gym",
+      "nameEn": "Gym Double Full Body"
+    },
+    "73": {
+      "id": "v1:73",
+      "name": "Semana Completa en Casa",
+      "nameEn": "Full Week at Home"
+    },
+    "74": {
+      "id": "v1:74",
+      "name": "Ritmo Diario en Casa",
+      "nameEn": "Daily Rhythm at Home"
+    },
+    "75": {
+      "id": "v1:75",
+      "name": "Semana Calisténica",
+      "nameEn": "Calisthenics Week"
+    },
+    "76": {
+      "id": "v1:76",
+      "name": "Progresión Diaria Calisténica",
+      "nameEn": "Daily Calisthenics Progression"
+    },
+    "77": {
+      "id": "v1:77",
+      "name": "PPL Semanal en Gym Pequeño",
+      "nameEn": "Weekly PPL in a Small Gym"
+    },
+    "78": {
+      "id": "v1:78",
+      "name": "Upper Lower Semanal en Gym Pequeño",
+      "nameEn": "Weekly Upper Lower in a Small Gym"
+    },
+    "79": {
+      "id": "v1:79",
+      "name": "PPL Semanal en el Gym",
+      "nameEn": "Weekly Gym PPL"
+    },
+    "80": {
+      "id": "v1:80",
+      "name": "Semana Total en el Gym",
+      "nameEn": "Total Gym Week"
+    },
+    "81": {
+      "id": "v1:81",
+      "name": "Upper Lower en Gym Pequeño",
+      "nameEn": "Upper Lower in a Small Gym"
+    }
+  }
+}

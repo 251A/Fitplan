@@ -1,0 +1,11 @@
+<svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Frame corners and inner figure share one stroke width (3 units ≈ the
+       weight of the 15px/600 label the icon sits next to at its 25.5px
+       render size). -->
+  <path d="M13.8 2H9.2C5.22 2 2 5.22 2 9.2V13.8" stroke="#F9FAFB" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M30.2 2H34.8C38.78 2 42 5.22 42 9.2V13.8" stroke="#F9FAFB" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M42 30.2V34.8C42 38.78 38.78 42 34.8 42H30.2" stroke="#F9FAFB" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M13.8 42H9.2C5.22 42 2 38.78 2 34.8V30.2" stroke="#F9FAFB" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M18.334 17.4167C18.334 18.3891 18.7203 19.3218 19.4079 20.0094C20.0956 20.697 21.0282 21.0833 22.0007 21.0833C22.9731 21.0833 23.9057 20.697 24.5934 20.0094C25.281 19.3218 25.6673 18.3891 25.6673 17.4167C25.6673 16.4442 25.281 15.5116 24.5934 14.8239C23.9057 14.1363 22.9731 13.75 22.0007 13.75C21.0282 13.75 20.0956 14.1363 19.4079 14.8239C18.7203 15.5116 18.334 16.4442 18.334 17.4167Z" stroke="#F9FAFB" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M16.5 30.25V28.4167C16.5 27.4442 16.8863 26.5116 17.5739 25.8239C18.2616 25.1363 19.1942 24.75 20.1667 24.75H23.8333C24.8058 24.75 25.7384 25.1363 26.4261 25.8239C27.1137 26.5116 27.5 27.4442 27.5 28.4167V30.25" stroke="#F9FAFB" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

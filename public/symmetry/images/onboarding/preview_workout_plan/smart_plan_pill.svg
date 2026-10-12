@@ -1,0 +1,16 @@
+<!-- SAT-5547 — the lavender disc behind each smart-plan bullet's glyph.
+     Figma 52624:4852 / 4856 / 4861: a 24x24 circle with a vertical lavender
+     gradient, #C6B6F9 at the top to #DED5F6 at the foot (sampled from the
+     nodes). The disc lives in the asset rather than in a BoxDecoration because
+     the app's colours are asked for by role and no lavender role exists yet;
+     an SVG carries its own paint, so this needs no token and no literal in
+     Dart. The glyph is drawn on top, in `ink.inverse`. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+  <defs>
+    <linearGradient id="smartPlanPill" x1="12" y1="0" x2="12" y2="24" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#C6B6F9"/>
+      <stop offset="1" stop-color="#DED5F6"/>
+    </linearGradient>
+  </defs>
+  <circle cx="12" cy="12" r="12" fill="url(#smartPlanPill)"/>
+</svg>
