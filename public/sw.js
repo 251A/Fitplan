@@ -16,6 +16,8 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.method !== 'GET' || new URL(req.url).origin !== location.origin) return;
+  // iOS streams video with Range requests and needs 206 answers: never serve those from the cache.
+  if (req.headers.has('range')) return;
 
   if (req.mode === 'navigate') {
     event.respondWith(

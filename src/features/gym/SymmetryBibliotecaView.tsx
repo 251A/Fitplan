@@ -365,7 +365,8 @@ export const SymmetryBibliotecaView: React.FC<SymmetryBibliotecaViewProps> = ({
         <div
           style={{
             position: 'fixed',
-            bottom: 64,
+            // Above the app tab bar (~62px) and the gym section bar (56px).
+            bottom: 'calc(118px + env(safe-area-inset-bottom, 0px))',
             left: 0,
             right: 0,
             maxWidth: 480,

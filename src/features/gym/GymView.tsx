@@ -7,6 +7,7 @@ import { SymmetryLiveTracker, type SymmetryTrackerInitialExercise } from './Symm
 import { SymmetryExercisePicker } from './SymmetryExercisePicker';
 import { SymmetryExerciseVisual } from './SymmetryExerciseVisual';
 import { SymmetryBodySilhouette } from './SymmetryBodySilhouette';
+import { SymmetryBodyScanCard } from './components/SymmetryBodyScanCard';
 import { SymmetryRanksView } from './SymmetryRanksView';
 import {
   SymmetryBibliotecaView,
@@ -27,15 +28,47 @@ import {
 } from '../../data/symmetry/symmetryCatalog';
 import { isSymmetryConnected } from '../../data/symmetry/symmetryApi';
 import { SymmetryLoginModal } from './SymmetryLoginModal';
+import { SymmetryExerciseDetail } from './SymmetryExerciseDetail';
+import { SymmetryIcon } from './components/SymmetryIcon';
+import { LOTTIE, SymmetryLottie } from './components/SymmetryLottie';
+import { addDays, dateKey } from '../../domain/dates';
+import {
+  personalRecords,
+  trainedDays,
+  weeklyStreak,
+  weeklyVolumeSeries,
+} from '../../domain/strength/gymActivity';
 import './symmetryTheme.css';
 
 type NavTab = 'friends' | 'ranks' | 'train' | 'library' | 'profile';
+
+const NAV_ITEMS: { tab: NavTab; label: string; icon: string }[] = [
+  { tab: 'friends', label: 'Amigos', icon: 'navigation_bar/social_media_icon' },
+  { tab: 'ranks', label: 'Rangos', icon: 'ranks_icon' },
+  { tab: 'train', label: 'Entrenar', icon: 'navigation_bar/start_training_icon' },
+  { tab: 'library', label: 'Biblioteca', icon: 'icon_exercises' },
+  { tab: 'profile', label: 'Perfil', icon: 'navigation_bar/profile_icon' },
+];
+
+const HEATMAP_DAYS = 84;
 
 type View =
   | { kind: 'main' }
   | { kind: 'live'; templateName?: string; exercises?: SymmetryTrackerInitialExercise[]; session?: GymSession }
   | { kind: 'exercise'; exercise: Exercise }
+  | { kind: 'symExercise'; exercise: SymmetryExercise }
   | { kind: 'import' };
+
+const compactKg = (v: number) =>
+  v >= 1000
+    ? `${new Intl.NumberFormat('es-ES', { maximumFractionDigits: 1 }).format(v / 1000)} mil kg`
+    : `${Math.round(v)} kg`;
+
+function deltaLabel(current: number, previous: number): { text: string; up: boolean } | null {
+  if (previous <= 0) return null;
+  const pct = Math.round(((current - previous) / previous) * 100);
+  return { text: `${pct >= 0 ? '+' : ''}${pct}%`, up: pct >= 0 };
+}
 
 function formatSessionDate(dateStr?: string | null): string {
   if (!dateStr) return 'Reciente';
@@ -59,7 +92,7 @@ function formatSessionDuration(durationMin?: number): string {
 }
 
 export function GymView() {
-  const { exercises, bestSets, gymSessions, profile, days } = useAppData();
+  const { exercises, bestSets, gymSessions, profile, days, timeZone } = useAppData();
   const [navTab, setNavTab] = useState<NavTab>('train');
   const [profileSubTab, setProfileSubTab] = useState<'workouts' | 'stats'>('workouts');
   const [view, setView] = useState<View>({ kind: 'main' });
@@ -88,6 +121,24 @@ export function GymView() {
   const sortedSessions = useMemo(() => {
     return [...gymSessions].sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''));
   }, [gymSessions]);
+
+  // Activity summaries from the logged sessions (deterministic, see domain/strength/gymActivity).
+  const today = dateKey(Date.now(), timeZone);
+  const streakWeeks = useMemo(() => weeklyStreak(gymSessions, today), [gymSessions, today]);
+  const volumeSeries = useMemo(() => weeklyVolumeSeries(gymSessions, today, 8), [gymSessions, today]);
+  const prs = useMemo(() => personalRecords(gymSessions), [gymSessions]);
+  const prDates = useMemo(() => new Set(prs.map((p) => p.date)), [prs]);
+  const heatmap = useMemo(() => trainedDays(gymSessions, today, HEATMAP_DAYS), [gymSessions, today]);
+  const last30 = addDays(today, -29);
+  const prev30 = addDays(today, -59);
+  const sessionsLast30 = gymSessions.filter((s) => s.date && s.date >= last30 && s.date <= today).length;
+  const sessionsPrev30 = gymSessions.filter((s) => s.date && s.date >= prev30 && s.date < last30).length;
+  const prsLast30 = prs.filter((p) => p.date >= last30).length;
+  const prsPrev30 = prs.filter((p) => p.date >= prev30 && p.date < last30).length;
+
+  const exerciseName = (id: string) => exercises.find((e) => e.id === id)?.name ?? findSymmetryExercise(id)?.name ?? id;
+
+  const openSymmetryExercise = (ex: SymmetryExercise) => setView({ kind: 'symExercise', exercise: ex });
 
   const connected = isSymmetryConnected();
   const allQuickRoutines = useMemo(() => getAllQuickWorkouts(), []);
@@ -193,6 +244,17 @@ export function GymView() {
     return <ExerciseDetail exercise={fresh} onDone={back} />;
   }
 
+  if (view.kind === 'symExercise') {
+    return (
+      <SymmetryExerciseDetail
+        exercise={view.exercise}
+        userWeightKg={userWeightKg}
+        onBack={back}
+        onStart={(ex) => setView({ kind: 'live', templateName: ex.name, exercises: [ex] })}
+      />
+    );
+  }
+
   return (
     <div
       className="symmetry-screen-root"
@@ -202,7 +264,7 @@ export function GymView() {
         minHeight: '100vh',
         background: '#090a0c',
         color: '#ffffff',
-        padding: '12px 14px 84px',
+        padding: '12px 14px calc(140px + env(safe-area-inset-bottom, 0px))',
         boxSizing: 'border-box',
         position: 'relative',
       }}
@@ -214,7 +276,14 @@ export function GymView() {
         <div>
           <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
             <h1 style={{ fontSize: 24, fontWeight: 900, margin: 0 }}>Amigos</h1>
-            <span style={{ fontSize: 13, color: '#f59e0b', fontWeight: 700 }}>🔥 1 Día de Racha</span>
+            <span style={{ fontSize: 13, color: '#f59e0b', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 2 }}>
+              <SymmetryLottie
+                src={LOTTIE.streakFlame}
+                size={24}
+                fallback={<SymmetryIcon name="streak/flame_lit" mode="original" size={16} />}
+              />
+              {streakWeeks} {streakWeeks === 1 ? 'semana' : 'semanas'} de racha
+            </span>
           </header>
 
           <div
@@ -262,15 +331,10 @@ export function GymView() {
         <SymmetryRanksView
           gymSessions={gymSessions}
           bestSets={bestSets}
+          exercises={exercises}
           userWeightKg={userWeightKg}
-          onSelectExercise={(ex) => {
-            const fitplanEx = exercises.find((e) => e.name.toLowerCase() === ex.name.toLowerCase());
-            if (fitplanEx) {
-              setView({ kind: 'exercise', exercise: fitplanEx });
-            } else {
-              setView({ kind: 'live', templateName: ex.name, exercises: [ex] });
-            }
-          }}
+          streakWeeks={streakWeeks}
+          onSelectExercise={openSymmetryExercise}
         />
       )}
 
@@ -646,7 +710,13 @@ export function GymView() {
                         <span style={{ fontSize: 12, fontWeight: 700, color: '#ffffff' }}>
                           {formatSessionDate(s.date)}
                         </span>
-                        <span style={{ fontSize: 10, color: '#6b7280' }}>›</span>
+                        {s.date && prDates.has(s.date) ? (
+                          <span title="Récord personal" style={{ display: 'flex' }}>
+                            <SymmetryIcon name="icon_pr_row_trophy" mode="original" size={14} title="Récord personal" />
+                          </span>
+                        ) : (
+                          <span style={{ fontSize: 10, color: '#6b7280' }}>›</span>
+                        )}
                       </div>
 
                       {/* Center Mannequin Silhouette with Cyan Muscles */}
@@ -856,17 +926,7 @@ export function GymView() {
       {/* TAB 4: BIBLIOTECA (Templates & Routine Creator) */}
       {/* ============================================================== */}
       {navTab === 'library' && (
-        <SymmetryBibliotecaView
-          onStartRoutine={handleStartRoutine}
-          onSelectExercise={(ex) => {
-            const fitplanEx = exercises.find((e) => e.name.toLowerCase() === ex.name.toLowerCase());
-            if (fitplanEx) {
-              setView({ kind: 'exercise', exercise: fitplanEx });
-            } else {
-              setView({ kind: 'live', templateName: ex.name, exercises: [ex] });
-            }
-          }}
-        />
+        <SymmetryBibliotecaView onStartRoutine={handleStartRoutine} onSelectExercise={openSymmetryExercise} />
       )}
 
       {/* ============================================================== */}
@@ -888,12 +948,72 @@ export function GymView() {
               @dvjtrkdsuq0
             </div>
 
-            <div style={{ display: 'flex', gap: 14, color: '#9ca3af', fontSize: 18 }}>
-              <span>📤</span>
-              <span>👥</span>
-              <span>⚙️</span>
-            </div>
+            <button
+              type="button"
+              onClick={() => setShowLoginModal(true)}
+              style={{
+                padding: '4px 10px',
+                borderRadius: 20,
+                background: connected ? 'rgba(16, 185, 129, 0.15)' : '#16181e',
+                border: `1px solid ${connected ? '#10b981' : '#282b36'}`,
+                color: connected ? '#10b981' : '#9ca3af',
+                fontSize: 11,
+                fontWeight: 700,
+                cursor: 'pointer',
+              }}
+            >
+              {connected ? 'Symmetry conectado' : 'Symmetry sin conectar'}
+            </button>
           </header>
+
+          {/* Streak + totals */}
+          {(() => {
+            const totalVolume = gymSessions.reduce(
+              (sum, s) => sum + s.sets.reduce((a, x) => (x.skipped || x.weightKg <= 0 ? a : a + x.weightKg * x.reps), 0),
+              0,
+            );
+            const thisWeek = volumeSeries[volumeSeries.length - 1];
+            const weekSets = gymSessions
+              .filter((s) => s.date && thisWeek && s.date >= thisWeek.week && s.date <= today)
+              .reduce((n, s) => n + s.sets.filter((x) => !x.skipped).length, 0);
+            return (
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'auto 1fr 1fr',
+                  alignItems: 'center',
+                  gap: 12,
+                  padding: '12px 14px',
+                  borderRadius: 18,
+                  background: '#121317',
+                  border: '1px solid #1f2127',
+                  marginBottom: 16,
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <SymmetryLottie
+                    src={LOTTIE.streakFlame}
+                    size={44}
+                    fallback={<SymmetryIcon name={streakWeeks > 0 ? 'streak/flame_lit' : 'streak/flame_grey'} mode="original" size={30} />}
+                  />
+                  <div>
+                    <div style={{ fontSize: 20, fontWeight: 900, color: '#f97316', lineHeight: 1 }}>{streakWeeks}</div>
+                    <div style={{ fontSize: 10, color: '#9ca3af' }}>{streakWeeks === 1 ? 'semana' : 'semanas'}</div>
+                  </div>
+                </div>
+                <div>
+                  <div style={{ fontSize: 10, color: '#9ca3af' }}>Volumen total</div>
+                  <div style={{ fontSize: 15, fontWeight: 800 }}>{compactKg(totalVolume)}</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: 10, color: '#9ca3af' }}>Series esta semana</div>
+                  <div style={{ fontSize: 15, fontWeight: 800 }}>{weekSets}</div>
+                </div>
+              </div>
+            );
+          })()}
+
+          <SymmetryBodyScanCard />
 
           {/* Sub-tabs: 🏋️ Entrenos | 📈 Estadísticas (Screenshot 1 & 3) */}
           <div
@@ -1021,127 +1141,143 @@ export function GymView() {
           {/* SUBTAB 2: STATS / PRS / CONSTANCIA (Screenshots 1 & 5) */}
           {profileSubTab === 'stats' && (
             <div>
-              {/* Weekly Volume Card (Screenshot 1) */}
-              <div
-                style={{
-                  borderRadius: 18,
-                  background: '#121317',
-                  border: '1px solid #1f2127',
-                  padding: '18px 16px',
-                  marginBottom: 14,
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                  <div style={{ fontSize: 12, color: '#9ca3af' }}>Volumen ∨</div>
-                  <div style={{ fontSize: 12, color: '#9ca3af' }}>Período ∨</div>
-                </div>
-
-                <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 16 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span style={{ fontSize: 24, fontWeight: 900, color: '#ffffff' }}>18,1 mil kg</span>
-                    <span style={{ fontSize: 12, color: '#4ade80', fontWeight: 700 }}>+234% ↑</span>
-                  </div>
-                  <span style={{ fontSize: 14, fontWeight: 700, color: '#ffffff' }}>Semana</span>
-                </div>
-
-                {/* SVG Curve Chart */}
-                <div style={{ height: 110, width: '100%' }}>
-                  <svg viewBox="0 0 300 100" style={{ width: '100%', height: '100%' }}>
-                    <path
-                      d="M0 60 Q 40 100 80 40 T 160 90 T 240 90 T 300 30"
-                      fill="none"
-                      stroke="#2563eb"
-                      strokeWidth="3.5"
-                    />
-                    <circle cx="300" cy="30" r="5" fill="#38bdf8" />
-                  </svg>
-                </div>
-              </div>
-
-              {/* Stats Counters: 10 Entrenos, 19 Nuevos PRs */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 20 }}>
-                <div style={{ padding: 14, borderRadius: 14, background: '#121317', border: '1px solid #1f2127' }}>
-                  <div style={{ fontSize: 12, color: '#38bdf8', fontWeight: 700, marginBottom: 4 }}>
-                    🏋️ ↑ +6
-                  </div>
-                  <div style={{ fontSize: 16, fontWeight: 800, color: '#ffffff' }}>
-                    10 Entrenos
-                  </div>
-                </div>
-
-                <div style={{ padding: 14, borderRadius: 14, background: '#121317', border: '1px solid #1f2127' }}>
-                  <div style={{ fontSize: 12, color: '#f87171', fontWeight: 700, marginBottom: 4 }}>
-                    🏆 ↓ -2
-                  </div>
-                  <div style={{ fontSize: 16, fontWeight: 800, color: '#ffffff' }}>
-                    19 Nuevos PRs
-                  </div>
-                </div>
-              </div>
-
-              {/* PRs Recientes List (Screenshot 1) */}
-              <section style={{ marginBottom: 24 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                  <h3 style={{ fontSize: 16, fontWeight: 800, color: '#ffffff', margin: 0 }}>
-                    PRs recientes
-                  </h3>
-                  <span style={{ fontSize: 12, color: '#9ca3af' }}>Ver todos ›</span>
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  {[
-                    { name: 'Jalón Al Pecho Agarre Cerrado', weight: 45, reps: 13, date: 'Oct 12' },
-                    { name: 'Curl de Concentración con Agarre Inverso', weight: 16, reps: 15, date: 'Oct 7' },
-                    { name: 'Jalón Al Pecho Agarre Prono', weight: 60, reps: 7, date: 'Oct 7' },
-                  ].map((pr, i) => (
-                    <div
-                      key={i}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        padding: '10px 12px',
-                        borderRadius: 14,
-                        background: '#121317',
-                        border: '1px solid #1e2027',
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                        <SymmetryExerciseVisual
-                          exercise={{ name: pr.name }}
-                          variant="circular"
-                          size={44}
-                        />
-
-                        <div>
-                          <div style={{ fontSize: 13, fontWeight: 700, color: '#ffffff', lineHeight: 1.3 }}>
-                            {pr.name}
-                          </div>
-                          <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 2 }}>
-                            🏆 {pr.weight} kg × {pr.reps} · {pr.date}
-                          </div>
-                        </div>
-                      </div>
-
-                      <span
-                        style={{
-                          fontSize: 10,
-                          fontWeight: 800,
-                          padding: '3px 8px',
-                          borderRadius: 12,
-                          background: '#2563eb',
-                          color: '#ffffff',
-                          whiteSpace: 'nowrap',
-                        }}
-                      >
-                        ★ NUEVO
-                      </span>
+              {/* Weekly volume (last 8 weeks) */}
+              {(() => {
+                const current = volumeSeries[volumeSeries.length - 1]!;
+                const previous = volumeSeries[volumeSeries.length - 2]!;
+                const delta = deltaLabel(current.volumeKg, previous.volumeKg);
+                const max = Math.max(1, ...volumeSeries.map((w) => w.volumeKg));
+                const pts = volumeSeries.map((w, i) => {
+                  const x = (i / Math.max(1, volumeSeries.length - 1)) * 290 + 5;
+                  const y = 92 - (w.volumeKg / max) * 80;
+                  return { x, y };
+                });
+                const last = pts[pts.length - 1]!;
+                return (
+                  <div
+                    style={{
+                      borderRadius: 18,
+                      background: '#121317',
+                      border: '1px solid #1f2127',
+                      padding: '18px 16px',
+                      marginBottom: 14,
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                      <div style={{ fontSize: 12, color: '#9ca3af' }}>Volumen esta semana</div>
+                      <div style={{ fontSize: 12, color: '#9ca3af' }}>Últimas 8 semanas</div>
                     </div>
-                  ))}
-                </div>
+
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 16 }}>
+                      <span style={{ fontSize: 24, fontWeight: 900, color: '#ffffff' }}>{compactKg(current.volumeKg)}</span>
+                      {delta && (
+                        <span style={{ fontSize: 12, color: delta.up ? '#4ade80' : '#f87171', fontWeight: 700 }}>
+                          {delta.text} {delta.up ? '↑' : '↓'} vs semana anterior
+                        </span>
+                      )}
+                    </div>
+
+                    <div style={{ height: 110, width: '100%' }}>
+                      <svg viewBox="0 0 300 100" preserveAspectRatio="none" style={{ width: '100%', height: '100%' }} role="img" aria-label="Volumen semanal">
+                        <polyline
+                          points={pts.map((p) => `${p.x},${p.y}`).join(' ')}
+                          fill="none"
+                          stroke="#2563eb"
+                          strokeWidth="3"
+                          strokeLinejoin="round"
+                          vectorEffect="non-scaling-stroke"
+                        />
+                        <circle cx={last.x} cy={last.y} r="4" fill="#38bdf8" />
+                      </svg>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* Sessions and PRs, last 30 days vs the previous 30 */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 20 }}>
+                {[
+                  { icon: 'icon_pr_summary_dumbbell', value: sessionsLast30, prev: sessionsPrev30, label: sessionsLast30 === 1 ? 'Entreno' : 'Entrenos' },
+                  { icon: 'icon_pr_summary_trophy', value: prsLast30, prev: prsPrev30, label: prsLast30 === 1 ? 'Nuevo PR' : 'Nuevos PRs' },
+                ].map((c) => {
+                  const diff = c.value - c.prev;
+                  return (
+                    <div key={c.icon} style={{ padding: 14, borderRadius: 14, background: '#121317', border: '1px solid #1f2127' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, marginBottom: 4, color: diff >= 0 ? '#38bdf8' : '#f87171' }}>
+                        <SymmetryIcon name={c.icon} mode="original" size={16} />
+                        {diff >= 0 ? `↑ +${diff}` : `↓ ${diff}`}
+                      </div>
+                      <div style={{ fontSize: 16, fontWeight: 800, color: '#ffffff' }}>
+                        {c.value} {c.label}
+                      </div>
+                      <div style={{ fontSize: 11, color: '#6b7280', marginTop: 2 }}>Últimos 30 días</div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Recent PRs */}
+              <section style={{ marginBottom: 24 }}>
+                <h3 style={{ fontSize: 16, fontWeight: 800, color: '#ffffff', margin: '0 0 12px' }}>PRs recientes</h3>
+
+                {prs.length === 0 ? (
+                  <div style={{ padding: 16, borderRadius: 14, background: '#121317', border: '1px solid #1e2027', fontSize: 12, color: '#9ca3af' }}>
+                    Aún no hay récords: aparecen cuando superas el 1RM estimado de una sesión anterior.
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    {prs.slice(0, 5).map((pr) => {
+                      const name = exerciseName(pr.exerciseId);
+                      const isNew = pr.date >= addDays(today, -6);
+                      return (
+                        <div
+                          key={`${pr.exerciseId}-${pr.date}`}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            gap: 8,
+                            padding: '10px 12px',
+                            borderRadius: 14,
+                            background: '#121317',
+                            border: '1px solid #1e2027',
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
+                            <SymmetryExerciseVisual exercise={{ name }} variant="circular" size={44} />
+                            <div style={{ minWidth: 0 }}>
+                              <div style={{ fontSize: 13, fontWeight: 700, color: '#ffffff', lineHeight: 1.3 }}>{name}</div>
+                              <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 2 }}>
+                                {pr.weightKg} kg × {pr.reps} · 1RM {Math.round(pr.e1rm * 10) / 10} kg (+
+                                {Math.round((pr.e1rm - pr.previousE1rm) * 10) / 10}) ·{' '}
+                                {new Date(`${pr.date}T12:00:00`).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}
+                              </div>
+                            </div>
+                          </div>
+
+                          {isNew && (
+                            <span
+                              style={{
+                                fontSize: 10,
+                                fontWeight: 800,
+                                padding: '3px 8px',
+                                borderRadius: 12,
+                                background: '#2563eb',
+                                color: '#ffffff',
+                                whiteSpace: 'nowrap',
+                              }}
+                            >
+                              ★ NUEVO
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </section>
 
-              {/* Constancia Heatmap (Screenshot 5) */}
+              {/* Consistency heatmap: one column per week, Monday on top */}
               <section
                 style={{
                   padding: 16,
@@ -1153,26 +1289,44 @@ export function GymView() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
                   <div>
                     <h4 style={{ fontSize: 15, fontWeight: 800, margin: '0 0 2px' }}>Constancia</h4>
-                    <div style={{ fontSize: 12, color: '#9ca3af' }}>14/90 días · 1.1x/semana</div>
+                    <div style={{ fontSize: 12, color: '#9ca3af' }}>
+                      {heatmap.size}/{HEATMAP_DAYS} días · {(heatmap.size / (HEATMAP_DAYS / 7)).toLocaleString('es-ES', { maximumFractionDigits: 1 })}x/semana
+                    </div>
                   </div>
-                  <span style={{ fontSize: 12, color: '#9ca3af' }}>3 meses ∨</span>
+                  <span style={{ fontSize: 12, color: '#9ca3af' }}>12 semanas</span>
                 </div>
 
-                {/* 3-month grid representation */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: 4, margin: '14px 0' }}>
-                  {Array.from({ length: 60 }).map((_, idx) => {
-                    const trained = [2, 5, 8, 12, 16, 20, 22, 28, 32, 35, 42, 48, 52, 58].includes(idx);
-                    return (
-                      <div
-                        key={idx}
-                        style={{
-                          aspectRatio: '1 / 1',
-                          borderRadius: 4,
-                          background: trained ? '#38bdf8' : '#1c1e25',
-                        }}
-                      />
-                    );
-                  })}
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateRows: 'repeat(7, 1fr)',
+                    gridAutoFlow: 'column',
+                    gridAutoColumns: '1fr',
+                    gap: 4,
+                    margin: '14px 0',
+                  }}
+                >
+                  {(() => {
+                    // Start on the Monday 11 weeks before this week's Monday, end on Sunday of this week.
+                    const thisMonday = addDays(today, -((new Date(`${today}T12:00:00`).getDay() + 6) % 7));
+                    const start = addDays(thisMonday, -7 * (HEATMAP_DAYS / 7 - 1));
+                    return Array.from({ length: HEATMAP_DAYS }).map((_, idx) => {
+                      const d = addDays(start, idx);
+                      const trained = heatmap.has(d);
+                      const future = d > today;
+                      return (
+                        <div
+                          key={d}
+                          title={d}
+                          style={{
+                            aspectRatio: '1 / 1',
+                            borderRadius: 4,
+                            background: trained ? '#38bdf8' : future ? 'transparent' : '#1c1e25',
+                          }}
+                        />
+                      );
+                    });
+                  })()}
                 </div>
 
                 <div style={{ display: 'flex', gap: 14, fontSize: 11, color: '#9ca3af' }}>
@@ -1195,127 +1349,55 @@ export function GymView() {
       {/* AUTHENTIC SYMMETRY BOTTOM NAVIGATION BAR (Screenshots 1 - 6)   */}
       {/* ============================================================== */}
       <nav
+        aria-label="Secciones del gimnasio"
         style={{
           position: 'fixed',
-          bottom: 0,
+          // Sits right above the app tab bar (fixed at the bottom, ~62px plus the safe area).
+          bottom: 'calc(62px + env(safe-area-inset-bottom, 0px))',
           left: 0,
           right: 0,
           maxWidth: 480,
           margin: '0 auto',
-          height: 64,
+          height: 56,
           background: '#0a0b0e',
           borderTop: '1px solid #1b1d24',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-around',
           zIndex: 50,
-          padding: '0 4px',
+          boxSizing: 'border-box',
         }}
       >
-        {/* 1. Amigos */}
-        <button
-          type="button"
-          onClick={() => setNavTab('friends')}
-          style={{
-            background: 'none',
-            border: 'none',
-            color: navTab === 'friends' ? '#ffffff' : '#6b7280',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 4,
-            cursor: 'pointer',
-            fontSize: 10,
-            fontWeight: navTab === 'friends' ? 700 : 500,
-          }}
-        >
-          <span style={{ fontSize: 18 }}>👥</span>
-          Amigos
-        </button>
-
-        {/* 2. Rangos */}
-        <button
-          type="button"
-          onClick={() => setNavTab('ranks')}
-          style={{
-            background: 'none',
-            border: 'none',
-            color: navTab === 'ranks' ? '#ffffff' : '#6b7280',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 4,
-            cursor: 'pointer',
-            fontSize: 10,
-            fontWeight: navTab === 'ranks' ? 700 : 500,
-          }}
-        >
-          <span style={{ fontSize: 18 }}>⭐</span>
-          Rangos
-        </button>
-
-        {/* 3. Entrenar (Center dumbbell) */}
-        <button
-          type="button"
-          onClick={() => setNavTab('train')}
-          style={{
-            background: 'none',
-            border: 'none',
-            color: navTab === 'train' ? '#38bdf8' : '#6b7280',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 4,
-            cursor: 'pointer',
-            fontSize: 10,
-            fontWeight: navTab === 'train' ? 800 : 500,
-          }}
-        >
-          <span style={{ fontSize: 20 }}>🏋️</span>
-          Entrenar
-        </button>
-
-        {/* 4. Biblioteca */}
-        <button
-          type="button"
-          onClick={() => setNavTab('library')}
-          style={{
-            background: 'none',
-            border: 'none',
-            color: navTab === 'library' ? '#ffffff' : '#6b7280',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 4,
-            cursor: 'pointer',
-            fontSize: 10,
-            fontWeight: navTab === 'library' ? 700 : 500,
-          }}
-        >
-          <span style={{ fontSize: 18 }}>📚</span>
-          Biblioteca
-        </button>
-
-        {/* 5. Perfil */}
-        <button
-          type="button"
-          onClick={() => setNavTab('profile')}
-          style={{
-            background: 'none',
-            border: 'none',
-            color: navTab === 'profile' ? '#ffffff' : '#6b7280',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 4,
-            cursor: 'pointer',
-            fontSize: 10,
-            fontWeight: navTab === 'profile' ? 700 : 500,
-          }}
-        >
-          <span style={{ fontSize: 18 }}>👤</span>
-          Perfil
-        </button>
+        {NAV_ITEMS.map(({ tab, label, icon }) => {
+          const active = navTab === tab;
+          const activeColor = tab === 'train' ? '#38bdf8' : '#ffffff';
+          return (
+            <button
+              key={tab}
+              type="button"
+              aria-current={active ? 'page' : undefined}
+              onClick={() => setNavTab(tab)}
+              style={{
+                flex: 1,
+                height: '100%',
+                background: 'none',
+                border: 'none',
+                color: active ? activeColor : '#6b7280',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 4,
+                cursor: 'pointer',
+                fontSize: 10,
+                fontWeight: active ? 700 : 500,
+              }}
+            >
+              <SymmetryIcon name={icon} size={tab === 'train' ? 24 : 22} color={active ? activeColor : '#6b7280'} />
+              {label}
+            </button>
+          );
+        })}
       </nav>
 
       {/* ============================================================== */}

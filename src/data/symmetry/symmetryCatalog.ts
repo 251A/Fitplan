@@ -71,12 +71,12 @@ export function findSymmetryExercise(idOrName: number | string): SymmetryExercis
 }
 
 export function calculateSymmetryRank(
-  exerciseId: number,
+  exerciseOrId: number | SymmetryExercise,
   oneRepMaxKg: number,
   userWeightKg: number,
   gender: 'male' | 'female' = 'male',
 ): CalculatedRank | null {
-  const exercise = findSymmetryExercise(exerciseId);
+  const exercise = typeof exerciseOrId === 'number' ? findSymmetryExercise(exerciseOrId) : exerciseOrId;
   if (!exercise || !exercise.rankThresholds || userWeightKg <= 0 || oneRepMaxKg <= 0) return null;
 
   const thresholds = exercise.rankThresholds[gender] || exercise.rankThresholds.male;

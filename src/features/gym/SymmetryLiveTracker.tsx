@@ -14,6 +14,8 @@ import { lastSetFor } from './gymStats';
 import { SymmetryExercisePicker } from './SymmetryExercisePicker';
 import { SymmetryExerciseVisual } from './SymmetryExerciseVisual';
 import { assetUrl } from '../../data/symmetry/assetHelper';
+import { LOTTIE, SymmetryLottie } from './components/SymmetryLottie';
+import { SymmetryIcon } from './components/SymmetryIcon';
 
 interface TrackerSet {
   id: string;
@@ -98,6 +100,14 @@ export function SymmetryLiveTracker({
   const [restSecondsLeft, setRestSecondsLeft] = useState<number | null>(null);
   const [isFinishing, setIsFinishing] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [saved, setSaved] = useState(false);
+
+  // After saving, the check animation plays and then the tracker closes (with a fallback timeout).
+  useEffect(() => {
+    if (!saved) return;
+    const t = window.setTimeout(onDone, 2500);
+    return () => window.clearTimeout(t);
+  }, [saved, onDone]);
 
   // User body weight for 1RM ranking
   const userWeightKg = useMemo(() => {
@@ -405,7 +415,7 @@ export function SymmetryLiveTracker({
       }
 
       await reload();
-      onDone();
+      setSaved(true);
     } catch (err) {
       alert(`Error al guardar sesión: ${(err as Error).message}`);
       setIsFinishing(false);
@@ -976,12 +986,19 @@ export function SymmetryLiveTracker({
       {/* Floating Rest Timer Widget */}
       {restSecondsLeft !== null && (
         <div className="sym-rest-floating">
-          <div>
-            <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--sym-text-muted)', textTransform: 'uppercase' }}>
-              Descanso
-            </div>
-            <div className="sym-rest-timer-time">
-              {formatTimer(restSecondsLeft)}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <SymmetryLottie
+              src={LOTTIE.sandTimer}
+              size={36}
+              fallback={<SymmetryIcon name="sand_clock_icon" color="grey" size={22} />}
+            />
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--sym-text-muted)', textTransform: 'uppercase' }}>
+                Descanso
+              </div>
+              <div className="sym-rest-timer-time">
+                {formatTimer(restSecondsLeft)}
+              </div>
             </div>
           </div>
 
@@ -1018,6 +1035,34 @@ export function SymmetryLiveTracker({
           onSelect={handleSelectExercise}
           onClose={() => setShowPicker(false)}
         />
+      )}
+
+      {saved && (
+        <div
+          role="status"
+          onClick={onDone}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 1200,
+            background: 'rgba(9,10,12,0.94)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 12,
+          }}
+        >
+          <SymmetryLottie
+            src={LOTTIE.check}
+            size={140}
+            loop={false}
+            onComplete={onDone}
+            fallback={<SymmetryIcon name="icon_success" color="blue" size={72} />}
+          />
+          <div style={{ fontSize: 20, fontWeight: 900, color: '#ffffff' }}>Entrenamiento guardado</div>
+          {statusMessage && <div style={{ fontSize: 13, color: '#9ca3af' }}>{statusMessage}</div>}
+        </div>
       )}
     </div>
   );
