@@ -27,7 +27,10 @@ import {
   type SymmetryExercise,
 } from '../../data/symmetry/symmetryCatalog';
 import { isSymmetryConnected } from '../../data/symmetry/symmetryApi';
-import { isExerciseMediaStale, refreshExerciseMedia } from '../../data/symmetry/symmetryExerciseMedia';
+import { isExerciseMediaStale, primeExerciseMedia, refreshExerciseMedia } from '../../data/symmetry/symmetryExerciseMedia';
+
+// Make downloaded Symmetry templates resolvable by id/name before the first render.
+primeExerciseMedia();
 import { SymmetryLoginModal } from './SymmetryLoginModal';
 import { SymmetryExerciseDetail } from './SymmetryExerciseDetail';
 import { SymmetryIcon } from './components/SymmetryIcon';

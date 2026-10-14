@@ -1,5 +1,22 @@
 import { describe, expect, it } from 'vitest';
-import { parseExerciseTemplates } from './symmetryExerciseMedia';
+import { implementFromName, parseExerciseTemplates, toLibraryExercise } from './symmetryExerciseMedia';
+
+describe('library mapping', () => {
+  it('derives equipment from the name suffix', () => {
+    expect(implementFromName('Press Inclinado (Smith)')).toBe('smith');
+    expect(implementFromName('Curl Martillo (Mancuerna)')).toBe('dumbbell');
+    expect(implementFromName('Remo (Barra)')).toBe('barbell');
+    expect(implementFromName('Jalón (Polea)')).toBe('cable');
+    expect(implementFromName('Extensión De Rodilla (Máquina)')).toBe('machine');
+    expect(implementFromName('Dominadas')).toBe('no_external_load');
+  });
+
+  it('maps focus muscle and category, without ranks', () => {
+    const ex = toLibraryExercise({ id: 900, name: 'Remo Alto (Polea)', focusMuscle: 'upper_back', secondaryMuscles: [] });
+    expect(ex).toMatchObject({ id: 900, implement: 'cable', primaryMuscle: 'back', category: 'pull', rankThresholds: null });
+    expect(toLibraryExercise({ id: 901, name: 'Aductor (Máquina)', focusMuscle: 'adductors', secondaryMuscles: [] }).category).toBe('legs');
+  });
+});
 
 describe('parseExerciseTemplates', () => {
   it('keeps id, media, instructions and muscles from a template', () => {

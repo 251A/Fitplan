@@ -19,6 +19,11 @@ const CATALOG_MUSCLE_LABEL: Record<string, string> = {
   glutes: 'Glúteos',
   calves: 'Gemelos',
   abs: 'Abdominales',
+  forearms: 'Antebrazos',
+  adductors: 'Aductores',
+  abductors: 'Abductores',
+  neck: 'Cuello',
+  cardio: 'Cardio',
 };
 
 interface Props {

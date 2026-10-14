@@ -2,15 +2,45 @@ import React, { useState, useMemo, useEffect } from 'react';
 import {
   SymmetryExerciseVisual,
   ROUTINE_COLLAGES,
+  getExerciseInitials,
+  resolveExerciseImage,
 } from './SymmetryExerciseVisual';
+import { SymmetryIcon } from './components/SymmetryIcon';
+import { SymmetryMuscleIcon } from './components/SymmetryMuscleIcon';
+import { exerciseMuscles, muscleDistribution, musclesText } from '../../data/symmetry/symmetryMuscles';
 import { SymmetryExercisePicker } from './SymmetryExercisePicker';
 import {
   SYMMETRY_EXERCISES,
   findSymmetryExercise,
-  getMuscleImage,
   type SymmetryExercise,
 } from '../../data/symmetry/symmetryCatalog';
 import { assetUrl } from '../../data/symmetry/assetHelper';
+import { getLibraryExercises } from '../../data/symmetry/symmetryExerciseMedia';
+
+const PAGE_SIZE = 40;
+
+const MUSCLE_LABELS: Record<string, string> = {
+  chest: 'Pecho',
+  delts: 'Hombros',
+  back: 'Espalda',
+  biceps: 'Bíceps',
+  triceps: 'Tríceps',
+  forearms: 'Antebrazos',
+  quads: 'Cuádriceps',
+  hamstrings: 'Femorales',
+  glutes: 'Glúteos',
+  calves: 'Gemelos',
+  adductors: 'Aductores',
+  abductors: 'Abductores',
+  abs: 'Abdominales',
+  neck: 'Cuello',
+  cardio: 'Cardio',
+};
+
+/** Case- and accent-insensitive search key ("jalon" finds "Jalón"). */
+function normalizeSearch(s: string): string {
+  return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim();
+}
 
 export interface RoutineTemplate {
   id: string;
@@ -116,6 +146,7 @@ export const SymmetryBibliotecaView: React.FC<SymmetryBibliotecaViewProps> = ({
   const [selectedTemplate, setSelectedTemplate] = useState<RoutineTemplate | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showExercisePicker, setShowExercisePicker] = useState(false);
+  const [replaceIndex, setReplaceIndex] = useState<number | null>(null);
   const [customRoutines, setCustomRoutines] = useState<RoutineTemplate[]>([]);
 
   // Create routine form state
@@ -164,6 +195,21 @@ export const SymmetryBibliotecaView: React.FC<SymmetryBibliotecaViewProps> = ({
     setSelectedTemplate(newRoutine);
   };
 
+  // Bundled catalog + templates downloaded from the user's Symmetry session (see GymView refresh).
+  const [mediaVersion, setMediaVersion] = useState(0);
+  useEffect(() => {
+    const bump = () => setMediaVersion((v) => v + 1);
+    window.addEventListener('symmetry-media-updated', bump);
+    return () => window.removeEventListener('symmetry-media-updated', bump);
+  }, []);
+  const libraryExercises = useMemo(() => getLibraryExercises(), [mediaVersion]);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  useEffect(() => setVisibleCount(PAGE_SIZE), [searchQuery]);
+  const matchingExercises = useMemo(() => {
+    const q = normalizeSearch(searchQuery);
+    return q ? libraryExercises.filter((e) => normalizeSearch(e.name).includes(q)) : libraryExercises;
+  }, [libraryExercises, searchQuery]);
+
   const allTemplates = useMemo(() => {
     return [...customRoutines, ...DEFAULT_TEMPLATES];
   }, [customRoutines]);
@@ -203,163 +249,142 @@ export const SymmetryBibliotecaView: React.FC<SymmetryBibliotecaViewProps> = ({
         {/* Title & Subtitle */}
         <h1
           style={{
-            fontSize: 28,
-            fontWeight: 900,
-            color: '#ffffff',
-            margin: '0 0 4px',
+            fontSize: 30,
+            fontWeight: 800,
+            color: '#FFFFFF',
+            margin: '8px 0 6px',
             letterSpacing: '-0.4px',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
           }}
         >
           {selectedTemplate.name}
         </h1>
-        <div style={{ fontSize: 13, color: '#9ca3af', marginBottom: 20 }}>
+        <div style={{ fontSize: 16, color: '#8E8E93', marginBottom: 34 }}>
           {exercises.length} Ejercicios, {selectedTemplate.durationMin} min
         </div>
 
-        {/* Distribución Muscular Section */}
-        <section style={{ marginBottom: 24 }}>
-          <h3
-            style={{
-              fontSize: 14,
-              fontWeight: 700,
-              color: '#ffffff',
-              marginBottom: 12,
-            }}
-          >
-            Distribución Muscular
-          </h3>
+        {/* Distribución Muscular: derived from each exercise's focus/secondary muscles */}
+        <section style={{ marginBottom: 30 }}>
+          <h3 style={{ fontSize: 17, fontWeight: 700, color: '#FFFFFF', margin: '0 0 16px' }}>Distribución Muscular</h3>
 
-          <div style={{ display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 6 }}>
-            {selectedTemplate.muscleDistribution.map((md, idx) => {
-              const muscleImg = getMuscleImage(md.muscle, true);
-              return (
-                <div
-                  key={idx}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 10,
-                    padding: '8px 12px',
-                    borderRadius: 14,
-                    background: '#131418',
-                    border: '1px solid #1f2128',
-                    minWidth: 120,
-                  }}
-                >
-                  <div
+          <div style={{ display: 'flex', gap: 22, overflowX: 'auto', paddingBottom: 6, scrollbarWidth: 'none' }}>
+            {muscleDistribution(exercises.map(exerciseMuscles)).map((md) => (
+              <div key={md.key} style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+                <SymmetryMuscleIcon muscle={md.key} size={66} />
+                <div>
+                  <div style={{ fontSize: 15, fontWeight: 600, color: '#FFFFFF', marginBottom: 6 }}>{md.label}</div>
+                  <span
                     style={{
-                      width: 38,
-                      height: 38,
-                      borderRadius: 10,
-                      background: '#1a1d24',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      overflow: 'hidden',
+                      display: 'inline-block',
+                      padding: '4px 10px',
+                      borderRadius: 999,
+                      background: '#2C2C2E',
+                      color: '#FFFFFF',
+                      fontSize: 14,
+                      fontWeight: 600,
                     }}
                   >
-                    <img
-                      src={muscleImg}
-                      alt=""
-                      style={{ width: '80%', height: '80%', objectFit: 'contain' }}
-                    />
-                  </div>
-
-                  <div>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: '#ffffff' }}>
-                      {md.label}
-                    </div>
-                    <div style={{ fontSize: 12, color: '#60a5fa', fontWeight: 600 }}>
-                      {md.percent}%
-                    </div>
-                  </div>
+                    {md.percent}%
+                  </span>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         </section>
 
         {/* Exercises List Section */}
         <section>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              marginBottom: 12,
-            }}
-          >
-            <h3 style={{ fontSize: 15, fontWeight: 700, color: '#ffffff', margin: 0 }}>
-              {exercises.length} Ejercicios
-            </h3>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+            <h3 style={{ fontSize: 17, fontWeight: 700, color: '#FFFFFF', margin: 0 }}>{exercises.length} Ejercicios</h3>
 
             <button
               type="button"
               onClick={() => setShowExercisePicker(true)}
+              aria-label="Añadir ejercicio"
               style={{
-                width: 32,
-                height: 32,
-                borderRadius: '50%',
-                background: '#1c1e25',
+                width: 38,
+                height: 38,
+                borderRadius: 10,
+                background: '#1C1C1E',
                 border: 'none',
-                color: '#ffffff',
-                fontSize: 18,
+                color: '#FFFFFF',
+                fontSize: 22,
+                lineHeight: 1,
                 cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                display: 'grid',
+                placeItems: 'center',
               }}
             >
               +
             </button>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {exercises.map((ex, index) => (
-              <div
-                key={index}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '12px 14px',
-                  borderRadius: 16,
-                  background: '#121317',
-                  border: '1px solid #1d1f27',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                  <SymmetryExerciseVisual exercise={ex} variant="thumbnail" size={54} />
-
-                  <div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: '#ffffff', lineHeight: 1.25 }}>
-                      {ex.name}
-                    </div>
-                    <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 4 }}>
-                      {ex.primaryMuscle.charAt(0).toUpperCase() + ex.primaryMuscle.slice(1)}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Shuffle / Alternative icon */}
-                <button
-                  type="button"
-                  title="Reemplazar ejercicio"
+          <div>
+            {exercises.map((ex, index) => {
+              const gif = resolveExerciseImage(ex);
+              return (
+                <div
+                  key={`${ex.id}-${index}`}
                   style={{
-                    background: 'none',
-                    border: 'none',
-                    color: '#38bdf8',
-                    fontSize: 20,
-                    cursor: 'pointer',
-                    padding: 8,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 14,
+                    padding: '14px 0',
+                    borderBottom: index < exercises.length - 1 ? '1px solid #1C1C1E' : 'none',
                   }}
                 >
-                  🔀
-                </button>
-              </div>
-            ))}
+                  <div
+                    style={{
+                      width: 64,
+                      height: 64,
+                      flexShrink: 0,
+                      borderRadius: 12,
+                      background: '#FFFFFF',
+                      overflow: 'hidden',
+                      display: 'grid',
+                      placeItems: 'center',
+                    }}
+                  >
+                    {gif ? (
+                      <img src={gif} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ) : (
+                      <span style={{ color: '#111', fontWeight: 800, fontSize: 13 }}>{getExerciseInitials(ex.name)}</span>
+                    )}
+                  </div>
+
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 15, fontWeight: 600, color: '#FFFFFF', lineHeight: 1.3 }}>{ex.name}</div>
+                    <div style={{ fontSize: 13, color: '#8E8E93', marginTop: 4 }}>{musclesText(exerciseMuscles(ex))}</div>
+                  </div>
+
+                  <button
+                    type="button"
+                    title="Reemplazar ejercicio"
+                    aria-label="Reemplazar ejercicio"
+                    onClick={() => setReplaceIndex(index)}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 8, flexShrink: 0 }}
+                  >
+                    <SymmetryIcon name="controls/icon_replace_shuffle" color="#3B82F6" size={24} />
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </section>
+
+        {replaceIndex !== null && (
+          <SymmetryExercisePicker
+            onClose={() => setReplaceIndex(null)}
+            onSelect={(ex) => {
+              const ids = [...selectedTemplate.exerciseIds];
+              ids[replaceIndex] = ex.id;
+              setSelectedTemplate({ ...selectedTemplate, exerciseIds: ids });
+              setReplaceIndex(null);
+            }}
+          />
+        )}
 
         {/* Sticky bottom Empezar Entrenamiento button (Screenshot 7) */}
         <div
@@ -381,22 +406,22 @@ export const SymmetryBibliotecaView: React.FC<SymmetryBibliotecaViewProps> = ({
             onClick={() => onStartRoutine(selectedTemplate)}
             style={{
               width: '100%',
-              padding: '16px 20px',
-              borderRadius: 28,
-              background: '#ffffff',
+              padding: '18px 20px',
+              borderRadius: 16,
+              background: '#FFFFFF',
               color: '#000000',
               border: 'none',
-              fontSize: 16,
-              fontWeight: 800,
+              fontSize: 17,
+              fontWeight: 700,
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: 8,
+              gap: 14,
               boxShadow: '0 6px 20px rgba(0,0,0,0.5)',
             }}
           >
-            <span>▶</span> Empezar Entrenamiento
+            <span style={{ fontSize: 18 }}>▶</span> Empezar Entrenamiento
           </button>
         </div>
 
@@ -548,11 +573,13 @@ export const SymmetryBibliotecaView: React.FC<SymmetryBibliotecaViewProps> = ({
               }}
             />
           </div>
+          <div style={{ fontSize: 11, color: '#6b7280', margin: '0 4px 10px' }}>
+            {matchingExercises.length} ejercicios
+            {libraryExercises.length === SYMMETRY_EXERCISES.length && ' · conecta Symmetry para ver el catálogo completo'}
+          </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {SYMMETRY_EXERCISES.filter((e) =>
-              searchQuery ? e.name.toLowerCase().includes(searchQuery.toLowerCase()) : true,
-            )
-              .slice(0, 40)
+            {matchingExercises
+              .slice(0, visibleCount)
               .map((ex) => (
                 <div
                   key={ex.id}
@@ -571,12 +598,32 @@ export const SymmetryBibliotecaView: React.FC<SymmetryBibliotecaViewProps> = ({
                   <SymmetryExerciseVisual exercise={ex} variant="thumbnail" size={44} />
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 14, fontWeight: 700, color: '#ffffff' }}>{ex.name}</div>
-                    <div style={{ fontSize: 12, color: '#9ca3af' }}>{ex.primaryMuscle}</div>
+                    <div style={{ fontSize: 12, color: '#9ca3af' }}>{MUSCLE_LABELS[ex.primaryMuscle] ?? ex.primaryMuscle}</div>
                   </div>
                   <div style={{ color: '#38bdf8', fontSize: 16 }}>›</div>
                 </div>
               ))}
           </div>
+          {matchingExercises.length > visibleCount && (
+            <button
+              type="button"
+              onClick={() => setVisibleCount((n) => n + PAGE_SIZE)}
+              style={{
+                width: '100%',
+                marginTop: 12,
+                padding: '10px 0',
+                borderRadius: 12,
+                background: '#14151a',
+                border: '1px solid #22252e',
+                color: '#ffffff',
+                fontSize: 13,
+                fontWeight: 700,
+                cursor: 'pointer',
+              }}
+            >
+              Mostrar más ({matchingExercises.length - visibleCount})
+            </button>
+          )}
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>

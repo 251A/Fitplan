@@ -1,4 +1,5 @@
 import type { Exercise, GymSession, SeedBestSet } from '../../data/db/models';
+import { doubleProgression } from '../../domain/strength/strength';
 
 export interface LastSet {
   weightKg: number;
@@ -28,6 +29,34 @@ export function lastSetFor(
     .filter((b) => b.exerciseId === exerciseId && (!beforeDate || !b.date || b.date < beforeDate))
     .sort((a, b) => b.weightKg - a.weightKg)[0];
   return seed ? { weightKg: seed.weightKg, reps: seed.reps, date: seed.date, fromSeed: true } : undefined;
+}
+
+/**
+ * Deterministic target for the next session (spec 7.4): repeat the last top set, or add the
+ * double-progression increment when every top set reached the top of the rep range.
+ */
+export function suggestNextSet(
+  exerciseId: string,
+  equipment: string,
+  sessions: ReadonlyArray<GymSession>,
+  bestSets: ReadonlyArray<SeedBestSet>,
+  repRange: { min: number; max: number } = { min: 8, max: 12 },
+): { weightKg: number; reps: number; progressed: boolean } | undefined {
+  const last = lastSetFor(exerciseId, sessions, bestSets);
+  if (!last) return undefined;
+  const lastSession = datedDesc(sessions).find((s) => s.sets.some((x) => x.exerciseId === exerciseId && !x.skipped));
+  const step = lastSession
+    ? doubleProgression(lastSession.sets, {
+        id: exerciseId,
+        primaryMuscle: 'chest',
+        secondaryMuscles: [],
+        equipment: equipment === 'dumbbell' ? 'dumbbell' : 'machine',
+        loadMode: 'total',
+      }, repRange)
+    : undefined;
+  return step
+    ? { weightKg: step.nextWeightKg, reps: repRange.min, progressed: true }
+    : { weightKg: last.weightKg, reps: last.reps, progressed: false };
 }
 
 /** Sessions plus the seed best sets as pseudo-sessions, for 1RM history from day one. */

@@ -59,13 +59,21 @@ export interface CalculatedRank {
   progressPercent: number;
 }
 
+/** Templates downloaded from the user's Symmetry session (see symmetryExerciseMedia.ts). */
+let extraExercises: SymmetryExercise[] = [];
+
+export function registerExtraExercises(list: SymmetryExercise[]): void {
+  extraExercises = list;
+}
+
 export function findSymmetryExercise(idOrName: number | string): SymmetryExercise | undefined {
   if (typeof idOrName === 'number') {
-    return SYMMETRY_EXERCISES.find((e) => e.id === idOrName);
+    return SYMMETRY_EXERCISES.find((e) => e.id === idOrName) ?? extraExercises.find((e) => e.id === idOrName);
   }
   const clean = idOrName.trim().toLowerCase();
   return (
     SYMMETRY_EXERCISES.find((e) => e.name.toLowerCase() === clean) ||
+    extraExercises.find((e) => e.name.toLowerCase() === clean) ||
     SYMMETRY_EXERCISES.find((e) => e.name.toLowerCase().includes(clean))
   );
 }
