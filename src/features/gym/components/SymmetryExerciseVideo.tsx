@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
 import { assetUrl } from '../../../data/symmetry/assetHelper';
+import { getExerciseMedia } from '../../../data/symmetry/symmetryExerciseMedia';
 import { exerciseVideoSources } from '../../../data/symmetry/symmetryMediaUrls';
 import { SymmetryExerciseVisual, resolveExerciseImage } from '../SymmetryExerciseVisual';
 
 type Angle = 'front' | 'side' | 'render';
 
 const ANGLE_LABELS: Record<Angle, string> = {
-  front: 'Frontal',
+  front: 'Técnica',
   side: 'Lateral',
-  render: '3D / Render',
+  render: 'Animación',
 };
 
 /**
@@ -24,7 +25,9 @@ interface SymmetryExerciseVideoProps {
   exercise: { id?: number | string; name?: string; videoUrl?: string; techniqueVideoURL?: string };
 }
 
-export function SymmetryExerciseVideo({ exercise }: SymmetryExerciseVideoProps) {
+export function SymmetryExerciseVideo({ exercise: rawExercise }: SymmetryExerciseVideoProps) {
+  const media = getExerciseMedia(rawExercise.id);
+  const exercise = { ...rawExercise, videoUrl: rawExercise.videoUrl ?? media?.videoUrl };
   const sources = {
     front: exerciseVideoSources(exercise, 'front'),
     side: exerciseVideoSources(exercise, 'side'),
@@ -137,7 +140,7 @@ export function SymmetryExerciseVideo({ exercise }: SymmetryExerciseVideoProps) 
       </div>
       {missing.has('front') && missing.has('side') && (
         <p style={{ fontSize: 11, color: '#6b7280', margin: '8px 2px 0' }}>
-          Sin vídeo local para este ejercicio. Se muestra el render.
+          Symmetry no tiene vídeo de técnica para este ejercicio. Se muestra la animación.
         </p>
       )}
     </div>

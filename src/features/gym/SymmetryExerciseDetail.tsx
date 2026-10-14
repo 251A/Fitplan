@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useAppData } from '../../app/AppData';
 import { e1rmHistory, type E1RMPoint } from '../../domain/strength/strength';
 import { IMPLEMENT_LABELS, type SymmetryExercise } from '../../data/symmetry/symmetryCatalog';
+import { getExerciseMedia } from '../../data/symmetry/symmetryExerciseMedia';
 import { symmetryExerciseFor, userExerciseRanks } from '../../data/symmetry/userRanks';
 import { TrendChart } from '../progress/TrendChart';
 import { SymmetryExerciseVideo } from './components/SymmetryExerciseVideo';
@@ -29,6 +30,7 @@ interface Props {
 
 export function SymmetryExerciseDetail({ exercise, userWeightKg, onBack, onStart }: Props) {
   const { gymSessions, bestSets, exercises } = useAppData();
+  const media = getExerciseMedia(exercise.id);
 
   // FitPlan ids logged for this catalog exercise (exact name/alias match or the numeric Symmetry id).
   const linkedIds = useMemo(() => {
@@ -113,6 +115,13 @@ export function SymmetryExerciseDetail({ exercise, userWeightKg, onBack, onStart
           )}
         </div>
       </section>
+
+      {media?.instructions && (
+        <section style={{ marginTop: 16, padding: 14, borderRadius: 16, background: '#121317', border: '1px solid #1f2127' }}>
+          <div style={{ fontSize: 13, fontWeight: 800, marginBottom: 8 }}>Instrucciones</div>
+          <div style={{ fontSize: 13, lineHeight: 1.5, color: '#d1d5db', whiteSpace: 'pre-line' }}>{media.instructions}</div>
+        </section>
+      )}
 
       {history.length > 0 && (
         <div style={{ marginTop: 16 }}>

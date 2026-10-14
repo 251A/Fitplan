@@ -2,12 +2,13 @@
  * Remote Symmetry media confirmed by a string scan of libapp.so (APK v. on disk, Oct 2026).
  * Only URLs that appear verbatim in the binary are listed here; nothing is guessed.
  *
- * Per-exercise videos, thumbnails and GIFs are NOT in the APK nor hardcoded in the binary:
- * the app receives them at runtime from the authenticated `/exercise-template/list` endpoint
- * (fields such as `videoUrl` / `techniqueVideoURL` / `image_url`). `video_angles` is only a base.
+ * Per-exercise videos and GIFs are NOT in the APK nor hardcoded in the binary: they come at
+ * runtime from the authenticated `/exercise-template/list` endpoint (`techniqueVideoURL`,
+ * `thumbnailURL`) — see symmetryExerciseMedia.ts. `video_angles` is only a base.
  */
 
-export const SYMMETRY_CDN = 'https://symmetry-assets.com/public';
+export const SYMMETRY_ASSET_HOST = 'https://symmetry-assets.com/';
+export const SYMMETRY_CDN = `${SYMMETRY_ASSET_HOST}public`;
 
 /** Base prefix for exercise camera-angle videos; full paths come from the API. */
 export const VIDEO_ANGLES_BASE = `${SYMMETRY_CDN}/video_angles`;
@@ -68,7 +69,8 @@ export function exerciseVideoSources(
   if (exercise.id !== undefined && exercise.id !== null && exercise.id !== '') {
     out.push(`symmetry/exercise_videos/${exercise.id}/${angle}.mp4`);
   }
-  const remote = angle === 'front' ? exercise.videoUrl ?? exercise.techniqueVideoURL : exercise.techniqueVideoURL;
-  if (remote && remote.startsWith(SYMMETRY_CDN)) out.push(remote);
+  // Symmetry ships a single technique video per exercise; it fills the front angle only.
+  const remote = angle === 'front' ? exercise.videoUrl ?? exercise.techniqueVideoURL : undefined;
+  if (remote && remote.startsWith(SYMMETRY_ASSET_HOST)) out.push(remote);
   return out;
 }

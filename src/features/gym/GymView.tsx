@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useAppData } from '../../app/AppData';
 import type { GymSession, Exercise } from '../../data/db/models';
 import { ExerciseDetail } from './ExerciseDetail';
@@ -27,6 +27,7 @@ import {
   type SymmetryExercise,
 } from '../../data/symmetry/symmetryCatalog';
 import { isSymmetryConnected } from '../../data/symmetry/symmetryApi';
+import { isExerciseMediaStale, refreshExerciseMedia } from '../../data/symmetry/symmetryExerciseMedia';
 import { SymmetryLoginModal } from './SymmetryLoginModal';
 import { SymmetryExerciseDetail } from './SymmetryExerciseDetail';
 import { SymmetryIcon } from './components/SymmetryIcon';
@@ -141,6 +142,18 @@ export function GymView() {
   const openSymmetryExercise = (ex: SymmetryExercise) => setView({ kind: 'symExercise', exercise: ex });
 
   const connected = isSymmetryConnected();
+
+  // Exercise GIFs/videos/instructions: cached per device from the user's Symmetry session.
+  const [, setMediaVersion] = useState(0);
+  useEffect(() => {
+    const bump = () => setMediaVersion((v) => v + 1);
+    window.addEventListener('symmetry-media-updated', bump);
+    return () => window.removeEventListener('symmetry-media-updated', bump);
+  }, []);
+  useEffect(() => {
+    if (connected && isExerciseMediaStale()) void refreshExerciseMedia();
+  }, [connected]);
+
   const allQuickRoutines = useMemo(() => getAllQuickWorkouts(), []);
 
   const filteredQuickRoutines = useMemo(() => {

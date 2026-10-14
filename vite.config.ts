@@ -23,11 +23,18 @@ export default defineConfig({
         secure: true,
         rewrite: (path) => path.replace(/^\/symmetry-(api|proxy)/, ''),
       },
-      '^/symmetry/(users|training-sessions|sync)': {
+      '^/symmetry/(users|training-sessions|sync|exercise-template)': {
         target: 'https://dev-api-398208568169.europe-southwest1.run.app/api',
         changeOrigin: true,
         secure: true,
         rewrite: (path) => path.replace(/^\/symmetry/, ''),
+        // Mirror the Worker: the app sends its Symmetry token as X-Symmetry-Auth.
+        configure: (proxy) => {
+          proxy.on('proxyReq', (proxyReq) => {
+            const auth = proxyReq.getHeader('x-symmetry-auth');
+            if (auth) proxyReq.setHeader('authorization', String(auth));
+          });
+        },
       },
     },
   },

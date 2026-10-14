@@ -21,9 +21,12 @@ describe('symmetryMediaUrls', () => {
 
   it('lists local video first and only accepts Symmetry CDN remotes', () => {
     expect(exerciseVideoSources({ id: 7 }, 'front')).toEqual(['symmetry/exercise_videos/7/front.mp4']);
-    expect(
-      exerciseVideoSources({ id: 7, videoUrl: `${SYMMETRY_CDN}/video_angles/x.mp4` }, 'front'),
-    ).toEqual(['symmetry/exercise_videos/7/front.mp4', `${SYMMETRY_CDN}/video_angles/x.mp4`]);
+    const remote = 'https://symmetry-assets.com/exercises/v2/Elevaciones_Laterales.mp4';
+    expect(exerciseVideoSources({ id: 7, videoUrl: remote }, 'front')).toEqual([
+      'symmetry/exercise_videos/7/front.mp4',
+      remote,
+    ]);
+    expect(exerciseVideoSources({ id: 7, videoUrl: remote }, 'side')).toEqual(['symmetry/exercise_videos/7/side.mp4']);
     expect(exerciseVideoSources({ videoUrl: 'https://evil.example/x.mp4' }, 'front')).toEqual([]);
   });
 });

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { SymmetryExercise } from '../../data/symmetry/symmetryCatalog';
 import { assetUrl } from '../../data/symmetry/assetHelper';
+import { getExerciseMedia } from '../../data/symmetry/symmetryExerciseMedia';
 
 // Known authentic cropped illustrations from Symmetry
 const KNOWN_EXERCISE_IMAGES: Record<string, string> = {
@@ -68,6 +69,10 @@ export function resolveExerciseImage(
   exercise?: Partial<SymmetryExercise> | { id?: number | string; name?: string },
 ): string | null {
   if (!exercise) return null;
+
+  // Real Symmetry GIF for this exact template, when the catalog has been downloaded.
+  const media = getExerciseMedia(exercise.id);
+  if (media?.thumbnailUrl) return media.thumbnailUrl;
 
   if (exercise.id != null) {
     const byId = KNOWN_EXERCISE_IMAGES[String(exercise.id)];
